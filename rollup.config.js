@@ -11,7 +11,7 @@ const dev = process.env.ROLLUP_WATCH;
 const serveopts = {
   contentBase: ['./dist'],
   host: '0.0.0.0',
-  port: 5000,
+  port: 5010,
   allowCrossOrigin: true,
   headers: {
     'Access-Control-Allow-Origin': '*',
@@ -32,7 +32,7 @@ const plugins = [
 
 export default [
   {
-    input: 'src/porta-card.ts',
+    input: 'src/persiana-card.ts',
     output: {
       dir: 'dist',
       format: 'es',

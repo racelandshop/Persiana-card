@@ -151,14 +151,14 @@ class ActionHandler extends HTMLElement implements ActionHandler {
   }
 }
 // TODO You need to replace all instances of "action-handler-boilerplate" with "action-handler-<your card name>"
-customElements.define('action-handler-porta-card', ActionHandler);
+customElements.define('action-handler-persiana-card', ActionHandler);
 
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector('action-handler-porta-card')) {
-    return body.querySelector('action-handler-porta-card') as ActionHandler;
+  if (body.querySelector('action-handler-persiana-card')) {
+    return body.querySelector('action-handler-persiana-card') as ActionHandler;
   }
-  const actionhandler = document.createElement('action-handler-porta-card');
+  const actionhandler = document.createElement('action-handler-persiana-card');
   body.appendChild(actionhandler);
   return actionhandler as ActionHandler;
 };

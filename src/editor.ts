@@ -13,20 +13,22 @@ const cardConfigStruct = {
   },
 };
 
-const room = "M11.4,1.4h27.2v43.1H11.4V1.4z";
-const door = "M11.4 1.4v43.1h27.2V1.4H11.4zm23 23.4c0 1.1-.9 1.9-1.9 1.9h0c-1.1 0-1.9-.9-1.9-1.9V21c0-1.1.9-1.9 1.9-1.9h0c1.1 0 1.9.9 1.9 1.9v3.8z";
-const garageClosed = "M19,20H17V11H7V20H5V9L12,5L19,9V20M8,12H16V14H8V12M8,15H16V17H8V15M16,18V20H8V18H16Z";
-const garageOpen = "M19,20H17V11H7V20H5V9L12,5L19,9V20M8,12H16V14H8V12Z";
-const sidegateClosed = "M15.867 25.984v6.774h18.07V19.21h-18.07Zm16.848-4.925v.617H17.09V20.44h15.625Zm0 2.464v.614H17.09v-1.23h15.625Zm0 2.461v.618H17.09v-1.23h15.625Zm0 2.465v.613H17.09v-1.23h15.625Zm0 2.461v.617H17.09v-1.23h15.625Zm0 0";
-const sidegateOpen = "M7.324 12.563v4.68H0V33.25h50.047V17.242H42.48v-9.36h-6.105v24.876H13.43V7.883H7.324Zm0 0";
-const includeDomains = ['switch'];
-@customElement('porta-card-editor')
+const open = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm47.043 3.949v.742H2.707V5.723h44.45Zm0 21.117v20.148H2.707V7.441h44.45Zm0 0";
+const closed = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm46.93 3.89v.688H2.82V5.723h44.223Zm0 1.547v.742H2.82V7.211h44.223Zm0 1.543v.688H2.82V8.812h44.223Zm0 1.547v.742H2.82v-1.488h44.223Zm0 1.601v.747H2.82v-1.489h44.223Zm0 1.602v.746H2.82v-1.488h44.223Zm0 1.605v.743H2.82v-1.489h44.223Zm0 1.602v.742H2.82v-1.488h44.223Zm0 1.543v.688H2.82v-1.372h44.223Zm0 1.547v.746H2.82v-1.488h44.223Zm0 1.547v.687H2.82v-1.375h44.223Zm0 1.488v.684H2.82v-1.371h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.602v.746H2.82v-1.489h44.223Zm0 1.546v.688H2.82v-1.375h44.223Zm0 1.489v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.66v.8H2.82v-1.605h44.223Zm0 1.601v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.606v.742H2.82v-1.488h44.223Zm0 1.543v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.543v.687H2.82v-1.371h44.223Zm0 1.546v.747H2.82v-1.489h44.223Zm0 1.547v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 0";
+
+const includeDomains = ['cover'];
+
+@customElement('persiana-card-editor')
+
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
+  _show_name: boolean | undefined;
+  _changed_icon: unknown;
+  dir: any;
 
   public setConfig(config: BoilerplateCardConfig): void {
     this._config = config;
@@ -40,20 +42,28 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return true;
   }
 
+  get _entity(): string {
+    return this._config?.entity || "";
+  }
+
   get _name(): string {
     return this._config?.name || '';
   }
 
-  get _show_name(): boolean {
-    return this._config?.show_name ?? true;
+  get _buttons_position(): string {
+    return this._config?.buttons_position || "";
   }
 
-  get _show_state(): boolean {
-    return this._config?.show_state ?? true;
+  get _title_position(): string {
+    return this._config?.title_position || "";
   }
 
-  get _entity(): string {
-    return this._config?.entity || '';
+  get _invert_percentage(): boolean {
+    return this._config?.invert_position || false;
+  }
+
+  get _blind_color(): string {
+    return this._config?.blind_color || "";
   }
 
   get _show_warning(): boolean {
@@ -117,46 +127,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
           .configValue=${'show_name'}
           @change=${this._change}>
       </ha-switch>
-      </ha-formfield>
-      <ha-formfield
-      .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
-      .dir=${this.dir}>
-      <ha-switch
-        .checked=${this._show_state !== false}
-        .configValue=${'show_state'}
-        @change=${this._change}>
-      </ha-switch>
-      </ha-formfield>
-      <div>
-
-      </div>
-      <paper-input-label-8>Escolha o icon: </paper-input-label-8>
-      <paper-dropdown-menu class="dropdown-icon">
-      <paper-listbox slot="dropdown-content"
-        attr-for-selected="value"
-        .configValue=${"icon"}
-        selected='1'
-        @iron-select=${this._changed_icon}>
-          <paper-item class= "paper-item-door" .value=${[room, door]}>
-              <svg class="svg-door" viewBox="0 0 50 50" height="24" width="24" >
-              <path class="opacity"  fill="#ffffff" d=${room}/>
-              <path class="state" fill="#b68349" d=${door}/>
-              </svg>Porta
-          </paper-item>
-          <paper-item class= "paper-item-garagem" .value=${[garageOpen, garageClosed]}>
-              <svg class="svg-garagem" viewBox="0 0 24 24" height="24" width="24" >
-              <path class="opacity" fill="#a9b1bc" d=${garageOpen}/>
-              <path class="state" fill="#a9b1bc" d=${garageClosed}/>
-              </svg>Garagem
-          </paper-item>
-          <paper-item class= "paper-item-iron" .value=${[sidegateOpen, sidegateClosed]}>
-              <svg class="svg-iron" viewBox="0 0 50 50" height="24" width="24" >
-              <path class="opacity"  fill="#a9b1bc" d=${sidegateOpen}/>
-              <path class="state" fill="#a9b1bc" d=${sidegateClosed}/>
-              </svg>Portão
-          </paper-item>
-          </paper-listbox>
-        </paper-dropdown-menu>
+      </ha-formfield>  
     </div>
     `;
   }
@@ -213,18 +184,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       }
     }
     fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  private _changed_icon(ev): void {
-    if (!this.hass || ev.target.selected === "") {
-      return;
-    }
-    this._config = {
-      ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:porta-card'
-    }
-    console.log("this._config", this._config);
-    fireEvent(this, "config-changed", { config: this._config });
-  }
+  } 
 
   static get styles(): CSSResultGroup {
     return css`
@@ -251,25 +211,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         padding-left: 16px;
         background: var(--secondary-background-color);
         display: grid;
-      }
-      ha-formfield {
-        padding: 0px 10px 0px 20px;
-        max-width: 211px;
-      }
-      .dropdown-icon {
-        padding-left: 5%;
-      }
-      .svg-door {
-        margin-right: 2.5%;
-      }
-      .svg-garagem {
-        transform: translate(-10%, -5%) scale(1.5);
-        margin-right: 2.5%;
-      }
-      .svg-iron {
-        margin-right: 2.5%;
-        transform: translate(-10%, -5%) scale(1);
-      }
+      }      
     `;
   }
 }

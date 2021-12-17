@@ -1,7 +1,7 @@
 import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 declare global {
   interface HTMLElementTagNameMap {
-    'porta-card-editor': LovelaceCardEditor;
+    'persiana-card-editor': LovelaceCardEditor;
     'hui-error-card': LovelaceCard;
   }
 }
