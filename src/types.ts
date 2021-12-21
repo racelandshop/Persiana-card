@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 declare global {
   interface HTMLElementTagNameMap {
@@ -8,9 +9,19 @@ declare global {
 
 // TODO Add your configuration elements here for type-checking
 export interface BoilerplateCardConfig extends LovelaceCardConfig {
+  entities: any;
+  title: any;
+  show_name: any;
+  show_state: any;
+  icon: any;
+  show_icon: any;
   type: string;
   name?: string;
   show_warning?: boolean;
+  title_position: string;
+  buttons_position: string;
+  invert_percentage: string;
+  blind_color: string;
   show_error?: boolean;
   test_gui?: boolean;
   entity?: string;

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/camelcase */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
@@ -13,11 +15,7 @@ const cardConfigStruct = {
   },
 };
 
-const open = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm47.043 3.949v.742H2.707V5.723h44.45Zm0 21.117v20.148H2.707V7.441h44.45Zm0 0";
-const closed = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm46.93 3.89v.688H2.82V5.723h44.223Zm0 1.547v.742H2.82V7.211h44.223Zm0 1.543v.688H2.82V8.812h44.223Zm0 1.547v.742H2.82v-1.488h44.223Zm0 1.601v.747H2.82v-1.489h44.223Zm0 1.602v.746H2.82v-1.488h44.223Zm0 1.605v.743H2.82v-1.489h44.223Zm0 1.602v.742H2.82v-1.488h44.223Zm0 1.543v.688H2.82v-1.372h44.223Zm0 1.547v.746H2.82v-1.488h44.223Zm0 1.547v.687H2.82v-1.375h44.223Zm0 1.488v.684H2.82v-1.371h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.602v.746H2.82v-1.489h44.223Zm0 1.546v.688H2.82v-1.375h44.223Zm0 1.489v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.66v.8H2.82v-1.605h44.223Zm0 1.601v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.606v.742H2.82v-1.488h44.223Zm0 1.543v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.543v.687H2.82v-1.371h44.223Zm0 1.546v.747H2.82v-1.489h44.223Zm0 1.547v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 0";
-
 const includeDomains = ['cover'];
-
 @customElement('persiana-card-editor')
 
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
@@ -26,7 +24,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
-  _show_name: boolean | undefined;
   _changed_icon: unknown;
   dir: any;
 
@@ -42,28 +39,20 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return true;
   }
 
-  get _entity(): string {
-    return this._config?.entity || "";
-  }
-
   get _name(): string {
     return this._config?.name || '';
   }
 
-  get _buttons_position(): string {
-    return this._config?.buttons_position || "";
+  get _show_name(): boolean {
+    return this._config?.show_name ?? true;
   }
 
-  get _title_position(): string {
-    return this._config?.title_position || "";
+  get _show_state(): boolean {
+    return this._config?.show_state ?? true;
   }
 
-  get _invert_percentage(): boolean {
-    return this._config?.invert_position || false;
-  }
-
-  get _blind_color(): string {
-    return this._config?.blind_color || "";
+  get _entity(): string {
+    return this._config?.entity || "";
   }
 
   get _show_warning(): boolean {
@@ -86,6 +75,22 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return this._config?.double_tap_action || { action: 'none' };
   }
 
+  get _buttons_position(): string {
+    return this._config?.buttons_position || "";
+  }
+
+  get _title_position(): string {
+    return this._config?.title_position || "";
+  }
+
+  get _invert_percentage(): string {
+    return this._config?.invert_percentage || "";
+  }
+
+  get _blind_color(): string {
+    return this._config?.blind_color || "";
+  }
+
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -93,42 +98,62 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     this._helpers.importMoreInfoControl('climate');
 
     return html`
+
       <div class="card-config">
+
         <div class="option" .option=${'required'}>
-              <ha-entity-picker
-              .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
-          .hass=${this.hass}
-          .value=${this._entity}
-          .configValue=${'entity'}
-          .includeDomains=${includeDomains}
-          @value-changed=${this._valueChanged}
-          allow-custom-entity>
-        </ha-entity-picker>
+
+          <ha-entity-picker
+            .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
+            .hass=${this.hass}
+            .value=${this._entity}
+            .configValue=${'entity'}
+            .includeDomains=${includeDomains}
+            @value-changed=${this._valueChanged}
+            allow-custom-entity>
+          </ha-entity-picker>
+
         </div class="card-config">
+
         </div class="option">
 
     <div class="side-by-side">
+
         <paper-input
-        .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
-        .value=${this._name}
-        .configValue=${'name'}
-        @value-changed=${this._valueChanged}
-        ></paper-input>
+          .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
+          .value=${this._name}
+          .configValue=${'name'}
+          @value-changed=${this._valueChanged}>
+        </paper-input>
+
     </div class="side-by-side">
 
     <div class="div-options">
       <p>
       </p>
+
         <ha-formfield
-        .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
-        .dir=${this.dir}>
-        <ha-switch
-          .checked=${this._show_name !== false}
-          .configValue=${'show_name'}
-          @change=${this._change}>
-      </ha-switch>
-      </ha-formfield>  
+          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
+          .dir=${this.dir}>
+          <ha-switch
+            .checked=${this._show_name !== false}
+            .configValue=${'show_name'}
+            @change=${this._change}>
+          </ha-switch>
+      </ha-formfield>
+
     </div>
+    <ha-formfield
+      .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
+      .dir=${this.dir}>
+        <ha-switch
+          .checked=${this._show_state !== false}
+          .configValue=${'show_state'}
+          @change=${this._change}>
+        </ha-switch>
+    </ha-formfield>
+      <div>
+      </div>
     `;
   }
 
@@ -184,7 +209,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       }
     }
     fireEvent(this, 'config-changed', { config: this._config });
-  } 
+  }
 
   static get styles(): CSSResultGroup {
     return css`
@@ -192,26 +217,35 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         padding: 3% 0%;
         cursor: pointer;
       }
+
       .row {
         display: flex;
         margin-bottom: -14px;
         pointer-events: none;
       }
+
       .title {
         padding-left: 16px;
         margin-top: -6px;
         pointer-events: none;
       }
+
       .secondary {
         padding-left: 40px;
         color: var(--secondary-text-color);
         pointer-events: none;
       }
+
       .values {
         padding-left: 16px;
         background: var(--secondary-background-color);
         display: grid;
-      }      
+      }
+
+      ha-formfield {
+        padding: 0px 10px 0px 20px;
+        max-width: 211px;
+      }
     `;
   }
 }

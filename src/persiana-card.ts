@@ -1,30 +1,35 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
-import { LitElement, html, TemplateResult, css, PropertyValues, CSSResultGroup} from 'lit';
+import { html, TemplateResult, css, PropertyValues, CSSResultGroup, LitElement} from 'lit';
 import { HassEntity } from 'home-assistant-js-websocket'
 import { queryAsync } from 'lit-element'
 import { customElement, property, state } from "lit/decorators";
 import { findEntities } from "./././find-entities";
 import { ifDefined } from "lit/directives/if-defined";
 import { classMap } from "lit/directives/class-map";
-import { HomeAssistant, hasConfigOrEntityChanged, hasAction, ActionHandlerEvent, handleAction, LovelaceCardEditor, getLovelace, computeDomain} from 'custom-card-helpers';
+import { HomeAssistant, hasConfigOrEntityChanged, hasAction, ActionHandlerEvent, handleAction, LovelaceCardEditor, getLovelace } from 'custom-card-helpers';
 import './editor';
 import type { BoilerplateCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-const open = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm47.043 3.949v.742H2.707V5.723h44.45Zm0 21.117v20.148H2.707V7.441h44.45Zm0 0";
-const closed = "M.113 2.52v2.402H1.13v44.871h47.719V4.922h1.015V.113H.113Zm46.93 3.89v.688H2.82V5.723h44.223Zm0 1.547v.742H2.82V7.211h44.223Zm0 1.543v.688H2.82V8.812h44.223Zm0 1.547v.742H2.82v-1.488h44.223Zm0 1.601v.747H2.82v-1.489h44.223Zm0 1.602v.746H2.82v-1.488h44.223Zm0 1.605v.743H2.82v-1.489h44.223Zm0 1.602v.742H2.82v-1.488h44.223Zm0 1.543v.688H2.82v-1.372h44.223Zm0 1.547v.746H2.82v-1.488h44.223Zm0 1.547v.687H2.82v-1.375h44.223Zm0 1.488v.684H2.82v-1.371h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.602v.746H2.82v-1.489h44.223Zm0 1.546v.688H2.82v-1.375h44.223Zm0 1.489v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.66v.8H2.82v-1.605h44.223Zm0 1.601v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 1.606v.742H2.82v-1.488h44.223Zm0 1.543v.687H2.82v-1.375h44.223Zm0 1.547v.742H2.82v-1.489h44.223Zm0 1.543v.687H2.82v-1.371h44.223Zm0 1.546v.747H2.82v-1.489h44.223Zm0 1.547v.688H2.82v-1.375h44.223Zm0 1.543v.746H2.82v-1.488h44.223Zm0 0";
+// const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+// const closed = "M2.887 6.32v.809H46.18V5.508H2.887Zm0 2.27v.808H46.18v-1.62H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.809H46.18v-1.618H2.887Zm0 2.27v.808H46.18v-1.621H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.812H46.18v-1.62H2.887Zm0 2.27v.808H46.18V21.39H2.887Zm0 2.269v.808H46.18v-1.62H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.812H46.18v-1.62H2.887Zm0 2.269v.809H46.18v-1.617H2.887Zm0 2.27v.809H46.18V32.73H2.887Zm0 2.266v.812H46.18V35H2.887Zm0 2.269v.813H46.18V37.27H2.887Zm0 2.27v.808H46.18v-1.62H2.887Zm0 2.269v.809H46.18v-1.621H2.887Zm0 2.266v.812H46.18v-1.62H2.887Zm0 0";
 
-const blind = this.card.querySelector('div[data-blind="' + entityId +'"]');
-const slide = blind.querySelector('.sc-blind-selector-slide');
-const picker = blind.querySelector('.sc-blind-selector-picker');
+const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
+const closed = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
-const state = this.homeassistant.states[entityId];
-const friendlyName = (entity && entity.name) ? entity.name : state ? state.attributes.friendly_name : 'unknown';
-const currentPosition = state ? state.attributes.current_position : 'unknown';
+// const up = "M24.613.86C21.253 7.444.023 49.823.023 49.944c0 .02.016.032.036.032.062 0 4.863-2.075 20.406-8.813 2.48-1.078 4.527-1.953 4.55-1.953.02 0 3.055 1.305 6.743 2.902 12.816 5.547 18.183 7.856 18.207 7.832C50 49.906 25.165.18 25.055.07c-.016-.015-.18.285-.442.79Zm0 0";
+// const down = "M49.395.254c-.918.39-7.461 3.223-15.946 6.894-4.62 2.004-8.43 3.645-8.46 3.645-.04 0-2.321-.977-5.079-2.172C8.203 3.555.887.398.305.171.184.126.082.102.082.118c0 .098 24.816 49.801 24.867 49.801.04 0 2.801-5.469 9.2-18.211C39.761 20.527 49.956.129 49.956.078c0-.058-.027-.05-.562.176Zm0 0";
+// const stop = "M2.043 24.625v22.168h45.914V2.457H2.043Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -40,16 +45,8 @@ console.info(
 });
 @customElement('persiana-card')
 
-export class BoilerplateCard extends HTMLElement {
-  isUpdating: boolean | undefined;
-  setPickerPosition: any;
-  getPictureTop: any;
-  minPosition: number;
-  maxPosition: number;
-  updateBlindPosition: any;
-  card: any;
-  private _showError: any;
-  private _showWarning: any;
+export class BoilerplateCard extends LitElement {
+  [x: string]: any;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('persiana-card-editor');
@@ -73,7 +70,7 @@ export class BoilerplateCard extends HTMLElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: "cover.left_living_blind", name: "Persiana", title_position: "bottom", buttons_position: "left", invert_percentage: "false", blind_color: "#FFD580" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", buttons_position: "left", invert_percentage: "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [closed, open], show_icon: "any" };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -124,7 +121,7 @@ export class BoilerplateCard extends HTMLElement {
         buttonsPosition = entity.buttons_position.toLowerCase();
       }
 
-      let titlePosition = 'bottom';
+      let titlePosition = 'top';
       if (entity && entity.title_position) {
         titlePosition = entity.title_position.toLowerCase();
       }
@@ -143,34 +140,6 @@ export class BoilerplateCard extends HTMLElement {
 
       blind.className = 'sc-blind';
       blind.dataset.blind = entityId;
-      // blind.innerHTML = `
-
-      //   <div class="sc-blind-top" ` + (titlePosition == 'bottom' ? 'style="display:none;"' : '') + `>
-      //     <div class="sc-blind-label">
-      //     </div>
-      //     <div class="sc-blind-position">
-      //     </div
-      //   </div>
-      //   <div class="sc-blind-middle" style="flex-direction: ` + (buttonsPosition == 'right' ? 'row-reverse' : 'row') + `;">
-      //     <div class="sc-blind-buttons">
-      //     <ha-icon-button class="sc-blind-button" data-command="up"><ha-icon icon="mdi:arrow-up"></ha-icon></ha-icon-button><br>
-      //     <ha-icon-button class="sc-blind-button" data-command="stop"><ha-icon icon="mdi:stop"></ha-icon></ha-icon-button><br>
-      //     <ha-icon-button class="sc-blind-button" data-command="down"><ha-icon icon="mdi:arrow-down"></ha-icon></ha-icon-button>
-      //   </div>
-      //   <div class="sc-blind-selector">
-      //     <div class="sc-blind-selector-picture">
-      //       <div class="sc-blind-selector-slide"></div>
-      //       <div class="sc-blind-selector-picker"></div>
-      //     </div>
-      //   </div>
-      //   </div>
-      //   <div class0"sc-blind-bottom" ` + (titlePosition != 'bottom' ? 'style="display:none;"' : '') + `>
-      //     <div class="sc-blind-label">
-      //     </div>
-      //     <div class="sc-blind-position">
-      //     </div>
-      //   </div>
-      // `;
 
       let picture = blind.querySelector('.sc-blind-selector-picture');
       let slide = blind.querySelector('.sc-blind-selector-slide');
@@ -197,68 +166,45 @@ export class BoilerplateCard extends HTMLElement {
       };
 
       let mouseUp = function (event) {
-        _this.isUpdating = false;
-
         let newPosition = event.pageY - _this.getPictureTop(picture);
-
-        if (newPosition < _this.minPosition)
-          newPosition = _this.minPosition;
-
-        if (newPosition < _this.maxPosition)
-          newPosition = _this.maxPosition;
-
-        let percentagePosition = (newPosition - _this.minPosition) * 100 / (_this.maxPosition - _this.minPosition);
-
-        if (invertPercentage) {
-          _this.updateBlindPosition(_homeassistant, entityId, percentagePosition);
-        } else {
-          _this.updateBlindPosition(_homeassistant, entityId, 100 - percentagePosition);
-        }
-
-        document.removeEventListener('mousemove', mouseMove);
-        document.removeEventListener('touchmove', mouseMove);
-        document.removeEventListener('pointermove', mouseMove);
-
-        document.removeEventListener('mouseup', mouseUp);
-        document.removeEventListener('touchend', mouseUp);
-        document.removeEventListener('pointerup', mouseUp);
+        _this.setPickerPosition(newPosition, picker, slide);
       };
 
       picker.addEventListener('mousedown', mouseDown);
       picker.addEventListener('touchstart', mouseDown);
       picker.addEventListener('pointerdown', mouseDown);
 
-      blind.querySelectorAll('.sc-blind-button').forEach(function() {
-        onclick = function () {
-          const command = this.dataset.command;
+      // blind.querySelectorAll('.sc-blind-button').forEach(function () {
+      //   onclick = function () {
+      //     const command = this.dataset.command;
 
-          let service = '';
+      //     let service = '';
 
-          switch (command) {
-            case 'up':
-              service = 'open_cover';
-              break;
+      //     switch (command) {
+      //       case 'up':
+      //         service = 'open_cover';
+      //         break;
 
-            case 'down':
-              service = 'close_cover';
-              break;
+      //       case 'down':
+      //         service = 'close_cover';
+      //         break;
 
-            case 'stop':
-              service = 'stop_cover';
-              break;
-          }
+      //       case 'stop':
+      //         service = 'stop_cover';
+      //         break;
+      //     }
 
-          _homeassistant.callService('cover', service, {
-            entity_id: entityId
-          });
+      //     _homeassistant.callService('cover', service, {
+      //       entity_id: entityId
+      //     });
 
-        };
-      });
+      //   };
+      // });
       allBlinds.appendChild(blind);
     });
   }
 
-    public translate_state(stateObj): string {
+  public translate_state(stateObj): string {
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
       return localize("states.on");
     }
@@ -301,50 +247,50 @@ export class BoilerplateCard extends HTMLElement {
     const stateObj = this.config.entity
       ? this.hass.states[this.config.entity]
       : undefined;
-      
-  return html`
-  <div
-  class="sc-blind-top ${classMap({
-    "titlePosition": ifDefined(
-      stateObj ? this.computeActiveState(stateObj) : undefined) == 'bottom' ? 'style="display: none; "' : '') + `>
-    "
- <div class="sc-blind-label">
- </div>
- <div class="sc-blind-position">
- </div>
- </div>
 
+    return html`
 
-
-
-
-
-
-   <div class="sc-blind-middle" style="flex-direction: ` + (buttonsPosition == 'right' ? 'row-reverse' : 'row') + `;">
-     <div class="sc-blind-buttons">
-       <ha-icon-button class="sc-blind-button" data-command="up"><ha-icon icon="mdi:arrow-up"></ha-icon></ha-icon-button><br>
-       <ha-icon-button class="sc-blind-button" data-command="stop"><ha-icon icon="mdi:stop"></ha-icon></ha-icon-button><br>
-       <ha-icon-button class="sc-blind-button" data-command="down"><ha-icon icon="mdi:arrow-down"></ha-icon></ha-icon-button>
-     </div>
-     <div class="sc-blind-selector">
-       <div class="sc-blind-selector-picture">
-         <div class="sc-blind-selector-slide"></div>
-         <div class="sc-blind-selector-picker"></div>
-       </div>
-     </div>
-   </div>
-   <div class="sc-blind-bottom" ` + (titlePosition != 'bottom' ? 'style="display:none;"' : '') + `>
-     <div class="sc-blind-label">
-
-     </div>
-     <div class="sc-blind-position">
-
-     </div>
-   </div>
-       `
-
-: ""
-};          
+<ha-card
+        class="hassbut ${classMap({
+          "state-on": ifDefined(
+          stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+        "state-off": ifDefined(
+          stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+      })}"
+        @action=${this._handleAction}
+        @focus="${this.handleRippleFocus}"
+        .actionHandler=${actionHandler({
+          hasHold: hasAction(this.config.hold_action),
+          hasDoubleClick: hasAction(this.config.double_tap_action),
+        })}
+        tabindex="0"
+        .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
+      >
+      ${this.config.show_icon
+          ? html`
+            <svg class=${classMap({
+                "svgicon-blind":
+                  (JSON.stringify(this.config.icon) == JSON.stringify([open, closed])),
+                }
+                )
+            }
+              viewBox="0 0 50 50" height="100%" width="100%" >
+              <path fill="#a9b1bc" d=${this.config.icon[0]} />
+              <path class=${classMap({
+                "state-on-blind":
+                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open, closed])),
+                "state-off-blind":
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open, closed])),
+                "state-unavailable":
+                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "unavailable",
+              }
+                  )
+              }
+              d=${this.config.icon[1]} />
+            </svg>
+            <div class="divibut"></div>
+            `
+    : ""}
 
     ${this.config.show_name
     ? html`
@@ -453,7 +399,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding: 0% 100% 1% 0%;
       }
 
-      .divibut{
+      .divibut {
         padding-bottom: 0%;
         margin-bottom: 0%;
       }
@@ -492,72 +438,59 @@ private computeActiveState = (stateObj: HassEntity): string => {
         align-items: left;
       }
 
-      .svgicon-door {
-        padding-bottom: 20px;
-        max-width: 170px;
+      .state-on-blind {
+        transition: all 0.5s ease;
+        fill: #706960;
       }
 
-      .svgicon-garagem {
-        padding-bottom: 20px;
-        max-width: 170px;
-        transform: translate(62%, 55%) scale(2.5);
+      .state-off-blind {
+        transition: all 0.5s ease;
+        fill: #a2743f;
       }
 
-      .svgicon-sidegate {
-        padding-left: 10px;
+      .state-unavailable {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+
+      .svgicon-up {
+        padding-left: 50px;
+        padding-bottom: 40px;
+      }
+
+      .svgicon-down {
+        padding-left: 50px;
+        padding-bottom: 30px;
+      }
+
+      .svigicon-stop {
+        padding-left: 50px;
         padding-bottom: 20px;
-        transform: scale(1.3);
       }
 
       .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
-      .state-on-persiana-icon {
-        transform: skewY(10deg) translate(4.5%, -3.9%) scaleX(0.8);
-        /* transition-property: all 0.5s ease-out; */
-        transition: all 0.5s ease;
-        fill: #b68349;
-
-      }
-
-      .state-off-persiana-icon {
-        animation-direction: reverse;
-        transition: all 0.5s ease;
-        fill: #a2743f;
-      }
-
-      .state-on-garagem-icon {
-        transform: scale(0);
-        fill: #ffffff;
-      }
-
-      .state-off-garagem-icon {
-        fill: #a9b1bc;
-      }
-
-      .state-on-sidegate-icon {
+      .state-on-up-icon {
         fill: #a9b1bc;
         transform: translate(15px);
         transition: 2s ease;
       }
 
-      .state-off-sidegate-icon {
+      .state-on-down-icon {
         fill: #a9b1bc;
-        transition: all 2s ease;
-        direction: 0px;
+        transform: translate(0px);
+        transition: 2s ease;
       }
 
-      .persiana-icon.state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
+      .state-on-stop-icon {
+        fill: #a9b1bc;
+        animation-play-state: paused;
       }
 
-      .garagem-icon.state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
-
-      .sidegate-icon.state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
+      .state-off-stop-icon {
+        fill: #a9b1bc;
+        animation-play-state: running;
       }
 
       .opacity {
