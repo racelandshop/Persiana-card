@@ -21,11 +21,11 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 
-// const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
-// const closed = "M2.887 6.32v.809H46.18V5.508H2.887Zm0 2.27v.808H46.18v-1.62H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.809H46.18v-1.618H2.887Zm0 2.27v.808H46.18v-1.621H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.812H46.18v-1.62H2.887Zm0 2.27v.808H46.18V21.39H2.887Zm0 2.269v.808H46.18v-1.62H2.887Zm0 2.265v.813H46.18v-1.621H2.887Zm0 2.27v.812H46.18v-1.62H2.887Zm0 2.269v.809H46.18v-1.617H2.887Zm0 2.27v.809H46.18V32.73H2.887Zm0 2.266v.812H46.18V35H2.887Zm0 2.269v.813H46.18V37.27H2.887Zm0 2.27v.808H46.18v-1.62H2.887Zm0 2.269v.809H46.18v-1.621H2.887Zm0 2.266v.812H46.18v-1.62H2.887Zm0 0";
+// const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+// const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
 
 const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
-const closed = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
+const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
 // const up = "M24.613.86C21.253 7.444.023 49.823.023 49.944c0 .02.016.032.036.032.062 0 4.863-2.075 20.406-8.813 2.48-1.078 4.527-1.953 4.55-1.953.02 0 3.055 1.305 6.743 2.902 12.816 5.547 18.183 7.856 18.207 7.832C50 49.906 25.165.18 25.055.07c-.016-.015-.18.285-.442.79Zm0 0";
 // const down = "M49.395.254c-.918.39-7.461 3.223-15.946 6.894-4.62 2.004-8.43 3.645-8.46 3.645-.04 0-2.321-.977-5.079-2.172C8.203 3.555.887.398.305.171.184.126.082.102.082.118c0 .098 24.816 49.801 24.867 49.801.04 0 2.801-5.469 9.2-18.211C39.761 20.527 49.956.129 49.956.078c0-.058-.027-.05-.562.176Zm0 0";
@@ -70,7 +70,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", buttons_position: "left", invert_percentage: "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [closed, open], show_icon: "any" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any" }; //pressed_icon: [up, stop, down]
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -270,17 +270,17 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <svg class=${classMap({
                 "svgicon-blind":
-                  (JSON.stringify(this.config.icon) == JSON.stringify([open, closed])),
+                  (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
                 }
                 )
             }
-              viewBox="0 0 50 50" height="100%" width="100%" >
+              viewBox="0 0 50 50" height="100%" width="75%" >
               <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
-                "state-on-blind":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open, closed])),
-                "state-off-blind":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open, closed])),
+                "state-on-blind-icon":
+                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([close, open])),
+                "state-off-blind-icon":
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
                 "state-unavailable":
                   ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "unavailable",
               }
@@ -416,6 +416,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .hassbut.state-off {
+        padding-top: 50px;
         text-align: left;
       }
 
@@ -438,18 +439,15 @@ private computeActiveState = (stateObj: HassEntity): string => {
         align-items: left;
       }
 
-      .state-on-blind {
-        transition: all 0.5s ease;
-        fill: #706960;
+      .invert_percentage {
+        align-items: right;
+
       }
 
-      .state-off-blind {
-        transition: all 0.5s ease;
-        fill: #a2743f;
-      }
-
-      .state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
+      .svgicon-blind {
+        padding-bottom: 20px;
+        max-width: 170px;
+        transform: translate(62%, 55%) scale(2.5);
       }
 
       .svgicon-up {
@@ -491,6 +489,19 @@ private computeActiveState = (stateObj: HassEntity): string => {
       .state-off-stop-icon {
         fill: #a9b1bc;
         animation-play-state: running;
+      }
+
+      .state-on-blind-icon {
+        transform: scale(0);
+        fill: #ffffff;
+      }
+
+      .state-off-blind-icon {
+        fill: #a9b1bc;
+      }
+
+      .state-unavailable {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
       }
 
       .opacity {

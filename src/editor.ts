@@ -15,6 +15,12 @@ const cardConfigStruct = {
   },
 };
 
+const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+
+const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
+const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
+
 const includeDomains = ['cover'];
 @customElement('persiana-card-editor')
 
@@ -152,8 +158,31 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
           @change=${this._change}>
         </ha-switch>
     </ha-formfield>
-      <div>
-      </div>
+    <div>
+
+</div>
+<!-- <paper-input-label-8>Escolha o icon: </paper-input-label-8>
+<paper-dropdown-menu class="dropdown-icon">
+<paper-listbox slot="dropdown-content"
+  attr-for-selected="value"
+  .configValue=${"icon"}
+  selected='1'
+  @iron-select=${this._changed_icon}>
+    <paper-item class= "paper-item-tecido" .value=${[open, close]}>
+        <svg class="svg-tecido" viewBox="0 0 24 24" height="24" width="24" >
+        <path class="opacity" fill="#a9b1bc" d=${open}/>
+        <path class="state" fill="#a9b1bc" d=${close}/>
+        </svg>Persiana de Tecido
+    </paper-item>
+    <paper-item class= "paper-item-plastico" .value=${[op, closed]}>
+        <svg class="svg-platico" viewBox="0 0 50 50" height="24" width="24" >
+        <path class="opacity"  fill="#a9b1bc" d=${op}/>
+        <path class="state" fill="#a9b1bc" d=${closed}/>
+        </svg>Persiana de Plástico
+    </paper-item>
+    </paper-listbox>
+  </paper-dropdown-menu> -->
+</div>
     `;
   }
 
@@ -245,6 +274,17 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       ha-formfield {
         padding: 0px 10px 0px 20px;
         max-width: 211px;
+      }
+      .dropdown-icon {
+        padding-left: 5%;
+      }
+      .svg-tecido {
+        transform: translate(-10%, -5%) scale(1.5);
+        margin-right: 2.5%;
+      }
+      .svg-platico {
+        margin-right: 2.5%;
+        transform: translate(-10%, -5%) scale(1);
       }
     `;
   }
