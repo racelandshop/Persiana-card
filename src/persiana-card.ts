@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable prefer-const */
@@ -20,16 +21,13 @@ import type { BoilerplateCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
+import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
 
-// const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
-// const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
 
 const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
 const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
-
-// const up = "M24.613.86C21.253 7.444.023 49.823.023 49.944c0 .02.016.032.036.032.062 0 4.863-2.075 20.406-8.813 2.48-1.078 4.527-1.953 4.55-1.953.02 0 3.055 1.305 6.743 2.902 12.816 5.547 18.183 7.856 18.207 7.832C50 49.906 25.165.18 25.055.07c-.016-.015-.18.285-.442.79Zm0 0";
-// const down = "M49.395.254c-.918.39-7.461 3.223-15.946 6.894-4.62 2.004-8.43 3.645-8.46 3.645-.04 0-2.321-.977-5.079-2.172C8.203 3.555.887.398.305.171.184.126.082.102.082.118c0 .098 24.816 49.801 24.867 49.801.04 0 2.801-5.469 9.2-18.211C39.761 20.527 49.956.129 49.956.078c0-.058-.027-.05-.562.176Zm0 0";
-// const stop = "M2.043 24.625v22.168h45.914V2.457H2.043Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -70,7 +68,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any" }; //pressed_icon: [up, stop, down]
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any" };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -252,7 +250,7 @@ export class BoilerplateCard extends LitElement {
 
 <ha-card
         class="hassbut ${classMap({
-          "state-on": ifDefined(
+        "state-on": ifDefined(
           stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
         "state-off": ifDefined(
           stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
@@ -270,7 +268,7 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <svg class=${classMap({
                 "svgicon-blind":
-                  (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
+                (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
                 }
                 )
             }
@@ -290,24 +288,54 @@ export class BoilerplateCard extends LitElement {
             </svg>
             <div class="divibut"></div>
             `
-    : ""}
+      : ""}
+  </ha-card>
 
     ${this.config.show_name
     ? html`
       <div tabindex = "-1" class="name-div">
       ${this.config.name}
         </div>
-        <div></div>
-      `
-    : ""}
+        <div></div>`: ""}
 
     ${this.config.show_state
     ? html`
       <div tabindex="-1" class="state-div">
       ${this.translate_state(stateObj)}
       <div class="position"></div>
-     </div><div></div>`: ""}
-      </ha-card>
+      </div>
+      <div></div>`: ""}
+
+    ${this.config.show_buttons
+    ? html`
+      <div class="card"><slot></slot></div>
+
+      <div class="card-actions">
+      <mwc-button @click=${this._editCard}>
+      ${this.hass!.localize("ui.panel.lovelace.editor.edit_card.edit")}</mwc-button>
+      <div>
+        <slot name="buttons"></slot>
+        <ha-icon-button
+          .label=${localize("common.arrowdown")}
+          .path=${mdiArrowDown}
+          class="move-arrow"
+          @click=${this._cardDown}
+          >
+        </ha-icon-button>
+        <ha-icon-button
+          .label=${localize("common.arrowup")}
+          .path=${mdiArrowUp}
+          class="move-arrow">
+        </ha-icon-button>
+        <ha-icon-button
+          .label=${localize("common.stop")}
+          .path=${mdiStop}
+          class="move-arrow"
+          @click=${this._cardstop}
+          >
+        </ha-icon-button>
+      </div>
+      </div>`: ""}
     `;
   }
 
@@ -450,45 +478,42 @@ private computeActiveState = (stateObj: HassEntity): string => {
         transform: translate(62%, 55%) scale(2.5);
       }
 
-      .svgicon-up {
-        padding-left: 50px;
+      .svgicon-buttons {
+        padding-right: 20px;
+      }
+
+      /* .svgicon-up {
+        padding-right: 50px;
         padding-bottom: 40px;
       }
 
       .svgicon-down {
-        padding-left: 50px;
+        padding-right: 50px;
         padding-bottom: 30px;
       }
 
       .svigicon-stop {
-        padding-left: 50px;
+        padding-right: 50px;
         padding-bottom: 20px;
-      }
+      } */
 
       .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
-      .state-on-up-icon {
-        fill: #a9b1bc;
-        transform: translate(15px);
-        transition: 2s ease;
-      }
-
-      .state-on-down-icon {
-        fill: #a9b1bc;
-        transform: translate(0px);
-        transition: 2s ease;
-      }
-
-      .state-on-stop-icon {
-        fill: #a9b1bc;
-        animation-play-state: paused;
-      }
-
-      .state-off-stop-icon {
-        fill: #a9b1bc;
+      .state-on-buttons-icon {
+        fill: #000000;
         animation-play-state: running;
+      }
+
+      .state-off-buttons-icon {
+        fill: #000000;
+        animation-play-state: running;
+      }
+
+      .state-stop-icon {
+        fill: #000000;
+        animation-play-state: paused;
       }
 
       .state-on-blind-icon {
