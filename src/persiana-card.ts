@@ -22,6 +22,7 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
+// import "@material/mwc-list/mwc-list-item";
 
 const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
 const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
@@ -68,7 +69,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any", show_buttons: "any" };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -92,115 +93,115 @@ export class BoilerplateCard extends LitElement {
     };
   }
 
-  set homeassistant(_homeassistant: any) {
-    const _this = this;
-    const entities = this.config.entities;
+  // set homeassistant(_homeassistant: any) {
+  //   const _this = this;
+  //   const entities = this.config.entities;
 
-    if (!this.card) {
-      const card = document.createElement('ha-card');
-    }
-    if (this.config.title) {
-      this.card.header = this.config.title;
-    }
-    this.card = this.card;
-    this.appendChild(this.card);
+  //   if (!this.card) {
+  //     const card = document.createElement('ha-card');
+  //   }
+  //   if (this.config.title) {
+  //     this.card.header = this.config.title;
+  //   }
+  //   this.card = this.card;
+  //   this.appendChild(this.card);
 
-    let allBlinds = document.createElement('div');
-    allBlinds.className = 'sc-blinds';
+  //   let allBlinds = document.createElement('div');
+  //   allBlinds.className = 'sc-blinds';
 
-    entities.forEach(function (entity) {
-      let entityId = entity;
-      if (entity && entity.entity) {
-        entityId = entity.entity;
-      }
+  //   entities.forEach(function (entity) {
+  //     let entityId = entity;
+  //     if (entity && entity.entity) {
+  //       entityId = entity.entity;
+  //     }
 
-      let buttonsPosition = 'left';
-      if (entity && entity.buttons_position) {
-        buttonsPosition = entity.buttons_position.toLowerCase();
-      }
+  //     let buttonsPosition = 'left';
+  //     if (entity && entity.buttons_position) {
+  //       buttonsPosition = entity.buttons_position.toLowerCase();
+  //     }
 
-      let titlePosition = 'top';
-      if (entity && entity.title_position) {
-        titlePosition = entity.title_position.toLowerCase();
-      }
+  //     let titlePosition = 'top';
+  //     if (entity && entity.title_position) {
+  //       titlePosition = entity.title_position.toLowerCase();
+  //     }
 
-      let invertPercentage = false;
-      if (entity && entity.invert_percentage) {
-        invertPercentage = entity.invert_percentage;
-      }
+  //     let invertPercentage = false;
+  //     if (entity && entity.invert_percentage) {
+  //       invertPercentage = entity.invert_percentage;
+  //     }
 
-      let blindColor = '#FFD580';
-      if (entity && entity.blind_color) {
-        blindColor = entity.blind_color;
-      }
+  //     let blindColor = '#FFD580';
+  //     if (entity && entity.blind_color) {
+  //       blindColor = entity.blind_color;
+  //     }
 
-      let blind = document.createElement('div');
+  //     let blind = document.createElement('div');
 
-      blind.className = 'sc-blind';
-      blind.dataset.blind = entityId;
+  //     blind.className = 'sc-blind';
+  //     blind.dataset.blind = entityId;
 
-      let picture = blind.querySelector('.sc-blind-selector-picture');
-      let slide = blind.querySelector('.sc-blind-selector-slide');
-      let picker = blind.querySelector('.sc-blind-selector-picker');
+  //     let picture = blind.querySelector('.sc-blind-selector-picture');
+  //     let slide = blind.querySelector('.sc-blind-selector-slide');
+  //     let picker = blind.querySelector('.sc-blind-selector-picker');
 
-      let mouseDown = function (event) {
-        if (event.cancelable) {
-          event.preventDefault();
-        }
-        _this.isUpdating = true;
+  //     let mouseDown = function (event) {
+  //       if (event.cancelable) {
+  //         event.preventDefault();
+  //       }
+  //       _this.isUpdating = true;
 
-        document.addEventListener('mousemove', mouseMove);
-        document.addEventListener('touchmove', mouseMove);
-        document.addEventListener('pointermove', mouseMove);
+  //       document.addEventListener('mousemove', mouseMove);
+  //       document.addEventListener('touchmove', mouseMove);
+  //       document.addEventListener('pointermove', mouseMove);
 
-        document.addEventListener('mouseup', mouseUp);
-        document.addEventListener('touchend', mouseUp);
-        document.addEventListener('pointerup', mouseUp);
-      };
+  //       document.addEventListener('mouseup', mouseUp);
+  //       document.addEventListener('touchend', mouseUp);
+  //       document.addEventListener('pointerup', mouseUp);
+  //     };
 
-      let mouseMove = function (event) {
-        let newPosition = event.pageY - _this.getPictureTop(picture);
-        _this.setPickerPosition(newPosition, picker, slide);
-      };
+  //     let mouseMove = function (event) {
+  //       let newPosition = event.pageY - _this.getPictureTop(picture);
+  //       _this.setPickerPosition(newPosition, picker, slide);
+  //     };
 
-      let mouseUp = function (event) {
-        let newPosition = event.pageY - _this.getPictureTop(picture);
-        _this.setPickerPosition(newPosition, picker, slide);
-      };
+  //     let mouseUp = function (event) {
+  //       let newPosition = event.pageY - _this.getPictureTop(picture);
+  //       _this.setPickerPosition(newPosition, picker, slide);
+  //     };
 
-      picker.addEventListener('mousedown', mouseDown);
-      picker.addEventListener('touchstart', mouseDown);
-      picker.addEventListener('pointerdown', mouseDown);
+  //     picker.addEventListener('mousedown', mouseDown);
+  //     picker.addEventListener('touchstart', mouseDown);
+  //     picker.addEventListener('pointerdown', mouseDown);
 
-      // blind.querySelectorAll('.sc-blind-button').forEach(function () {
-      //   onclick = function () {
-      //     const command = this.dataset.command;
+  //     // blind.querySelectorAll('.sc-blind-button').forEach(function () {
+  //     //   onclick = function () {
+  //     //     const command = this.dataset.command;
 
-      //     let service = '';
+  //     //     let service = '';
 
-      //     switch (command) {
-      //       case 'up':
-      //         service = 'open_cover';
-      //         break;
+  //     //     switch (command) {
+  //     //       case 'up':
+  //     //         service = 'open_cover';
+  //     //         break;
 
-      //       case 'down':
-      //         service = 'close_cover';
-      //         break;
+  //     //       case 'down':
+  //     //         service = 'close_cover';
+  //     //         break;
 
-      //       case 'stop':
-      //         service = 'stop_cover';
-      //         break;
-      //     }
+  //     //       case 'stop':
+  //     //         service = 'stop_cover';
+  //     //         break;
+  //     //     }
 
-      //     _homeassistant.callService('cover', service, {
-      //       entity_id: entityId
-      //     });
+  //     //     _homeassistant.callService('cover', service, {
+  //     //       entity_id: entityId
+  //     //     });
 
-      //   };
-      // });
-      allBlinds.appendChild(blind);
-    });
-  }
+  //     //   };
+  //     // });
+  //     allBlinds.appendChild(blind);
+  //   });
+  // }
 
   public translate_state(stateObj): string {
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
@@ -246,9 +247,8 @@ export class BoilerplateCard extends LitElement {
       ? this.hass.states[this.config.entity]
       : undefined;
 
-    return html`
-
-<ha-card
+  return html`
+  <ha-card
         class="hassbut ${classMap({
         "state-on": ifDefined(
           stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
@@ -289,7 +289,42 @@ export class BoilerplateCard extends LitElement {
             <div class="divibut"></div>
             `
       : ""}
-  </ha-card>
+
+    ${this.config.show_buttons
+    ? html`
+      <div class="persiana-card"><slot></slot></div>
+        <slot class="card-actions">
+        <!-- <slot name="buttons"></slot> -->
+        <ha-icon-button
+          .label=${localize("common.arrowup")}
+          .path=${mdiArrowUp}
+          title="Abrir a persiana?"
+          class="move-arrow"
+          @click=${this._cardUp}
+        >
+        </ha-icon-button>
+
+        <ha-icon-button
+          .label=${localize("common.stop")}
+          .path=${mdiStop}
+          title="Stop"
+          class="stop"
+          @click=${this._cardStop}
+        >
+        </ha-icon-button>
+
+        <ha-icon-button
+          .label=${localize("common.arrowdown")}
+          .path=${mdiArrowDown}
+          title="Fechar a persiana?"
+          class="move-arrow"
+          @click=${this._cardDown}
+        >
+        <ha-list-item>
+          ${this.hass!.localize("ui.panel.lovelace.editor.edit_card.move")}
+        </ha-list-item>
+        </ha-icon-button>
+    </slot>`: ""}
 
     ${this.config.show_name
     ? html`
@@ -305,37 +340,7 @@ export class BoilerplateCard extends LitElement {
       <div class="position"></div>
       </div>
       <div></div>`: ""}
-
-    ${this.config.show_buttons
-    ? html`
-      <div class="card"><slot></slot></div>
-
-      <div class="card-actions">
-      <mwc-button @click=${this._editCard}>
-      ${this.hass!.localize("ui.panel.lovelace.editor.edit_card.edit")}</mwc-button>
-      <div>
-        <slot name="buttons"></slot>
-        <ha-icon-button
-          .label=${localize("common.arrowdown")}
-          .path=${mdiArrowDown}
-          class="move-arrow"
-          @click=${this._cardDown}
-          >
-        </ha-icon-button>
-        <ha-icon-button
-          .label=${localize("common.arrowup")}
-          .path=${mdiArrowUp}
-          class="move-arrow">
-        </ha-icon-button>
-        <ha-icon-button
-          .label=${localize("common.stop")}
-          .path=${mdiStop}
-          class="move-arrow"
-          @click=${this._cardstop}
-          >
-        </ha-icon-button>
-      </div>
-      </div>`: ""}
+  </ha-card>
     `;
   }
 
@@ -393,6 +398,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       ha-card {
         cursor: pointer;
         display: grid;
+        /* display: flex; grid */
         flex-direction: column;
         align-items: left;
         text-align: left;
@@ -407,6 +413,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         color: var(--card-color-text, white);
         border-radius: 25px;
         overflow: hidden;
+        grid-template-columns: 50% 50%;
       }
 
       ha-icon {
@@ -468,11 +475,42 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .invert_percentage {
-        align-items: right;
-
+        padding: 0% 100% 1% 0%;
+        align-items: left;
       }
 
-      .svgicon-blind {
+      .persiana-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .ha-icon-button{
+        color: var(--primary-text-color);
+        display: flex;
+      }
+
+      ha-icon-button.move-arrow[disable]{
+        color: #000000;
+      }
+
+      ha-icon-button.stop[disable]{
+        color: #000000;
+      }
+
+      mwc-list-item {
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .card-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: #000000;
+      }
+
+      /* .svgicon-blind {
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
@@ -482,7 +520,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding-right: 20px;
       }
 
-      /* .svgicon-up {
+      .svgicon-up {
         padding-right: 50px;
         padding-bottom: 40px;
       }
@@ -497,7 +535,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding-bottom: 20px;
       } */
 
-      .state {
+      /* .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
@@ -527,7 +565,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       .state-unavailable {
         color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
+      } */
 
       .opacity {
         animation: opacity 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;

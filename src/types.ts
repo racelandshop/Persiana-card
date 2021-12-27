@@ -9,6 +9,7 @@ declare global {
 
 // TODO Add your configuration elements here for type-checking
 export interface BoilerplateCardConfig extends LovelaceCardConfig {
+  show_buttons: any;
   entities: any;
   title: any;
   show_name: any;
