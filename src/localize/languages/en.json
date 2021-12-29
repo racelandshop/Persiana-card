@@ -4,8 +4,12 @@
     "invalid_configuration": "Invalid configuration",
     "show_warning": "Show Warning",
     "show_error": "Show Error",
-    "arrowup": "Arrow Up",
-    "arrowdown": "Arrow Down",
+    "arrowup": "Open",
+    "arrowdown": "Closed",
     "stop": "Stop"
-  }
+  },
+  "states":{
+    "on": "100%",
+    "off": "0%"
+}
 }

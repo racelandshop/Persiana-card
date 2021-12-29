@@ -69,7 +69,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: "any", show_state: "any", icon: [open, close], show_icon: "any", show_buttons: "any" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open, close], show_icon: true, show_buttons: true };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -272,7 +272,7 @@ export class BoilerplateCard extends LitElement {
                 }
                 )
             }
-              viewBox="0 0 50 50" height="100%" width="75%" >
+              viewBox="0 0 50 50" height="75%" width="65%" >
               <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
                 "state-on-blind-icon":
@@ -286,24 +286,23 @@ export class BoilerplateCard extends LitElement {
               }
               d=${this.config.icon[1]} />
             </svg>
-            <div class="divibut"></div>
             `
       : ""}
 
     ${this.config.show_buttons
     ? html`
-      <div class="persiana-card"><slot></slot></div>
         <slot class="card-actions">
-        <!-- <slot name="buttons"></slot> -->
+        <ha-icon-button.move-arrow-up>&#9650;
         <ha-icon-button
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
-          title="Abrir a persiana?"
-          class="move-arrow"
+          title="Abrir"
+          class="move-arrow-up"
           @click=${this._cardUp}
         >
         </ha-icon-button>
-
+        </ha-icon-button.move-arrow-up>
+        <ha-icon-button.stop>&#9724;
         <ha-icon-button
           .label=${localize("common.stop")}
           .path=${mdiStop}
@@ -312,34 +311,33 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardStop}
         >
         </ha-icon-button>
-
+        </ha-icon-button.stop>
+        <ha-icon-button.move-arrow-down>&#9660;
         <ha-icon-button
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
-          title="Fechar a persiana?"
-          class="move-arrow"
+          title="Fechar"
+          class="move-arrow-down"
           @click=${this._cardDown}
         >
-        <ha-list-item>
-          ${this.hass!.localize("ui.panel.lovelace.editor.edit_card.move")}
-        </ha-list-item>
         </ha-icon-button>
+        </ha-icon-button.move-arrow-down>
     </slot>`: ""}
 
     ${this.config.show_name
     ? html`
       <div tabindex = "-1" class="name-div">
       ${this.config.name}
-        </div>
-        <div></div>`: ""}
+      </div>
+     `: ""}
 
     ${this.config.show_state
     ? html`
       <div tabindex="-1" class="state-div">
       ${this.translate_state(stateObj)}
-      <div class="position"></div>
+      <div class="position"></div>%
       </div>
-      <div></div>`: ""}
+     `: ""}
   </ha-card>
     `;
   }
@@ -396,9 +394,8 @@ private computeActiveState = (stateObj: HassEntity): string => {
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
-        cursor: pointer;
+        cursor: grabbing;
         display: grid;
-        /* display: flex; grid */
         flex-direction: column;
         align-items: left;
         text-align: left;
@@ -434,11 +431,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding: 0% 100% 1% 0%;
       }
 
-      .divibut {
-        padding-bottom: 0%;
-        margin-bottom: 0%;
-      }
-
       ha-icon,
       span {
         outline: none;
@@ -448,6 +440,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         margin: 0% 50% 5% 0%;
         padding: 0% 100% 5% 0%;
         text-align: left;
+        align-items: right;
       }
 
       .hassbut.state-off {
@@ -466,36 +459,40 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       .state-div {
         padding: 0% 100% 10% 0%;
-        align-items: left;
+        align-items: right;
       }
 
       .name-div {
         padding: 0% 100% 1% 0%;
         align-items: left;
-      }
 
-      .invert_percentage {
-        padding: 0% 100% 1% 0%;
-        align-items: left;
-      }
-
-      .persiana-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
 
       .ha-icon-button{
-        color: var(--primary-text-color);
+        color: white;
         display: flex;
       }
 
       ha-icon-button.move-arrow[disable]{
-        color: #000000;
+        color: white;
+        height: 50%;
       }
 
       ha-icon-button.stop[disable]{
-        color: #000000;
+        color: white;
+        height: 50%;
+      }
+
+      ha-icon-button.move-arrow-up {
+        color: white;
+      }
+
+      ha-icon-button.move-arrow-down {
+        color: white;
+      }
+
+      ha-icon-button.stop{
+        color: white;
       }
 
       mwc-list-item {
@@ -510,48 +507,14 @@ private computeActiveState = (stateObj: HassEntity): string => {
         color: #000000;
       }
 
-      /* .svgicon-blind {
+      .svgicon-blind {
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
       }
 
-      .svgicon-buttons {
-        padding-right: 20px;
-      }
-
-      .svgicon-up {
-        padding-right: 50px;
-        padding-bottom: 40px;
-      }
-
-      .svgicon-down {
-        padding-right: 50px;
-        padding-bottom: 30px;
-      }
-
-      .svigicon-stop {
-        padding-right: 50px;
-        padding-bottom: 20px;
-      } */
-
-      /* .state {
+      .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
-
-      .state-on-buttons-icon {
-        fill: #000000;
-        animation-play-state: running;
-      }
-
-      .state-off-buttons-icon {
-        fill: #000000;
-        animation-play-state: running;
-      }
-
-      .state-stop-icon {
-        fill: #000000;
-        animation-play-state: paused;
       }
 
       .state-on-blind-icon {
@@ -565,7 +528,9 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       .state-unavailable {
         color: var(--state-icon-unavailable-color, #bdbdbd);
-      } */
+      }
+
+      .move {cursor: move;}
 
       .opacity {
         animation: opacity 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;

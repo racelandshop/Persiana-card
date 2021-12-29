@@ -4,8 +4,12 @@
     "invalid_configuration": "Configuração Inválida",
     "show_warning": "Mostrar Aviso",
     "show_error": "Mostrar Erro",
-    "arrowup": "Seta para cima",
-    "arrowdown": "Seta para baixo",
+    "arrowup": "Abrir",
+    "arrowdown": "Fechar",
     "stop": "Stop"
-  }
+  },
+  "states":{
+    "on": "100%",
+    "off": "0%"
+}
 }

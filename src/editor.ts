@@ -108,11 +108,8 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     this._helpers.importMoreInfoControl('climate');
 
     return html`
-
       <div class="card-config">
-
         <div class="option" .option=${'required'}>
-
           <ha-entity-picker
             .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
             .hass=${this.hass}
@@ -122,26 +119,19 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             @value-changed=${this._valueChanged}
             allow-custom-entity>
           </ha-entity-picker>
-
         </div class="card-config">
-
         </div class="option">
-
     <div class="side-by-side">
-
         <paper-input
           .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
           .value=${this._name}
           .configValue=${'name'}
           @value-changed=${this._valueChanged}>
         </paper-input>
-
     </div class="side-by-side">
-
     <div class="div-options">
       <p>
       </p>
-
         <ha-formfield
           .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
           .dir=${this.dir}>
@@ -151,7 +141,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             @change=${this._change}>
           </ha-switch>
       </ha-formfield>
-
     </div>
     <ha-formfield
       .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
@@ -163,9 +152,8 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         </ha-switch>
     </ha-formfield>
     <div>
-
 </div>
-<!-- <paper-input-label-8>Escolha o icon: </paper-input-label-8>
+<paper-input-label-8>Escolha o icon: </paper-input-label-8>
 <paper-dropdown-menu class="dropdown-icon">
 <paper-listbox slot="dropdown-content"
   attr-for-selected="value"
@@ -185,7 +173,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         </svg>Persiana de Plástico
     </paper-item>
     </paper-listbox>
-  </paper-dropdown-menu> -->
+  </paper-dropdown-menu>
 </div>
     `;
   }
@@ -246,6 +234,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
 
   static get styles(): CSSResultGroup {
     return css`
+
       .option {
         padding: 3% 0%;
         cursor: pointer;
@@ -279,17 +268,21 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         padding: 0px 10px 0px 20px;
         max-width: 211px;
       }
+
       .dropdown-icon {
         padding-left: 5%;
       }
+
       .svg-tecido {
         transform: translate(-10%, -5%) scale(1.5);
         margin-right: 2.5%;
       }
+
       .svg-platico {
         margin-right: 2.5%;
         transform: translate(-10%, -5%) scale(1);
       }
+
     `;
   }
 }
