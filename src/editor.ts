@@ -280,7 +280,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
 
       .svg-platico {
         margin-right: 2.5%;
-        transform: translate(-10%, -5%) scale(1);
+        transform: translate(-10%, -5%) scale(1.5);
       }
 
     `;

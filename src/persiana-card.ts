@@ -293,34 +293,34 @@ export class BoilerplateCard extends LitElement {
     ? html`
         <slot class="card-actions">
         <ha-icon-button.move-arrow-up>&#9650;
-        <ha-icon-button
+        <button.mdc-icon-button
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
           title="Abrir"
           class="move-arrow-up"
           @click=${this._cardUp}
         >
-        </ha-icon-button>
+        </button.mdc-icon-button>
         </ha-icon-button.move-arrow-up>
         <ha-icon-button.stop>&#9724;
-        <ha-icon-button
+        <button.mdc-icon-button
           .label=${localize("common.stop")}
           .path=${mdiStop}
           title="Stop"
           class="stop"
           @click=${this._cardStop}
         >
-        </ha-icon-button>
+        </button.mdc-icon-button>
         </ha-icon-button.stop>
         <ha-icon-button.move-arrow-down>&#9660;
-        <ha-icon-button
+        <button.mdc-icon-button
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
           title="Fechar"
           class="move-arrow-down"
           @click=${this._cardDown}
         >
-        </ha-icon-button>
+        </button.mdc-icon-button>
         </ha-icon-button.move-arrow-down>
     </slot>`: ""}
 
@@ -394,7 +394,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
-        cursor: grabbing;
+        cursor: pointer;
         display: grid;
         flex-direction: column;
         align-items: left;
@@ -456,43 +456,55 @@ private computeActiveState = (stateObj: HassEntity): string => {
         display: grid;
         grid-template-columns: 50% 50%;
       }
+      .button.mdc-icon-button {
+        fill: #ffffff;
+      }
 
       .state-div {
-        padding: 0% 100% 10% 0%;
+        padding-top: 25px;
+        padding-bottom: 40px;
         align-items: right;
       }
 
       .name-div {
-        padding: 0% 100% 1% 0%;
+        padding-top: 25px;
         align-items: left;
-
       }
 
       .ha-icon-button{
-        color: white;
+        fill: #ffffff;
         display: flex;
+        visibility: visible;
       }
 
-      ha-icon-button.move-arrow[disable]{
-        color: white;
-        height: 50%;
+      ha-icon-button.move-arrow-up[disable]{
+        transform: scale(0);
+        fill: #ffffff;
+      }
+
+      ha-icon-button.move-arrow-down[disable]{
+        transform: scale(25);
+        fill: #ffffff;
       }
 
       ha-icon-button.stop[disable]{
-        color: white;
-        height: 50%;
+        animation-play-state: paused;
+        fill: #ffffff;
       }
 
       ha-icon-button.move-arrow-up {
-        color: white;
+        transform: scale(0);
+        fill: #ffffff;
       }
 
       ha-icon-button.move-arrow-down {
-        color: white;
+        transform: scale(25);
+        fill: #ffffff;
       }
 
       ha-icon-button.stop{
-        color: white;
+        animation-play-state: paused;
+        fill: #ffffff;
       }
 
       mwc-list-item {
@@ -508,6 +520,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .svgicon-blind {
+        cursor: grab;
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
