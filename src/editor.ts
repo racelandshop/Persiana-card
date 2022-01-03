@@ -25,7 +25,8 @@ const up = "M12.305.43C10.625 3.723.012 24.914.012 24.973c0 .011.008.015.02.015.
 const down = "M24.695.125c-.457.195-3.726 1.613-7.968 3.45a447.206 447.206 0 0 1-4.235 1.823c-.015 0-1.156-.492-2.539-1.085C4.102 1.776.445.199.153.085.092.063.038.05.038.059c0 .05 12.41 24.902 12.438 24.902.015 0 1.398-2.734 4.597-9.11C19.883 10.267 24.977.063 24.977.04c0-.031-.012-.023-.282.086Zm0 0";
 const stop = "M1.023 12.313v11.085h22.954V1.227H1.023Zm0 0";
 
-const includeDomains = ['cover'];
+// const includeDomains = ['cover'];
+const includeDomains = ["switch"];
 @customElement('persiana-card-editor')
 
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {

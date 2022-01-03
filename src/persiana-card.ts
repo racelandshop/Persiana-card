@@ -22,11 +22,9 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
-// import "@material/mwc-list/mwc-list-item";
 
 const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
 const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
-
 const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
 const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
@@ -60,7 +58,8 @@ export class BoilerplateCard extends LitElement {
     entities: string[],
     entitiesFallback: string[]
   ): BoilerplateCardConfig {
-    const includeDomains = ["cover"];
+    // const includeDomains = ["cover"];
+    const includeDomains = ["switch"];
     const maxEntities = 1;
     const foundEntities = findEntities(
       hass,
@@ -93,115 +92,63 @@ export class BoilerplateCard extends LitElement {
     };
   }
 
-  // set homeassistant(_homeassistant: any) {
-  //   const _this = this;
-  //   const entities = this.config.entities;
+  set homeassistant(_homeassistant: any) {
+    let dragItem = document.querySelector("#svgicon-blind");
+    let container = document.querySelector("#ha-card");
+    let active = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
 
-  //   if (!this.card) {
-  //     const card = document.createElement('ha-card');
-  //   }
-  //   if (this.config.title) {
-  //     this.card.header = this.config.title;
-  //   }
-  //   this.card = this.card;
-  //   this.appendChild(this.card);
+    container.addEventListener("touchstart", dragStart, false);
+    container.addEventListener("touchend", dragEnd, false);
+    container.addEventListener("touchmove", drag, false);
+    container.addEventListener("mousedown", dragStart, false);
+    container.addEventListener("mouseup", dragEnd, false);
+    container.addEventListener("mousemove", drag, false);
 
-  //   let allBlinds = document.createElement('div');
-  //   allBlinds.className = 'sc-blinds';
+    function dragStart(e) {
+      if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+      if (e.target === dragItem) {
+        active = true;
+      }
+    }
 
-  //   entities.forEach(function (entity) {
-  //     let entityId = entity;
-  //     if (entity && entity.entity) {
-  //       entityId = entity.entity;
-  //     }
+    function dragEnd(_e) {
+      initialX = currentX;
+      initialY = currentY;
+      active = false;
+    }
 
-  //     let buttonsPosition = 'left';
-  //     if (entity && entity.buttons_position) {
-  //       buttonsPosition = entity.buttons_position.toLowerCase();
-  //     }
+    function drag(e) {
+      if (active) {
+        e.preventDefault();
+        if (e.type === "touchmove") {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+        xOffset = currentX;
+        yOffset = currentY;
+        setTranslate(currentX, currentY, dragItem);
+      }
+    }
 
-  //     let titlePosition = 'top';
-  //     if (entity && entity.title_position) {
-  //       titlePosition = entity.title_position.toLowerCase();
-  //     }
-
-  //     let invertPercentage = false;
-  //     if (entity && entity.invert_percentage) {
-  //       invertPercentage = entity.invert_percentage;
-  //     }
-
-  //     let blindColor = '#FFD580';
-  //     if (entity && entity.blind_color) {
-  //       blindColor = entity.blind_color;
-  //     }
-
-  //     let blind = document.createElement('div');
-
-  //     blind.className = 'sc-blind';
-  //     blind.dataset.blind = entityId;
-
-  //     let picture = blind.querySelector('.sc-blind-selector-picture');
-  //     let slide = blind.querySelector('.sc-blind-selector-slide');
-  //     let picker = blind.querySelector('.sc-blind-selector-picker');
-
-  //     let mouseDown = function (event) {
-  //       if (event.cancelable) {
-  //         event.preventDefault();
-  //       }
-  //       _this.isUpdating = true;
-
-  //       document.addEventListener('mousemove', mouseMove);
-  //       document.addEventListener('touchmove', mouseMove);
-  //       document.addEventListener('pointermove', mouseMove);
-
-  //       document.addEventListener('mouseup', mouseUp);
-  //       document.addEventListener('touchend', mouseUp);
-  //       document.addEventListener('pointerup', mouseUp);
-  //     };
-
-  //     let mouseMove = function (event) {
-  //       let newPosition = event.pageY - _this.getPictureTop(picture);
-  //       _this.setPickerPosition(newPosition, picker, slide);
-  //     };
-
-  //     let mouseUp = function (event) {
-  //       let newPosition = event.pageY - _this.getPictureTop(picture);
-  //       _this.setPickerPosition(newPosition, picker, slide);
-  //     };
-
-  //     picker.addEventListener('mousedown', mouseDown);
-  //     picker.addEventListener('touchstart', mouseDown);
-  //     picker.addEventListener('pointerdown', mouseDown);
-
-  //     // blind.querySelectorAll('.sc-blind-button').forEach(function () {
-  //     //   onclick = function () {
-  //     //     const command = this.dataset.command;
-
-  //     //     let service = '';
-
-  //     //     switch (command) {
-  //     //       case 'up':
-  //     //         service = 'open_cover';
-  //     //         break;
-
-  //     //       case 'down':
-  //     //         service = 'close_cover';
-  //     //         break;
-
-  //     //       case 'stop':
-  //     //         service = 'stop_cover';
-  //     //         break;
-  //     //     }
-
-  //     //     _homeassistant.callService('cover', service, {
-  //     //       entity_id: entityId
-  //     //     });
-
-  //     //   };
-  //     // });
-  //     allBlinds.appendChild(blind);
-  //   });
-  // }
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+  }
 
   public translate_state(stateObj): string {
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
@@ -238,7 +185,6 @@ export class BoilerplateCard extends LitElement {
     if (this.config.show_warning) {
       return this._showWarning(localize('common.show_warning'));
     }
-
     if (this.config.show_error) {
       return this._showError(localize('common.show_error'));
     }
@@ -273,12 +219,12 @@ export class BoilerplateCard extends LitElement {
                 )
             }
               viewBox="0 0 50 50" height="75%" width="65%" >
-              <path fill="#a9b1bc" d=${this.config.icon[0]} />
+              <path fill="#000000" d=${this.config.icon[0]} />
               <path class=${classMap({
                 "state-on-blind-icon":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([close, open])),
+                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open, close])),
                 "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open, close])),
                 "state-unavailable":
                   ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "unavailable",
               }
@@ -292,36 +238,30 @@ export class BoilerplateCard extends LitElement {
     ${this.config.show_buttons
     ? html`
         <slot class="card-actions">
-        <ha-icon-button.move-arrow-up>&#9650;
         <button.mdc-icon-button
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
           title="Abrir"
           class="move-arrow-up"
           @click=${this._cardUp}
-        >
+        >&#9650;
         </button.mdc-icon-button>
-        </ha-icon-button.move-arrow-up>
-        <ha-icon-button.stop>&#9724;
         <button.mdc-icon-button
           .label=${localize("common.stop")}
           .path=${mdiStop}
           title="Stop"
           class="stop"
           @click=${this._cardStop}
-        >
+        >&#9724;
         </button.mdc-icon-button>
-        </ha-icon-button.stop>
-        <ha-icon-button.move-arrow-down>&#9660;
         <button.mdc-icon-button
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
           title="Fechar"
           class="move-arrow-down"
           @click=${this._cardDown}
-        >
+        >&#9660;
         </button.mdc-icon-button>
-        </ha-icon-button.move-arrow-down>
     </slot>`: ""}
 
     ${this.config.show_name
@@ -335,7 +275,7 @@ export class BoilerplateCard extends LitElement {
     ? html`
       <div tabindex="-1" class="state-div">
       ${this.translate_state(stateObj)}
-      <div class="position"></div>%
+      <div class="position"></div>
       </div>
      `: ""}
   </ha-card>
@@ -444,12 +384,11 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .hassbut.state-off {
-        padding-top: 50px;
-        text-align: left;
+        text-align: center;
       }
 
       .hassbut.state-on {
-        text-align: left;
+        text-align: center
       }
 
       .hassbut {
@@ -464,11 +403,13 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding-top: 25px;
         padding-bottom: 40px;
         align-items: right;
+        text-align: center;
       }
 
       .name-div {
         padding-top: 25px;
         align-items: left;
+        text-align: left;
       }
 
       .ha-icon-button{
@@ -477,34 +418,16 @@ private computeActiveState = (stateObj: HassEntity): string => {
         visibility: visible;
       }
 
-      ha-icon-button.move-arrow-up[disable]{
-        transform: scale(0);
-        fill: #ffffff;
-      }
-
-      ha-icon-button.move-arrow-down[disable]{
-        transform: scale(25);
-        fill: #ffffff;
-      }
-
-      ha-icon-button.stop[disable]{
-        animation-play-state: paused;
-        fill: #ffffff;
-      }
-
       ha-icon-button.move-arrow-up {
-        transform: scale(0);
-        fill: #ffffff;
+        transform: translateY(-25px);
       }
 
       ha-icon-button.move-arrow-down {
-        transform: scale(25);
-        fill: #ffffff;
+        transform: translateY(0px);
       }
 
-      ha-icon-button.stop{
+       ha-icon-button.stop{
         animation-play-state: paused;
-        fill: #ffffff;
       }
 
       mwc-list-item {
@@ -516,7 +439,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        color: #000000;
+        color: var(--card-color-bottom);
       }
 
       .svgicon-blind {
@@ -524,6 +447,10 @@ private computeActiveState = (stateObj: HassEntity): string => {
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
+      }
+
+      .svgicon-blind:hover {
+        cursor: pointer;
       }
 
       .state {
@@ -536,7 +463,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .state-off-blind-icon {
-        fill: #a9b1bc;
+        fill: #a2743f;
       }
 
       .state-unavailable {
@@ -555,12 +482,19 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       @keyframes state {
         0% {
-          transform: none;
-          fill: #9da0a2;
+          transform: translate(0px, 10px);
+        }
+        25% {
+          transform: translate(0px, 20px);
+        }
+        50% {
+          transform: translate(0px, 30px);
+        }
+        75% {
+          transform: translate(0px, 40px);
         }
         100% {
-          transform: skewY(10deg) translate(4.5%, -3.9%) scaleX(0.8);
-          fill: #b68349;
+          transform: translate(0px, 50px);
         }
       }
 
