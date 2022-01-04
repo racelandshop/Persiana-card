@@ -23,10 +23,10 @@ import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
 
-const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
-const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
-const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
-const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
+const open_shutter = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+const open_blind = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
+const close_blind = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -68,7 +68,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open, close], show_icon: true, show_buttons: true };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -93,8 +93,9 @@ export class BoilerplateCard extends LitElement {
   }
 
   set homeassistant(_homeassistant: any) {
-    let dragItem = document.querySelector("#svgicon-blind");
-    let container = document.querySelector("#ha-card");
+    // let dragItem = document.querySelector("hassbut");
+    let dragItem = document.querySelector("classMap");
+    let container = document.querySelector("ha-card");
     let active = false;
     let currentX;
     let currentY;
@@ -214,7 +215,9 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <svg class=${classMap({
                 "svgicon-blind":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close, open])),
+                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+                "svgicon-shutter":
+                (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
                 }
                 )
             }
@@ -222,11 +225,15 @@ export class BoilerplateCard extends LitElement {
               <path fill="#000000" d=${this.config.icon[0]} />
               <path class=${classMap({
                 "state-on-blind-icon":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open, close])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open_blind, close_blind])),
                 "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open, close])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+                "state-on-shutter-icon":
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+                "state-off-shutter-icon":
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
                 "state-unavailable":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "unavailable",
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
               }
                   )
               }
@@ -238,6 +245,7 @@ export class BoilerplateCard extends LitElement {
     ${this.config.show_buttons
     ? html`
         <slot class="card-actions">
+
         <button.mdc-icon-button
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
@@ -246,6 +254,7 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardUp}
         >&#9650;
         </button.mdc-icon-button>
+
         <button.mdc-icon-button
           .label=${localize("common.stop")}
           .path=${mdiStop}
@@ -254,6 +263,7 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardStop}
         >&#9724;
         </button.mdc-icon-button>
+
         <button.mdc-icon-button
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
@@ -262,6 +272,7 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardDown}
         >&#9660;
         </button.mdc-icon-button>
+
     </slot>`: ""}
 
     ${this.config.show_name
@@ -395,8 +406,12 @@ private computeActiveState = (stateObj: HassEntity): string => {
         display: grid;
         grid-template-columns: 50% 50%;
       }
+
       .button.mdc-icon-button {
         fill: #ffffff;
+      }
+      .button.mdc-icon-button.move-arrow-up {
+        transform: scale(0);
       }
 
       .state-div {
@@ -457,13 +472,26 @@ private computeActiveState = (stateObj: HassEntity): string => {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
+      /* alteração ao aspeto persiana */
       .state-on-blind-icon {
+        transform: scale(0);
+        fill: #a9b1bc;
+      }
+
+      /* alteração ao aspeto persiana */
+      .state-off-blind-icon {
+        fill: #a9b1bc;
+      }
+
+      /* alteração ao aspeto persiana */
+      .state-on-shutter-icon {
         transform: scale(0);
         fill: #ffffff;
       }
 
-      .state-off-blind-icon {
-        fill: #a2743f;
+      /* alteração ao aspeto persiana */
+      .state-off-shutter-icon {
+        fill: #ffffff;
       }
 
       .state-unavailable {

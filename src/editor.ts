@@ -15,17 +15,16 @@ const cardConfigStruct = {
   },
 };
 
-const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
-const closed = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+const open_shutter = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
 
-const open = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
-const close = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
+const open_blind = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
+const close_blind = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
 const up = "M12.305.43C10.625 3.723.012 24.914.012 24.973c0 .011.008.015.02.015.03 0 2.429-1.035 10.202-4.406 1.239-.539 2.262-.977 2.274-.977.008 0 1.527.653 3.37 1.45 6.411 2.773 9.09 3.93 9.106 3.918C25 24.953 12.582.09 12.527.035c-.007-.008-.09.145-.222.395Zm0 0";
 const down = "M24.695.125c-.457.195-3.726 1.613-7.968 3.45a447.206 447.206 0 0 1-4.235 1.823c-.015 0-1.156-.492-2.539-1.085C4.102 1.776.445.199.153.085.092.063.038.05.038.059c0 .05 12.41 24.902 12.438 24.902.015 0 1.398-2.734 4.597-9.11C19.883 10.267 24.977.063 24.977.04c0-.031-.012-.023-.282.086Zm0 0";
 const stop = "M1.023 12.313v11.085h22.954V1.227H1.023Zm0 0";
 
-// const includeDomains = ['cover'];
 const includeDomains = ["switch"];
 @customElement('persiana-card-editor')
 
@@ -75,11 +74,11 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   }
 
   get _tap_action(): ActionConfig {
-    return this._config?.tap_action || { action: 'more-info' };
+    return this._config?.tap_action || { action: 'none' };
   }
 
   get _hold_action(): ActionConfig {
-    return this._config?.hold_action || { action: 'none' };
+    return this._config?.hold_action || { action: 'toggle' };
   }
 
   get _double_tap_action(): ActionConfig {
@@ -161,17 +160,17 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   .configValue=${"icon"}
   selected='1'
   @iron-select=${this._changed_icon}>
-    <paper-item class= "paper-item-tecido" .value=${[open, close]}>
+    <paper-item class= "paper-item-tecido" .value=${[open_blind, close_blind]}>
         <svg class="svg-tecido" viewBox="0 0 24 24" height="24" width="24" >
-        <path class="opacity" fill="#a9b1bc" d=${open}/>
-        <path class="state" fill="#a9b1bc" d=${close}/>
+        <path class="opacity" fill="#a9b1bc" d=${open_blind}/>
+        <path class="state" fill="#a9b1bc" d=${close_blind}/>
         </svg>Persiana de Tecido
     </paper-item>
-    <paper-item class= "paper-item-plastico" .value=${[op, closed]}>
+    <paper-item class= "paper-item-plastico" .value=${[open_shutter, close_shutter]}>
         <svg class="svg-platico" viewBox="0 0 50 50" height="24" width="24" >
-        <path class="opacity"  fill="#a9b1bc" d=${op}/>
-        <path class="state" fill="#a9b1bc" d=${closed}/>
-        </svg>Persiana de Plástico
+        <path class="opacity"  fill="#a9b1bc" d=${open_shutter}/>
+        <path class="state" fill="#a9b1bc" d=${close_shutter}/>
+        </svg>Persiana
     </paper-item>
     </paper-listbox>
   </paper-dropdown-menu>
