@@ -299,7 +299,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      moveUpPers(lovelace.config, path, [path[0], path[1] - 1])
+      movePers(lovelace.config, path, [path[0], path[1] - 1])
     );
   }
 
@@ -307,7 +307,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      moveDownPers(lovelace.config, path, [path[0], path[1] + 1])
+      movePers(lovelace.config, path, [path[0], path[1] + 1])
     );
   }
 
@@ -315,7 +315,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      stopPers(lovelace.config, path, [path[0], path[0] + 0])
+      movePers(lovelace.config, path, [path[0], path[0] + 0])
     );
   }
 
@@ -562,15 +562,8 @@ private computeActiveState = (stateObj: HassEntity): string => {
     `;
   }
 }
-function moveUpPers(_config: any, _path: any, _arg2: any[]): any {
+function movePers(_config: any, _path: any, _arg2: any[]): any {
   throw new Error("Function not implemented.");
 }
 
-function moveDownPers(_config: any, _path: any, _arg2: any[]): any {
-  throw new Error("Function not implemented.");
-}
-
-function stopPers(_config: any, _path: any, _arg2: any[]): any {
-  throw new Error("Function not implemented.");
-}
 
