@@ -28,6 +28,8 @@ const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008
 const open_blind = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
 const close_blind = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
 
+const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
   'color: orange; font-weight: bold; background: black',
@@ -68,7 +70,8 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
+    //return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
+    return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -93,12 +96,11 @@ export class BoilerplateCard extends LitElement {
   }
 
   set homeassistant(_homeassistant: any) {
-    // let dragItem = document.querySelector("hassbut");
-    let dragItem = document.querySelector("classMap");
-    let container = document.querySelector("ha-card");
+    let dragItem = document.querySelector("hassbut"); //declaração da classe associada ao slider
+    let container = document.querySelector("ha-card"); //declaração da carta persiana
     let active = false;
-    let currentX;
-    let currentY;
+    let currentX; //posição do ponto X
+    let currentY; //posição do ponto Y
     let initialX;
     let initialY;
     let xOffset = 0;
@@ -215,19 +217,19 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <svg class=${classMap({
                 "svgicon-blind":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, op])),
                 "svgicon-shutter":
                 (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
                 }
                 )
             }
               viewBox="0 0 50 50" height="75%" width="65%" >
-              <path fill="#000000" d=${this.config.icon[0]} />
+              <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
                 "state-on-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open_blind, close_blind])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([op, close_blind])),
                 "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([op, close_blind])),
                 "state-on-shutter-icon":
                   ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
                 "state-off-shutter-icon":
@@ -291,6 +293,30 @@ export class BoilerplateCard extends LitElement {
      `: ""}
   </ha-card>
     `;
+  }
+
+  private _cardUp(): void {
+    const lovelace = this.lovelace!;
+    const path = this.path!;
+    lovelace.saveConfig(
+      moveUpPers(lovelace.config, path, [path[0], path[1] - 1])
+    );
+  }
+
+  private _cardDown(): void {
+    const lovelace = this.lovelace!;
+    const path = this.path!;
+    lovelace.saveConfig(
+      moveDownPers(lovelace.config, path, [path[0], path[1] + 1])
+    );
+  }
+
+  private _cardStop(): void {
+    const lovelace = this.lovelace!;
+    const path = this.path!;
+    lovelace.saveConfig(
+      stopPers(lovelace.config, path, [path[0], path[0] + 0])
+    );
   }
 
 private computeActiveState = (stateObj: HassEntity): string => {
@@ -407,13 +433,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
         grid-template-columns: 50% 50%;
       }
 
-      .button.mdc-icon-button {
-        fill: #ffffff;
-      }
-      .button.mdc-icon-button.move-arrow-up {
-        transform: scale(0);
-      }
-
       .state-div {
         padding-top: 25px;
         padding-bottom: 40px;
@@ -434,7 +453,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       ha-icon-button.move-arrow-up {
-        transform: translateY(-25px);
+        transform: translateY(-25%);
       }
 
       ha-icon-button.move-arrow-down {
@@ -474,24 +493,30 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       /* alteração ao aspeto persiana */
       .state-on-blind-icon {
-        transform: scale(0);
+        transform: translateY(-100%);
+        transition: 5s ease;
         fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
       .state-off-blind-icon {
+        transform: translateY(0%);
+        transition: 5s ease;
         fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
       .state-on-shutter-icon {
-        transform: scale(0);
-        fill: #ffffff;
+        transform: translateY(-100%);
+        transition: 5s ease;
+        fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
       .state-off-shutter-icon {
-        fill: #ffffff;
+        transform: translateY(0%);
+        transition: 5s ease;
+        fill: #a9b1bc;
       }
 
       .state-unavailable {
@@ -537,3 +562,15 @@ private computeActiveState = (stateObj: HassEntity): string => {
     `;
   }
 }
+function moveUpPers(_config: any, _path: any, _arg2: any[]): any {
+  throw new Error("Function not implemented.");
+}
+
+function moveDownPers(_config: any, _path: any, _arg2: any[]): any {
+  throw new Error("Function not implemented.");
+}
+
+function stopPers(_config: any, _path: any, _arg2: any[]): any {
+  throw new Error("Function not implemented.");
+}
+
