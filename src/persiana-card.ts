@@ -23,12 +23,12 @@ import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
 
-const open_shutter = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
-const open_blind = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
-const close_blind = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
+const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
+const close_blind = "M5.133 25.766v18.632h38.8V7.128h-38.8Zm0 0";
 
-const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+//const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -61,7 +61,7 @@ export class BoilerplateCard extends LitElement {
     entitiesFallback: string[]
   ): BoilerplateCardConfig {
     // const includeDomains = ["cover"];
-    const includeDomains = ["switch"];
+    const includeDomains = ["switch", "cover"]; //foi trocado de cover para switch devido ao problema de conetividade
     const maxEntities = 1;
     const foundEntities = findEntities(
       hass,
@@ -71,7 +71,7 @@ export class BoilerplateCard extends LitElement {
       includeDomains
     );
     //return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
-    return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
+    return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -217,7 +217,7 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <svg class=${classMap({
                 "svgicon-blind":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, op])),
+                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
                 "svgicon-shutter":
                 (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
                 }
@@ -227,9 +227,9 @@ export class BoilerplateCard extends LitElement {
               <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
                 "state-on-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([op, close_blind])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open_blind, close_blind])),
                 "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([op, close_blind])),
+                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
                 "state-on-shutter-icon":
                   ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
                 "state-off-shutter-icon":
@@ -452,16 +452,19 @@ private computeActiveState = (stateObj: HassEntity): string => {
         visibility: visible;
       }
 
-      ha-icon-button.move-arrow-up {
-        transform: translateY(-25%);
+      .ha-icon-button.move-arrow-up {
+        animation: mover 0.8s;
+        /* transform: translateY(-25%); */
       }
 
-      ha-icon-button.move-arrow-down {
-        transform: translateY(0px);
+      .ha-icon-button.move-arrow-down {
+        animation: mover 0.8s;
+        /* transform: translateY(0px); */
       }
 
-       ha-icon-button.stop{
-        animation-play-state: paused;
+      .ha-icon-button.stop{
+        /* animation-play-state: paused; */
+        animation: none;
       }
 
       mwc-list-item {
@@ -549,6 +552,22 @@ private computeActiveState = (stateObj: HassEntity): string => {
         100% {
           transform: translate(0px, 50px);
         }
+      }
+
+      @keyframes mover {
+        0% { transform: translateY(0%); }
+        25% { transform: translateY(-25%); }
+        50% { transform: translateY(-50%); }
+        75% { transform: translateY(-75%); }
+        100% { transform: translateY(-100%); }
+      }
+
+      @keyframes stoper {
+        0% { transform: none; }
+        25% { transform: none; }
+        50% { transform: none; }
+        75% { transform: none; }
+        100% { transform: none; }
       }
 
       @keyframes opacity {

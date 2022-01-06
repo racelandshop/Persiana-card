@@ -24,7 +24,8 @@
         "strict": true,
         "rules": {
           "no-unknown-tag-name": "off",
-          "no-unknown-event": "warning"
+          "no-unknown-event": "warning",
+          "no-unknown-property": "off"
         }
       }
     ]

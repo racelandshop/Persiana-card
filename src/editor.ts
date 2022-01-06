@@ -15,19 +15,12 @@ const cardConfigStruct = {
   },
 };
 
-const open_shutter = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
+const close_blind = "M5.133 25.766v18.632h38.8V7.128h-38.8Zm0 0";
 
-const open_blind = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H25.977V5.508H46.18Zm-21.809 0v18.958H4.488V7.129h19.883Zm0 0";
-const close_blind = "M2.887 26.09v20.578H46.18V5.508H2.887Zm0 0";
-
-const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
-
-const up = "M12.305.43C10.625 3.723.012 24.914.012 24.973c0 .011.008.015.02.015.03 0 2.429-1.035 10.202-4.406 1.239-.539 2.262-.977 2.274-.977.008 0 1.527.653 3.37 1.45 6.411 2.773 9.09 3.93 9.106 3.918C25 24.953 12.582.09 12.527.035c-.007-.008-.09.145-.222.395Zm0 0";
-const down = "M24.695.125c-.457.195-3.726 1.613-7.968 3.45a447.206 447.206 0 0 1-4.235 1.823c-.015 0-1.156-.492-2.539-1.085C4.102 1.776.445.199.153.085.092.063.038.05.038.059c0 .05 12.41 24.902 12.438 24.902.015 0 1.398-2.734 4.597-9.11C19.883 10.267 24.977.063 24.977.04c0-.031-.012-.023-.282.086Zm0 0";
-const stop = "M1.023 12.313v11.085h22.954V1.227H1.023Zm0 0";
-
-const includeDomains = ["switch"];
+const includeDomains = ["switch", "cover"];
 @customElement('persiana-card-editor')
 
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
@@ -36,7 +29,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
-  _changed_icon: unknown;
+  // _changed_icon: unknown;
   dir: any;
 
   public setConfig(config: BoilerplateCardConfig): void {
@@ -80,28 +73,28 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   }
 
   get _hold_action(): ActionConfig {
-    return this._config?.hold_action || { action: 'toggle' };
+    return this._config?.hold_action || { action: 'none' };
   }
 
   get _double_tap_action(): ActionConfig {
     return this._config?.double_tap_action || { action: 'none' };
   }
 
-  get _buttons_position(): string {
-    return this._config?.buttons_position || "";
-  }
+  // get _buttons_position(): string {
+  //   return this._config?.buttons_position || "";
+  // }
 
-  get _title_position(): string {
-    return this._config?.title_position || "";
-  }
+  // get _title_position(): string {
+  //   return this._config?.title_position || "";
+  // }
 
-  get _invert_percentage(): string {
-    return this._config?.invert_percentage || "";
-  }
+  // get _invert_percentage(): string {
+  //   return this._config?.invert_percentage || "";
+  // }
 
-  get _blind_color(): string {
-    return this._config?.blind_color || "";
-  }
+  // get _blind_color(): string {
+  //   return this._config?.blind_color || "";
+  // }
 
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
@@ -111,7 +104,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
 
     return html`
       <div class="card-config">
-        <div class="option" .option=${'required'}>
+      <div class="option" .option=${'required'}>
           <ha-entity-picker
             .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
             .hass=${this.hass}
@@ -162,9 +155,9 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   .configValue=${"icon"}
   selected='1'
   @iron-select=${this._changed_icon}>
-    <paper-item class= "paper-item-tecido" .value=${[op, close_blind]}>
-        <svg class="svg-tecido" viewBox="0 0 24 24" height="24" width="24" >
-        <path class="opacity" fill="#a9b1bc" d=${op}/>
+    <paper-item class= "paper-item-tecido" .value=${[open_blind, close_blind]}>
+        <svg class="svg-tecido" viewBox="0 0 50 50" height="24" width="24" >
+        <path class="opacity" fill="#a9b1bc" d=${open_blind}/>
         <path class="state" fill="#a9b1bc" d=${close_blind}/>
         </svg>Persiana de Tecido
     </paper-item>
@@ -234,57 +227,58 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     fireEvent(this, 'config-changed', { config: this._config });
   }
 
+  private _changed_icon(ev): void {
+    if (!this.hass || ev.target.selected === "") {
+      return;
+    }
+    this._config = {
+      ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:persiana-card'
+    }
+    console.log("this._config", this._config);
+    fireEvent(this, "config-changed", { config: this._config });
+  }
+
   static get styles(): CSSResultGroup {
     return css`
-
       .option {
         padding: 3% 0%;
         cursor: pointer;
       }
-
       .row {
         display: flex;
         margin-bottom: -14px;
         pointer-events: none;
       }
-
       .title {
         padding-left: 16px;
         margin-top: -6px;
         pointer-events: none;
       }
-
       .secondary {
         padding-left: 40px;
         color: var(--secondary-text-color);
         pointer-events: none;
       }
-
       .values {
         padding-left: 16px;
         background: var(--secondary-background-color);
         display: grid;
       }
-
       ha-formfield {
         padding: 0px 10px 0px 20px;
         max-width: 211px;
       }
-
       .dropdown-icon {
         padding-left: 5%;
       }
-
       .svg-tecido {
-        transform: translate(-10%, -5%) scale(1.5);
+        /* transform: translate(-10%, -5%) scale(1.5); */
         margin-right: 2.5%;
       }
-
       .svg-platico {
         margin-right: 2.5%;
-        transform: translate(-10%, -5%) scale(1.5);
+        /* transform: translate(-10%, -5%) scale(1.5); */
       }
-
     `;
   }
 }
