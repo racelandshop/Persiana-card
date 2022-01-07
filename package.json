@@ -17,6 +17,7 @@
   "dependencies": {
     "@material/mwc-ripple": "^0.19.1",
     "@mdi/js": "^6.5.95",
+    "babel-polyfill": "^6.26.0",
     "custom-card-helpers": "^1.8.0",
     "home-assistant-js-websocket": "^4.5.0",
     "lit": "^2.0.0-rc.2",
@@ -27,9 +28,9 @@
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-decorators": "^7.14.5",
     "@rollup/plugin-json": "^4.1.0",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
-    "eslint": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "eslint": "^8.6.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.24.0",
@@ -42,8 +43,8 @@
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-terser": "^5.3.1",
     "rollup-plugin-typescript2": "^0.24.3",
-    "rollup-plugin-uglify": "^6.0.4",
-    "ts-lit-plugin": "^1.2.1",
+    "rollup-plugin-uglify": "^5.0.2",
+    "ts-lit-plugin": "^1.0.5",
     "typescript": "^3.9.10"
   },
   "scripts": {

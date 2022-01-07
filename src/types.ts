@@ -10,19 +10,19 @@ declare global {
 // TODO Add your configuration elements here for type-checking
 export interface BoilerplateCardConfig extends LovelaceCardConfig {
   show_buttons: true;
-  entities: any;
-  title: any;
-  show_name: true;
-  show_state: true;
-  icon: any;
-  show_icon: true;
+  // entities: any;
+  // title: any;
+  // show_name: true;
+  // show_state: true;
+  // icon: any;
+  // show_icon: true;
   type: string;
   name?: string;
   show_warning?: boolean;
-  title_position: string;
-  buttons_position: string;
-  invert_percentage: string;
-  blind_color: string;
+  // title_position: string;
+  // buttons_position: string;
+  // invert_percentage: string;
+  // blind_color: string;
   show_error?: boolean;
   test_gui?: boolean;
   entity?: string;

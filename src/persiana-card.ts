@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-this-alias */
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
@@ -23,12 +22,10 @@ import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
 
-const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
+const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
-const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
-const close_blind = "M5.133 25.766v18.632h38.8V7.128h-38.8Zm0 0";
-
-//const op = "M.32 2.559c0 1.59.16 2.398.48 2.757.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.321-.359.481-1.168.481-2.757V.324H.32Zm45.86 23.53v20.579H2.887V5.508H46.18Zm0 0";
+const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
+const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -92,6 +89,12 @@ export class BoilerplateCard extends LitElement {
       tap_action: {
         action: "toggle",
       },
+      hold_action: {
+        action: "none",
+      },
+      double_tap_action: {
+        action: "none",
+      }
     };
   }
 
@@ -203,10 +206,10 @@ export class BoilerplateCard extends LitElement {
           stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
         "state-off": ifDefined(
           stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-      })}"
-        @action=${this._handleAction}
-        @focus="${this.handleRippleFocus}"
-        .actionHandler=${actionHandler({
+        })}"
+          @action=${this._handleAction}
+          @focus="${this.handleRippleFocus}"
+          .actionHandler=${actionHandler({
           hasHold: hasAction(this.config.hold_action),
           hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
@@ -328,6 +331,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
   return state;
 };
 
+  //é neste código que permite cliquar na carta de modo a funcionar
   private _handleAction(ev: ActionHandlerEvent): void {
     if (this.hass && this.config && ev.detail.action) {
       handleAction(this, this.hass, this.config, ev.detail.action);
@@ -391,6 +395,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       ha-icon {
+        cursor: pointer;
         width: 70%;
         height: 80%;
         padding-bottom: 15px;
@@ -421,17 +426,24 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .hassbut.state-off {
+        cursor: pointer;
         text-align: center;
       }
 
       .hassbut.state-on {
-        text-align: center
+        cursor: pointer;
+        text-align: center;
       }
 
       .hassbut {
         display: grid;
         grid-template-columns: 50% 50%;
       }
+
+      /* .ha-card.hassbutt.type-custom-persiana-card.state-off{
+        cursor:none;
+        animation: none;
+      } */
 
       .state-div {
         padding-top: 25px;
@@ -441,30 +453,32 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .name-div {
+        /* cursor: none; */
         padding-top: 25px;
         align-items: left;
         text-align: left;
       }
 
       .ha-icon-button{
+        cursor: pointer;
         fill: #ffffff;
         display: flex;
         visibility: visible;
       }
 
       .ha-icon-button.move-arrow-up {
+        cursor: pointer;
         animation: mover 0.8s;
-        /* transform: translateY(-25%); */
       }
 
       .ha-icon-button.move-arrow-down {
+        cursor: pointer;
         animation: mover 0.8s;
-        /* transform: translateY(0px); */
       }
 
       .ha-icon-button.stop{
-        /* animation-play-state: paused; */
-        animation: none;
+        cursor: pointer;
+        position: fixed;
       }
 
       mwc-list-item {
@@ -473,6 +487,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .card-actions {
+        pointer-events: none;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -480,14 +495,10 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .svgicon-blind {
-        cursor: grab;
+        cursor: pointer;
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
-      }
-
-      .svgicon-blind:hover {
-        cursor: pointer;
       }
 
       .state {

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/camelcase */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
 import { BoilerplateCardConfig, EditorTarget } from './types';
@@ -15,22 +14,18 @@ const cardConfigStruct = {
   },
 };
 
-const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
+const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
-const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.09v20.578H2.887V5.508H46.18Zm0 0";
-const close_blind = "M5.133 25.766v18.632h38.8V7.128h-38.8Zm0 0";
-
+const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
+const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 const includeDomains = ["switch", "cover"];
 @customElement('persiana-card-editor')
-
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
-  // _changed_icon: unknown;
-  dir: any;
 
   public setConfig(config: BoilerplateCardConfig): void {
     this._config = config;
@@ -57,7 +52,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   }
 
   get _entity(): string {
-    return this._config?.entity || "";
+    return this._config?.entity || '';
   }
 
   get _show_warning(): boolean {
@@ -80,22 +75,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return this._config?.double_tap_action || { action: 'none' };
   }
 
-  // get _buttons_position(): string {
-  //   return this._config?.buttons_position || "";
-  // }
-
-  // get _title_position(): string {
-  //   return this._config?.title_position || "";
-  // }
-
-  // get _invert_percentage(): string {
-  //   return this._config?.invert_percentage || "";
-  // }
-
-  // get _blind_color(): string {
-  //   return this._config?.blind_color || "";
-  // }
-
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
       return html``;
@@ -115,7 +94,8 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             allow-custom-entity>
           </ha-entity-picker>
         </div class="card-config">
-        </div class="option">
+      </div class="option">
+
     <div class="side-by-side">
         <paper-input
           .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
@@ -124,6 +104,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
           @value-changed=${this._valueChanged}>
         </paper-input>
     </div class="side-by-side">
+
     <div class="div-options">
       <p>
       </p>
@@ -137,6 +118,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
           </ha-switch>
       </ha-formfield>
     </div>
+
     <ha-formfield
       .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
       .dir=${this.dir}>
@@ -148,6 +130,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     </ha-formfield>
     <div>
 </div>
+
 <paper-input-label-8>Escolha o icon: </paper-input-label-8>
 <paper-dropdown-menu class="dropdown-icon">
 <paper-listbox slot="dropdown-content"
@@ -167,11 +150,11 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         <path class="state" fill="#a9b1bc" d=${close_shutter}/>
         </svg>Persiana
     </paper-item>
-    </paper-listbox>
-  </paper-dropdown-menu>
+</paper-listbox>
+</paper-dropdown-menu>
 </div>
-    `;
-  }
+`;
+}
 
   private _change(ev: Event): void{
     if (!this._config || !this.hass) {
@@ -272,12 +255,12 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         padding-left: 5%;
       }
       .svg-tecido {
-        /* transform: translate(-10%, -5%) scale(1.5); */
+        transform: translate(-10%, -5%) scale(1);
         margin-right: 2.5%;
       }
       .svg-platico {
+        transform: translate(-10%, -5%) scale(1);
         margin-right: 2.5%;
-        /* transform: translate(-10%, -5%) scale(1.5); */
       }
     `;
   }
