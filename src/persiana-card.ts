@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -57,8 +58,8 @@ export class BoilerplateCard extends LitElement {
     entities: string[],
     entitiesFallback: string[]
   ): BoilerplateCardConfig {
-    // const includeDomains = ["cover"];
-    const includeDomains = ["switch", "cover"]; //foi trocado de cover para switch devido ao problema de conetividade
+    //const includeDomains = ["cover"];
+    const includeDomains = ["switch", "cover"];
     const maxEntities = 1;
     const foundEntities = findEntities(
       hass,
@@ -69,6 +70,7 @@ export class BoilerplateCard extends LitElement {
     );
     //return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
     return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
+    //return { type: "custom:persiana-card", entity: "foundEntities[0]" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
@@ -99,41 +101,69 @@ export class BoilerplateCard extends LitElement {
   }
 
   set homeassistant(_homeassistant: any) {
-    let dragItem = document.querySelector("hassbut"); //declaração da classe associada ao slider
-    let container = document.querySelector("ha-card"); //declaração da carta persiana
+    let dragItem = document.querySelector("hui-card");//hui-card or ha-card
+    let slide = document.querySelector("state-off"); //hassbut
+    let picker = document.querySelector("hassbut"); //hassbut
     let active = false;
-    let currentX; //posição do ponto X
-    let currentY; //posição do ponto Y
+    let currentX;
+    let currentY;
     let initialX;
     let initialY;
     let xOffset = 0;
     let yOffset = 0;
 
-    container.addEventListener("touchstart", dragStart, false);
-    container.addEventListener("touchend", dragEnd, false);
-    container.addEventListener("touchmove", drag, false);
-    container.addEventListener("mousedown", dragStart, false);
-    container.addEventListener("mouseup", dragEnd, false);
-    container.addEventListener("mousemove", drag, false);
+    const mouseDown = (event) => {
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+      this.isUpdating = true;
 
-    function dragStart(e) {
-      if (e.type === "touchstart") {
-        initialX = e.touches[0].clientX - xOffset;
-        initialY = e.touches[0].clientY - yOffset;
+      document.addEventListener('mousemove', mouseMove);
+      document.addEventListener('touchmove', mouseMove);
+      document.addEventListener('pointermove', mouseMove);
+
+      document.addEventListener('mouseup', mouseUp);
+      document.addEventListener('touchend', mouseUp);
+      document.addEventListener('pointerup', mouseUp);
+    }
+
+    let mouseMove =  (event) => {
+      let newPosition = event.pageY - this.getItemTop(dragItem);
+      this.setPickerPosition(newPosition, picker, slide);
+    };
+
+    let mouseUp = function (this: any, event) {
+      this.isUpdating = false;
+
+      let newPosition = event.pageY - this.getItemTop(dragItem);
+
+      if (newPosition < this.minPosition)
+        newPosition = this.minPosition;
+
+      if (newPosition > this.maxPosition)
+        newPosition = this.maxPosition;
+
+      let percentagePosition = (newPosition - this.minPosition) * 100 / (this.maxPosition - this.minPosition);
+      let invertPercentage = false;
+
+      if (invertPercentage) {
+        this.updateBlindPosition(hass, entityId, percentagePosition);
       } else {
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
+        this.updateBlindPosition(hass, entityId, 100 - percentagePosition);
       }
-      if (e.target === dragItem) {
-        active = true;
-      }
-    }
 
-    function dragEnd(_e) {
-      initialX = currentX;
-      initialY = currentY;
-      active = false;
-    }
+      document.removeEventListener('mousemove', mouseMove);
+      document.removeEventListener('touchmove', mouseMove);
+      document.removeEventListener('pointermove', mouseMove);
+
+      document.removeEventListener('mouseup', mouseUp);
+      document.removeEventListener('touchend', mouseUp);
+      document.removeEventListener('pointerup', mouseUp);
+    };
+
+    picker.addEventListener('mousedown', mouseDown);
+    picker.addEventListener('touchstart', mouseDown);
+    picker.addEventListener('pointerdown', mouseDown);
 
     function drag(e) {
       if (active) {
@@ -249,34 +279,38 @@ export class BoilerplateCard extends LitElement {
 
     ${this.config.show_buttons
     ? html`
-        <slot class="card-actions">
-
-        <button.mdc-icon-button
+        <slot class="buttons">
+        <!-- <slot class="buttons_up"> -->
+        <button.mdc-icon-button-up
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
           title="Abrir"
           class="move-arrow-up"
           @click=${this._cardUp}
         >&#9650;
-        </button.mdc-icon-button>
+        </button.mdc-icon-button-up>
+        <!-- </slot> -->
 
-        <button.mdc-icon-button
+        <!-- <slot class="buttons_stop"> -->
+        <button.mdc-icon-button-stop
           .label=${localize("common.stop")}
           .path=${mdiStop}
           title="Stop"
           class="stop"
           @click=${this._cardStop}
         >&#9724;
-        </button.mdc-icon-button>
+        </button.mdc-icon-button-stop>
+        <!-- </slot> -->
 
-        <button.mdc-icon-button
+        <!-- <slot class="buttons_down"> -->
+        <button.mdc-icon-button-down
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
           title="Fechar"
           class="move-arrow-down"
           @click=${this._cardDown}
         >&#9660;
-        </button.mdc-icon-button>
+        </button.mdc-icon-button-down>
 
     </slot>`: ""}
 
@@ -302,7 +336,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      movePers(lovelace.config, path, [path[0], path[1] - 1])
+      swapCard(lovelace.config, path, [path[0], path[1] - 1])
     );
   }
 
@@ -310,7 +344,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      movePers(lovelace.config, path, [path[0], path[1] + 1])
+      swapCard(lovelace.config, path, [path[0], path[1] + 1])
     );
   }
 
@@ -318,7 +352,7 @@ export class BoilerplateCard extends LitElement {
     const lovelace = this.lovelace!;
     const path = this.path!;
     lovelace.saveConfig(
-      movePers(lovelace.config, path, [path[0], path[0] + 0])
+      swapCard(lovelace.config, path, [path[0], path[0] + 0])
     );
   }
 
@@ -440,11 +474,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
         grid-template-columns: 50% 50%;
       }
 
-      /* .ha-card.hassbutt.type-custom-persiana-card.state-off{
-        cursor:none;
-        animation: none;
-      } */
-
       .state-div {
         padding-top: 25px;
         padding-bottom: 40px;
@@ -453,7 +482,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .name-div {
-        /* cursor: none; */
         padding-top: 25px;
         align-items: left;
         text-align: left;
@@ -464,6 +492,18 @@ private computeActiveState = (stateObj: HassEntity): string => {
         fill: #ffffff;
         display: flex;
         visibility: visible;
+      }
+
+      /* .button.mdc-icon-button-up {
+        animation-play-state: running;
+      }
+
+      .button.mdc-icon-button-stop {
+        animation-play-state: paused;
+      }
+
+      .button.mdc-icon-button-down {
+        animation-play-state: running;
       }
 
       .ha-icon-button.move-arrow-up {
@@ -479,20 +519,45 @@ private computeActiveState = (stateObj: HassEntity): string => {
       .ha-icon-button.stop{
         cursor: pointer;
         position: fixed;
-      }
+        animation-play-state: paused;
+      } */
 
       mwc-list-item {
         cursor: pointer;
         white-space: nowrap;
       }
 
-      .card-actions {
+      /* engloba todos */
+      .buttons {
         pointer-events: none;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         color: var(--card-color-bottom);
       }
+
+      /* .buttons_up .state-on {
+        display: flex;
+        flex-direction: column;
+        animation: animationbuttonup;
+        animation-direction: normal;
+        color: var(--card-color-bottom);
+      }
+      .buttons_stop {
+        display: flex;
+        flex-direction: column;
+        color: var(--card-color-bottom);
+      }
+      .buttons_down .state-off {
+        display: flex;
+        flex-direction: column;
+        animation: animationbuttondown;
+        color: var(--card-color-bottom);
+        animation: reverse;
+      } */
+
+
+
 
       .svgicon-blind {
         cursor: pointer;
@@ -514,6 +579,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       /* alteração ao aspeto persiana */
       .state-off-blind-icon {
+        cursor: drag;
         transform: translateY(0%);
         transition: 5s ease;
         fill: #a9b1bc;
@@ -592,8 +658,16 @@ private computeActiveState = (stateObj: HassEntity): string => {
     `;
   }
 }
-function movePers(_config: any, _path: any, _arg2: any[]): any {
+
+function swapCard(_config: any, _path: any, _arg2: any[]): any {
   throw new Error("Function not implemented.");
 }
 
+function hass(_hass: any, _entityId: any, _percentagePosition: number) {
+  throw new Error("Function not implemented.");
+}
+
+function entityId(_hass: any, _entityId: any, _percentagePosition: number) {
+  throw new Error("Function not implemented.");
+}
 

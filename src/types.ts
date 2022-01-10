@@ -21,7 +21,7 @@ export interface BoilerplateCardConfig extends LovelaceCardConfig {
   show_warning?: boolean;
   // title_position: string;
   // buttons_position: string;
-  // invert_percentage: string;
+  invert_percentage: string;
   // blind_color: string;
   show_error?: boolean;
   test_gui?: boolean;
