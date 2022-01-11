@@ -276,11 +276,18 @@ export class BoilerplateCard extends LitElement {
             </svg>
             `
       : ""}
+      <div></div>
 
-    ${this.config.show_buttons
-    ? html`
-        <slot class="buttons">
-        <!-- <slot class="buttons_up"> -->
+      ${this.config.show_name
+      ? html`
+        <div tabindex = "-1" class="name-div">
+        ${this.config.name}
+        </div>
+      `: ""}
+
+      ${this.config.show_buttons
+      ? html`
+        <slot class="buttons_up">
         <button.mdc-icon-button-up
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
@@ -289,45 +296,38 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardUp}
         >&#9650;
         </button.mdc-icon-button-up>
-        <!-- </slot> -->
+        </slot>
 
-        <!-- <slot class="buttons_stop"> -->
-        <button.mdc-icon-button-stop
+      ${this.config.show_state
+      ? html`
+        <div tabindex="-1" class="state-div">
+        ${this.translate_state(stateObj)}
+        <div class="position"></div>
+        </div>
+      `: ""}
+
+      <slot class="buttons_stop">
+      <button.mdc-icon-button-stop
           .label=${localize("common.stop")}
           .path=${mdiStop}
           title="Stop"
           class="stop"
           @click=${this._cardStop}
         >&#9724;
-        </button.mdc-icon-button-stop>
-        <!-- </slot> -->
+      </button.mdc-icon-button-stop>
+      </slot>
+      <div></div>
 
-        <!-- <slot class="buttons_down"> -->
-        <button.mdc-icon-button-down
+      <slot class="buttons_down">
+      <button.mdc-icon-button-down
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
           title="Fechar"
           class="move-arrow-down"
           @click=${this._cardDown}
-        >&#9660;
-        </button.mdc-icon-button-down>
-
+      >&#9660;
+      </button.mdc-icon-button-down>
     </slot>`: ""}
-
-    ${this.config.show_name
-    ? html`
-      <div tabindex = "-1" class="name-div">
-      ${this.config.name}
-      </div>
-     `: ""}
-
-    ${this.config.show_state
-    ? html`
-      <div tabindex="-1" class="state-div">
-      ${this.translate_state(stateObj)}
-      <div class="position"></div>
-      </div>
-     `: ""}
   </ha-card>
     `;
   }
@@ -471,20 +471,31 @@ private computeActiveState = (stateObj: HassEntity): string => {
 
       .hassbut {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 90% 10%;
       }
 
       .state-div {
-        padding-top: 25px;
-        padding-bottom: 40px;
-        align-items: right;
-        text-align: center;
+        align-items: left;
+        text-align: left;
       }
 
       .name-div {
-        padding-top: 25px;
         align-items: left;
         text-align: left;
+      }
+
+      .buttons_up:hover {
+        background-color: var(--secondary-text-color, #313132);
+        border-radius: 100%;
+
+      }
+      .buttons_stop:hover {
+        background-color: var(--secondary-text-color);
+        border-radius: 100%;
+      }
+      .buttons_down:hover {
+        background-color: var(--secondary-text-color);
+        border-radius: 100%;
       }
 
       .ha-icon-button{
@@ -494,70 +505,45 @@ private computeActiveState = (stateObj: HassEntity): string => {
         visibility: visible;
       }
 
-      /* .button.mdc-icon-button-up {
-        animation-play-state: running;
-      }
-
-      .button.mdc-icon-button-stop {
-        animation-play-state: paused;
-      }
-
-      .button.mdc-icon-button-down {
-        animation-play-state: running;
-      }
-
-      .ha-icon-button.move-arrow-up {
-        cursor: pointer;
-        animation: mover 0.8s;
-      }
-
-      .ha-icon-button.move-arrow-down {
-        cursor: pointer;
-        animation: mover 0.8s;
-      }
-
-      .ha-icon-button.stop{
-        cursor: pointer;
-        position: fixed;
-        animation-play-state: paused;
-      } */
-
       mwc-list-item {
         cursor: pointer;
         white-space: nowrap;
       }
 
-      /* engloba todos */
-      .buttons {
-        pointer-events: none;
+      .buttons_up {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         color: var(--card-color-bottom);
       }
 
-      /* .buttons_up .state-on {
-        display: flex;
-        flex-direction: column;
-        animation: animationbuttonup;
-        animation-direction: normal;
-        color: var(--card-color-bottom);
-      }
       .buttons_stop {
         display: flex;
         flex-direction: column;
         color: var(--card-color-bottom);
       }
-      .buttons_down .state-off {
+
+      .buttons_down {
         display: flex;
         flex-direction: column;
-        animation: animationbuttondown;
         color: var(--card-color-bottom);
+      }
+
+      .buttons_up {
+        animation: moveup;
+        animation-direction: normal;
+        transform: translateY(-100%);
+        transform: moveup;
+        fill: #a9b1bc;
+      }
+
+      .buttons_stop, .state-on {
+        animation: stoper;
+      }
+
+      .buttons_down, .state-off-blind-icon {
         animation: reverse;
-      } */
-
-
-
+        fill: #a9b1bc;
+      }
 
       .svgicon-blind {
         cursor: pointer;
@@ -578,24 +564,24 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       /* alteração ao aspeto persiana */
-      .state-off-blind-icon {
+      /* .state-off-blind-icon {
         cursor: drag;
         transform: translateY(0%);
         transition: 5s ease;
         fill: #a9b1bc;
-      }
+      } */
 
       /* alteração ao aspeto persiana */
       .state-on-shutter-icon {
-        transform: translateY(-100%);
-        transition: 5s ease;
+        /* transform: translateY(-100%);
+        transition: 5s ease; */
         fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
       .state-off-shutter-icon {
-        transform: translateY(0%);
-        transition: 5s ease;
+        /* transform: translateY(0%);
+        transition: 5s ease; */
         fill: #a9b1bc;
       }
 
@@ -613,7 +599,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         animation-direction: reverse;
       }
 
-      @keyframes state {
+      /* @keyframes state {
         0% {
           transform: translate(0px, 10px);
         }
@@ -629,9 +615,9 @@ private computeActiveState = (stateObj: HassEntity): string => {
         100% {
           transform: translate(0px, 50px);
         }
-      }
+      } */
 
-      @keyframes mover {
+      @keyframes moveup {
         0% { transform: translateY(0%); }
         25% { transform: translateY(-25%); }
         50% { transform: translateY(-50%); }
