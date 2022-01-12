@@ -101,6 +101,8 @@ export class BoilerplateCard extends LitElement {
   }
 
   set homeassistant(_homeassistant: any) {
+    const _this = this;
+    const entities = this.config.entities;
     let dragItem = document.querySelector("hui-card");//hui-card or ha-card
     let slide = document.querySelector("state-off"); //hassbut
     let picker = document.querySelector("hassbut"); //hassbut
@@ -127,7 +129,7 @@ export class BoilerplateCard extends LitElement {
       document.addEventListener('pointerup', mouseUp);
     }
 
-    let mouseMove =  (event) => {
+    let mouseMove = (event) => {
       let newPosition = event.pageY - this.getItemTop(dragItem);
       this.setPickerPosition(newPosition, picker, slide);
     };
@@ -144,7 +146,11 @@ export class BoilerplateCard extends LitElement {
         newPosition = this.maxPosition;
 
       let percentagePosition = (newPosition - this.minPosition) * 100 / (this.maxPosition - this.minPosition);
+
       let invertPercentage = false;
+      if (entityId && entityId.invert_percentage) {
+        invertPercentage = entityId.invert_percentage;
+      }
 
       if (invertPercentage) {
         this.updateBlindPosition(hass, entityId, percentagePosition);
@@ -165,28 +171,76 @@ export class BoilerplateCard extends LitElement {
     picker.addEventListener('touchstart', mouseDown);
     picker.addEventListener('pointerdown', mouseDown);
 
-    function drag(e) {
-      if (active) {
-        e.preventDefault();
-        if (e.type === "touchmove") {
-          currentX = e.touches[0].clientX - initialX;
-          currentY = e.touches[0].clientY - initialY;
-        } else {
-          currentX = e.clientX - initialX;
-          currentY = e.clientY - initialY;
-        }
-        xOffset = currentX;
-        yOffset = currentY;
-        setTranslate(currentX, currentY, dragItem);
-      }
-    }
+    let allBlinds = document.createElement('div');
+    allBlinds.className = 'svgicon-blind';
 
-    function setTranslate(xPos, yPos, el) {
-      el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    blind.querySelectorAll('svgicon-blind').forEach(function(button) {
+      button.onclick = function () {
+        const command = this.dataset.command;
+
+        let service = '';
+
+        switch (command) {
+          case 'up':
+            service = 'open_blinds';
+            break;
+
+          case 'down':
+            service = 'close_blinds';
+            break;
+
+          case 'stop':
+            service = 'stop_blinds';
+            break;
+        }
+        hass.callService('blinds', service, {
+          entityId: entityId
+        });
+      };
+    });
+
+    const style = document.createElement('style');
+    const state = hass.states[entityId];
+    const friendlyName = (entityId && entityId.name) ? entityId.name : state ? state.attributes.friendly_name : 'unknown';
+    const currentPosition = state ? state.attributes.current_position : 'unknown';
+
+    allBlinds.appendChild(dragItem);
+
+    this.card.appendChild(allBlinds);
+          this.appendChild(style);
+
+    updateBlindPosition(hass, entityId, position); {
+        let blindPosition = Math.round(position);
+
+        hass.callService('blinds', 'set_cover_position', {
+          entity_id: entityId,
+          position: blindPosition
+        });
     }
   }
 
-  public translate_state(stateObj): string {
+  //   function drag(e) {
+  //     if (active) {
+  //       e.preventDefault();
+  //       if (e.type === "touchmove") {
+  //         currentX = e.touches[0].clientX - initialX;
+  //         currentY = e.touches[0].clientY - initialY;
+  //       } else {
+  //         currentX = e.clientX - initialX;
+  //         currentY = e.clientY - initialY;
+  //       }
+  //       xOffset = currentX;
+  //       yOffset = currentY;
+  //       setTranslate(currentX, currentY, dragItem);
+  //     }
+  //   }
+
+  //   function setTranslate(xPos, yPos, el) {
+  //     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+  //   }
+  // }
+
+public translate_state(stateObj): string {
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
       return localize("states.on");
     }
@@ -229,64 +283,64 @@ export class BoilerplateCard extends LitElement {
       ? this.hass.states[this.config.entity]
       : undefined;
 
-  return html`
+    return html`
   <ha-card
         class="hassbut ${classMap({
-        "state-on": ifDefined(
-          stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-        "state-off": ifDefined(
-          stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-        })}"
+      "state-on": ifDefined(
+        stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+      "state-off": ifDefined(
+        stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+    })}"
           @action=${this._handleAction}
           @focus="${this.handleRippleFocus}"
           .actionHandler=${actionHandler({
-          hasHold: hasAction(this.config.hold_action),
-          hasDoubleClick: hasAction(this.config.double_tap_action),
-        })}
+      hasHold: hasAction(this.config.hold_action),
+      hasDoubleClick: hasAction(this.config.double_tap_action),
+    })}
         tabindex="0"
         .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
       >
       ${this.config.show_icon
-          ? html`
+        ? html`
             <svg class=${classMap({
-                "svgicon-blind":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-                "svgicon-shutter":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-                }
-                )
-            }
+          "svgicon-blind":
+            (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+          "svgicon-shutter":
+            (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
+        }
+        )
+          }
               viewBox="0 0 50 50" height="75%" width="65%" >
               <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
-                "state-on-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open_blind, close_blind])),
-                "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-                "state-on-shutter-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-                "state-off-shutter-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-                "state-unavailable":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-              }
-                  )
-              }
+            "state-on-blind-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+            "state-off-blind-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+            "state-on-shutter-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+            "state-off-shutter-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+            "state-unavailable":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+          }
+          )
+          }
               d=${this.config.icon[1]} />
             </svg>
             `
-      : ""}
+        : ""}
       <div></div>
 
       ${this.config.show_name
-      ? html`
+        ? html`
         <div tabindex = "-1" class="name-div">
         ${this.config.name}
         </div>
       `: ""}
 
       ${this.config.show_buttons
-      ? html`
+        ? html`
         <slot class="buttons_up">
         <button.mdc-icon-button-up
           .label=${localize("common.arrowup")}
@@ -299,7 +353,7 @@ export class BoilerplateCard extends LitElement {
         </slot>
 
       ${this.config.show_state
-      ? html`
+            ? html`
         <div tabindex="-1" class="state-div">
         ${this.translate_state(stateObj)}
         <div class="position"></div>
@@ -332,29 +386,32 @@ export class BoilerplateCard extends LitElement {
     `;
   }
 
-  private _cardUp(): void {
-    const lovelace = this.lovelace!;
-    const path = this.path!;
-    lovelace.saveConfig(
-      swapCard(lovelace.config, path, [path[0], path[1] - 1])
-    );
-  }
 
-  private _cardDown(): void {
-    const lovelace = this.lovelace!;
-    const path = this.path!;
-    lovelace.saveConfig(
-      swapCard(lovelace.config, path, [path[0], path[1] + 1])
-    );
-  }
 
-  private _cardStop(): void {
-    const lovelace = this.lovelace!;
-    const path = this.path!;
-    lovelace.saveConfig(
-      swapCard(lovelace.config, path, [path[0], path[0] + 0])
-    );
-  }
+
+  // private _cardUp(): void {
+  //   const lovelace = this.lovelace!;
+  //   const path = this.path!;
+  //   lovelace.saveConfig(
+  //     swapCard(lovelace.config, path, [path[0], path[1] - 1])
+  //   );
+  // }
+
+  // private _cardDown(): void {
+  //   const lovelace = this.lovelace!;
+  //   const path = this.path!;
+  //   lovelace.saveConfig(
+  //     swapCard(lovelace.config, path, [path[0], path[1] + 1])
+  //   );
+  // }
+
+  // private _cardStop(): void {
+  //   const lovelace = this.lovelace!;
+  //   const path = this.path!;
+  //   lovelace.saveConfig(
+  //     swapCard(lovelace.config, path, [path[0], path[0] + 0])
+  //   );
+  // }
 
 private computeActiveState = (stateObj: HassEntity): string => {
   const domain = stateObj.entity_id.split(".")[0];
@@ -528,20 +585,16 @@ private computeActiveState = (stateObj: HassEntity): string => {
         color: var(--card-color-bottom);
       }
 
-      .buttons_up {
-        animation: moveup;
-        animation-direction: normal;
-        transform: translateY(-100%);
-        transform: moveup;
+      .buttons_up, .state-on-blind-icon {
         fill: #a9b1bc;
       }
 
-      .buttons_stop, .state-on {
+      .buttons_stop {
         animation: stoper;
       }
 
-      .buttons_down, .state-off-blind-icon {
-        animation: reverse;
+      .buttons_down {
+        animation-direction: reverse;
         fill: #a9b1bc;
       }
 
@@ -559,29 +612,30 @@ private computeActiveState = (stateObj: HassEntity): string => {
       /* alteração ao aspeto persiana */
       .state-on-blind-icon {
         transform: translateY(-100%);
-        transition: 5s ease;
+        transition: all 0.5s ease;
         fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
-      /* .state-off-blind-icon {
-        cursor: drag;
-        transform: translateY(0%);
-        transition: 5s ease;
+      .state-off-blind-icon {
+        /* transform: translateY(0%); */
+        animation-direction: reverse;
+        transition: all 0.5s ease;
         fill: #a9b1bc;
-      } */
+      }
 
       /* alteração ao aspeto persiana */
       .state-on-shutter-icon {
-        /* transform: translateY(-100%);
-        transition: 5s ease; */
+        transform: translateY(-100%);
+        transition: all 0.5s ease;
         fill: #a9b1bc;
       }
 
       /* alteração ao aspeto persiana */
       .state-off-shutter-icon {
-        /* transform: translateY(0%);
-        transition: 5s ease; */
+        /* transform: translateY(0%); */
+        animation-direction: reverse;
+        transition: all 0.5s ease;
         fill: #a9b1bc;
       }
 
@@ -617,14 +671,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
         }
       } */
 
-      @keyframes moveup {
-        0% { transform: translateY(0%); }
-        25% { transform: translateY(-25%); }
-        50% { transform: translateY(-50%); }
-        75% { transform: translateY(-75%); }
-        100% { transform: translateY(-100%); }
-      }
-
       @keyframes stoper {
         0% { transform: none; }
         25% { transform: none; }
@@ -645,15 +691,27 @@ private computeActiveState = (stateObj: HassEntity): string => {
   }
 }
 
-function swapCard(_config: any, _path: any, _arg2: any[]): any {
-  throw new Error("Function not implemented.");
-}
+// function swapCard(_config: any, _path: any, _arg2: any[]): any {
+//   throw new Error("Function not implemented.");
+// }
 
 function hass(_hass: any, _entityId: any, _percentagePosition: number) {
   throw new Error("Function not implemented.");
 }
 
 function entityId(_hass: any, _entityId: any, _percentagePosition: number) {
+  throw new Error("Function not implemented.");
+}
+
+function blind(_blind: any) {
+  throw new Error("Function not implemented.");
+}
+
+function updateBlindPosition(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
+  throw new Error("Function not implemented.");
+}
+
+function position(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
   throw new Error("Function not implemented.");
 }
 
