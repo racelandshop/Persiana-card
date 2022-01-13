@@ -19,9 +19,12 @@
     "@mdi/js": "^6.5.95",
     "babel-polyfill": "^6.26.0",
     "custom-card-helpers": "^1.8.0",
+    "element": "^0.1.4",
     "home-assistant-js-websocket": "^4.5.0",
     "lit": "^2.0.0-rc.2",
-    "material": "^0.4.3"
+    "material": "^0.4.3",
+    "property": "^3.0.0",
+    "rxjs": "^7.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
