@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -42,7 +43,8 @@ console.info(
 });
 @customElement('persiana-card')
 
-export class BoilerplateCard extends LitElement {
+// export class BoilerplateCard extends LitElement {
+class BlindCard extends HTMLElement {
   [x: string]: any;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -58,8 +60,7 @@ export class BoilerplateCard extends LitElement {
     entities: string[],
     entitiesFallback: string[]
   ): BoilerplateCardConfig {
-    //const includeDomains = ["cover"];
-    const includeDomains = ["switch", "cover"];
+    const includeDomains = ["cover"];
     const maxEntities = 1;
     const foundEntities = findEntities(
       hass,
@@ -69,63 +70,46 @@ export class BoilerplateCard extends LitElement {
       includeDomains
     );
     //return { type: "custom:persiana-card", entity: foundEntities[0] || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [op, close_blind], show_icon: true, show_buttons: true };
-    return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
-    //return { type: "custom:persiana-card", entity: "foundEntities[0]" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
+    //return { type: "custom:persiana-card", entity: "switch.raceland" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
+    return { type: "custom:persiana-card", entity: "foundEntities[0]" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
   }
 
-  @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public homeassistant!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
 
-  public setConfig(config: BoilerplateCardConfig): void {
-    if (!config) {
-      throw new Error(localize('common.invalidconfiguration'));
-    }
-    if (config.test_gui) {
-      getLovelace().setEditMode(true);
-    }
+//   public setConfig(config: BoilerplateCardConfig): void {
+//     if (!config) {
+//       throw new Error(localize('common.invalidconfiguration'));
+//     }
+//     if (config.test_gui) {
+//       getLovelace().setEditMode(true);
+//     }
 
-    this.config = {
-      show_icon: true,
-      icon: 'mdi:blinds',
-      ...config,
-      tap_action: {
-        action: "toggle",
-      },
-      hold_action: {
-        action: "none",
-      },
-      double_tap_action: {
-        action: "none",
-      }
-    };
-  }
+//     this.config = {
+//       show_icon: true,
+//       icon: 'mdi:blinds',
+//       ...config,
+//       tap_action: {
+//         action: "toggle",
+//       },
+//       hold_action: {
+//         action: "none",
+//       },
+//       double_tap_action: {
+//         action: "none",
+//       }
+//     };
+//   }
 
-  set homeassistant(_homeassistant: any) {
+  set hass(_hass: any) {
     const _this = this;
     const entities = this.config.entities;
-    let dragItem = document.querySelector("hui-card");//hui-card or ha-card
-    let slide = document.querySelector("state-off"); //hassbut
-    let picker = document.querySelector("hassbut"); //hassbut
-    let active = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-    this.config = this.config;
-    this.maxPosition = 137;
-    this.minPosition = 19;
-    this.isUpdating = false;
-
-
 
     if (!this.card) {
-      const card = document.createElement('hui-card');
-
+      const card = document.createElement('ha-card');
 
       if (this.config.title) {
-        card.header = this.config.title;
+        this.newMethod(card);
       }
 
       this.card = card;
@@ -133,7 +117,7 @@ export class BoilerplateCard extends LitElement {
 
 
       let allBlinds = document.createElement('div');
-      allBlinds.className = 'svgicon-blind';
+      allBlinds.className = 'sc-blinds';
       entities.forEach((entitiy) => {
 
         let entityId = entitiy;
@@ -163,7 +147,7 @@ export class BoilerplateCard extends LitElement {
 
         let blind = document.createElement('div');
 
-        blind.className = 'svgicon-blind';
+        blind.className = 'sc-blind';
         blind.dataset.blind = entityId;
 
         blind.innerHTML = `
@@ -198,12 +182,11 @@ export class BoilerplateCard extends LitElement {
           </div>
         `;
 
-        let dragItem = blind.querySelector('.sc-blind-selector-picture');
+        let picture = blind.querySelector('.sc-blind-selector-picture');
         let slide = blind.querySelector('.sc-blind-selector-slide');
         let picker = blind.querySelector('.sc-blind-selector-picker');
 
-        slide.style.background = blindColor;
-
+        newFunction(slide, blindColor);
 
         const mouseDown = (event) => {
           if (event.cancelable) {
@@ -221,27 +204,27 @@ export class BoilerplateCard extends LitElement {
         }
 
         let mouseMove = (event) => {
-          let newPosition = event.pageY - this.getPictureTop(dragItem);
+          let newPosition = event.pageY - this.getPictureTop(picture);
           this.setPickerPosition(newPosition, picker, slide);
         };
 
-        let mouseUp = function (this: any, event) {
-          this.isUpdating = false;
+        let mouseUp = function(event) {
+          _this.isUpdating = false;
 
-          let newPosition = event.pageY - this.getPictureTop(dragItem);
+          let newPosition = event.pageY - _this.getPictureTop(picture);
 
-          if (newPosition < this.minPosition)
-            newPosition = this.minPosition;
+          if (newPosition < _this.minPosition)
+            newPosition = _this.minPosition;
 
-          if (newPosition > this.maxPosition)
-            newPosition = this.maxPosition;
+          if (newPosition > _this.maxPosition)
+            newPosition = _this.maxPosition;
 
-          let percentagePosition = (newPosition - this.minPosition) * 100 / (this.maxPosition - this.minPosition);
+          let percentagePosition = (newPosition - _this.minPosition) * 100 / (_this.maxPosition - _this.minPosition);
 
           if (invertPercentage) {
-            this.updateBlindPosition(_homeassistant, entityId, percentagePosition);
+            _this.updateBlindPosition(_hass, entityId, percentagePosition);
           } else {
-            this.updateBlindPosition(_homeassistant, entityId, 100 - percentagePosition);
+            _this.updateBlindPosition(_hass, entityId, 100 - percentagePosition);
           }
 
           document.removeEventListener('mousemove', mouseMove);
@@ -259,30 +242,34 @@ export class BoilerplateCard extends LitElement {
 
         blind.querySelectorAll('.sc-blind-button').forEach(function (button) {
           button.onclick = function () {
-            const command = this.dataset.command;
+            const command = newFunction();
 
             let service = '';
 
             switch (command) {
               case 'up':
-                service = 'open_blinds';
+                service = 'open_cover';
                 break;
 
               case 'down':
-                service = 'close_blinds';
+                service = 'close_cover';
                 break;
 
               case 'stop':
-                service = 'stop_blinds';
+                service = 'stop_cover';
                 break;
             }
-            _homeassistant.callService('blinds', service, {
+            _hass.callService('cover', service, {
               entityId: entityId
             });
+
+            function newFunction() {
+              return _this.dataset.command;
+            }
           };
         });
 
-        allBlinds.appendChild(dragItem);
+        allBlinds.appendChild(picture);
 
         const style = document.createElement('style');
         style.textContent = `
@@ -292,11 +279,11 @@ export class BoilerplateCard extends LitElement {
             .sc-blind-middle {display: flex; width: 210px; margin: auto; }
               .sc-blind-buttons { flex: 1; text-align: center; margin-top: 0.4rem; }
               .sc-blind-selector { flex: 1; }
-                .sc-blind-selector-picture { position: relative; margin: auto; background-size: blinds; min-height: 150px; max-height:100%; width: 153px; }
-                  .sc-blind-selector-picture { background-image: url(data:@file/png;base64,shutter_open) }
+                .sc-blind-selector-picture { position: relative; margin: auto; background-size: cover; min-height: 150px; max-height:100%; width: 153px; }
+                  .sc-blind-selector-picture { background-image: open_blind) }
                 .sc-blind-selector-slide { background-color: #ffffff; position: absolute; top: 19px; left: 6px; width: 92.5%; height: 0; }
                 .sc-blind-selector-picker { position: absolute; top: 19px; left: 5px; width: 93.5%; cursor: pointer; height: 20px; background-repeat: no-repeat; }
-                  .sc-blind-selector-picker { background-image: url(data:@file/png;base64,shutter_close) }
+                  .sc-blind-selector-picker { background-image: close_blind }
             .sc-blind-top { text-align: center; margin-bottom: 1rem; }
             .sc-blind-bottom { text-align: center; margin-top: 1rem; }
               .sc-blind-label { display: inline-block; font-size: 20px; text-align: center; vertical-align: middle; horizontal-align: middle; }
@@ -321,7 +308,7 @@ export class BoilerplateCard extends LitElement {
           const slide = blind.querySelector('.sc-blind-selector-slide');
           const picker = blind.querySelector('.sc-blind-selector-picker');
 
-          const state = _homeassistant.states[entityId];
+          const state = _hass.states[entityId];
           const friendlyName = (entity && entity.name) ? entity.name : state ? state.attributes.friendly_name : 'unknown';
           const currentPosition = state ? state.attributes.current_position : 'unknown';
 
@@ -342,8 +329,8 @@ export class BoilerplateCard extends LitElement {
           }
         });
 
-        getPictureTop(dragItem); {
-          let pictureBox = dragItem.getBoundingClientRect();
+        getPictureTop(picture); {
+          let pictureBox = picture.getBoundingClientRect();
           let body = document.body;
           let docEl = document.documentElement;
 
@@ -357,6 +344,12 @@ export class BoilerplateCard extends LitElement {
         }
       });
     }
+
+    function newFunction(_slide: Element, _blindColor: string) {
+    }
+  }
+
+  private newMethod(_card: HTMLElement) {
   }
 
   setPickerPositionPercentage(position, picker, slide): void {
@@ -379,37 +372,50 @@ export class BoilerplateCard extends LitElement {
   updateBlindPosition(_homeassistant, entityId, position) {
     let blindPosition = Math.round(position);
 
-    _homeassistant.callService('blinds', 'set_blinds_position', {
+    _homeassistant.callService('cover', 'set_cover_position', {
       entity_id: entityId,
       position: blindPosition
     });
+  }
+
+  setConfig(config) {
+    if (!config.entities) {
+      throw new Error('You need to define entities');
     }
+
+    this.config = config;
+    this.maxPosition = 137;
+    this.minPosition = 19;
+    this.isUpdating = false;
+  }
 
     getCardSize() {
       return this.config.entities.length + 1;
     }
 
-public translate_state(stateObj): string {
-    if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
-      return localize("states.on");
-    }
-    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off") {
-      return localize("states.off");
-    }
-    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable") {
-      return localize("states.unavailable");
-    }
-    else {
-      return ""
-    }
-  }
+// update ao estado:
 
-  protected shouldUpdate(changedProps: PropertyValues): boolean {
-    if (!this.config) {
-      return false;
-    }
-    return hasConfigOrEntityChanged(this, changedProps, false);
-  }
+// public translate_state(stateObj): string {
+//     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
+//       return localize("states.on");
+//     }
+//     else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off") {
+//       return localize("states.off");
+//     }
+//     else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable") {
+//       return localize("states.unavailable");
+//     }
+//     else {
+//       return ""
+//     }
+//   }
+
+//   protected shouldUpdate(changedProps: PropertyValues): boolean {
+//     if (!this.config) {
+//       return false;
+//     }
+//     return hasConfigOrEntityChanged(this, changedProps, false);
+//   }
 
   protected renderSwitch(param): string {
     switch (param) {
@@ -432,124 +438,124 @@ public translate_state(stateObj): string {
       ? this.hass.states[this.config.entity]
       : undefined;
 
-    return html`
-  <ha-card
-        class="hassbut ${classMap({
-      "state-on": ifDefined(
-        stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-      "state-off": ifDefined(
-        stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-    })}"
-          @action=${this._handleAction}
-          @focus="${this.handleRippleFocus}"
-          .actionHandler=${actionHandler({
-      hasHold: hasAction(this.config.hold_action),
-      hasDoubleClick: hasAction(this.config.double_tap_action),
-    })}
-        tabindex="0"
-        .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
-      >
-      ${this.config.show_icon
-        ? html`
-            <svg class=${classMap({
-          "svgicon-blind":
-            (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-          "svgicon-shutter":
-            (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-        }
-        )
-          }
-              viewBox="0 0 50 50" height="75%" width="65%" >
-              <path fill="#a9b1bc" d=${this.config.icon[0]} />
-              <path class=${classMap({
-            "state-on-blind-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-            "state-off-blind-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-            "state-on-shutter-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-            "state-off-shutter-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-            "state-unavailable":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-          }
-          )
-          }
-              d=${this.config.icon[1]} />
-            </svg>
-            `
-        : ""}
-      <div></div>
+//     return html`
+//   <ha-card
+//         class="hassbut ${classMap({
+//       "state-on": ifDefined(
+//         stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+//       "state-off": ifDefined(
+//         stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+//     })}"
+//           @action=${this._handleAction}
+//           @focus="${this.handleRippleFocus}"
+//           .actionHandler=${actionHandler({
+//       hasHold: hasAction(this.config.hold_action),
+//       hasDoubleClick: hasAction(this.config.double_tap_action),
+//     })}
+//         tabindex="0"
+//         .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
+//       >
+//       ${this.config.show_icon
+//         ? html`
+//             <svg class=${classMap({
+//           "svgicon-blind":
+//             (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+//           "svgicon-shutter":
+//             (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
+//         }
+//         )
+//           }
+//               viewBox="0 0 50 50" height="75%" width="65%" >
+//               <path fill="#a9b1bc" d=${this.config.icon[0]} />
+//               <path class=${classMap({
+//             "state-on-blind-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//             "state-off-blind-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//             "state-on-shutter-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//             "state-off-shutter-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//             "state-unavailable":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+//           }
+//           )
+//           }
+//               d=${this.config.icon[1]} />
+//             </svg>
+//             `
+//         : ""}
+//       <div></div>
 
-      ${this.config.show_name
-        ? html`
-        <div tabindex = "-1" class="name-div">
-        ${this.config.name}
-        </div>
-      `: ""}
+//       ${this.config.show_name
+//         ? html`
+//         <div tabindex = "-1" class="name-div">
+//         ${this.config.name}
+//         </div>
+//       `: ""}
 
-      ${this.config.show_buttons
-        ? html`
-        <slot class="buttons_up">
-        <button.mdc-icon-button-up
-          .label=${localize("common.arrowup")}
-          .path=${mdiArrowUp}
-          title="Abrir"
-          class="move-arrow-up"
-          @click=${this._cardUp}
-        >&#9650;
-        </button.mdc-icon-button-up>
-        </slot>
+//       ${this.config.show_buttons
+//         ? html`
+//         <slot class="buttons_up">
+//         <button.mdc-icon-button-up
+//           .label=${localize("common.arrowup")}
+//           .path=${mdiArrowUp}
+//           title="Abrir"
+//           class="move-arrow-up"
+//           @click=${this._cardUp}
+//         >&#9650;
+//         </button.mdc-icon-button-up>
+//         </slot>
 
-      ${this.config.show_state
-            ? html`
-        <div tabindex="-1" class="state-div">
-        ${this.translate_state(stateObj)}
-        <div class="position"></div>
-        </div>
-      `: ""}
+//       ${this.config.show_state
+//             ? html`
+//         <div tabindex="-1" class="state-div">
+//         ${this.translate_state(stateObj)}
+//         <div class="position"></div>
+//         </div>
+//       `: ""}
 
-      <slot class="buttons_stop">
-      <button.mdc-icon-button-stop
-          .label=${localize("common.stop")}
-          .path=${mdiStop}
-          title="Stop"
-          class="stop"
-          @click=${this._cardStop}
-        >&#9724;
-      </button.mdc-icon-button-stop>
-      </slot>
-      <div></div>
+//       <slot class="buttons_stop">
+//       <button.mdc-icon-button-stop
+//           .label=${localize("common.stop")}
+//           .path=${mdiStop}
+//           title="Stop"
+//           class="stop"
+//           @click=${this._cardStop}
+//         >&#9724;
+//       </button.mdc-icon-button-stop>
+//       </slot>
+//       <div></div>
 
-      <slot class="buttons_down">
-      <button.mdc-icon-button-down
-          .label=${localize("common.arrowdown")}
-          .path=${mdiArrowDown}
-          title="Fechar"
-          class="move-arrow-down"
-          @click=${this._cardDown}
-      >&#9660;
-      </button.mdc-icon-button-down>
-    </slot>`: ""}
-  </ha-card>
-    `;
+//       <slot class="buttons_down">
+//       <button.mdc-icon-button-down
+//           .label=${localize("common.arrowdown")}
+//           .path=${mdiArrowDown}
+//           title="Fechar"
+//           class="move-arrow-down"
+//           @click=${this._cardDown}
+//       >&#9660;
+//       </button.mdc-icon-button-down>
+//     </slot>`: ""}
+//   </ha-card>
+//     `;
   }
 
-private computeActiveState = (stateObj: HassEntity): string => {
-  const domain = stateObj.entity_id.split(".")[0];
-  let state = stateObj.state;
-  if (domain === "climate") {
-    state = stateObj.attributes.hvac_action;
-  }
-  return state;
-};
+// private computeActiveState = (stateObj: HassEntity): string => {
+//   const domain = stateObj.entity_id.split(".")[0];
+//   let state = stateObj.state;
+//   if (domain === "climate") {
+//     state = stateObj.attributes.hvac_action;
+//   }
+//   return state;
+// };
 
   //é neste código que permite cliquar na carta de modo a funcionar
-  private _handleAction(ev: ActionHandlerEvent): void {
-    if (this.hass && this.config && ev.detail.action) {
-      handleAction(this, this.hass, this.config, ev.detail.action);
-    }
-  }
+//   private _handleAction(ev: ActionHandlerEvent): void {
+//     if (this.hass && this.config && ev.detail.action) {
+//       handleAction(this, this.hass, this.config, ev.detail.action);
+//     }
+//   }
 
   private _showWarning(warning: string): TemplateResult {
     return html`
@@ -569,250 +575,245 @@ private computeActiveState = (stateObj: HassEntity): string => {
     `;
   }
 
-  private computeObjectId = (entityId: string): string =>
-    entityId.substr(entityId.indexOf(".") + 1);
+//   private computeObjectId = (entityId: string): string =>
+//     entityId.substr(entityId.indexOf(".") + 1);
 
-  private computeStateName = (stateObj: HassEntity): string =>
-    stateObj.attributes.friendly_name === undefined
-      ? this.computeObjectId(stateObj.entity_id).replace(/_/g, " ")
-      : stateObj.attributes.friendly_name || "";
+//   private computeStateName = (stateObj: HassEntity): string =>
+//     stateObj.attributes.friendly_name === undefined
+//       ? this.computeObjectId(stateObj.entity_id).replace(/_/g, " ")
+//       : stateObj.attributes.friendly_name || "";
 
-  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
-    return this._ripple;
-  });
+//   private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
+//     return this._ripple;
+//   });
 
-  private handleRippleFocus() {
-    this._rippleHandlers.startFocus();
-  }
+//   private handleRippleFocus() {
+//     this._rippleHandlers.startFocus();
+//   }
 
-  static get styles(): CSSResultGroup {
-    return css`
-      ha-card {
-        cursor: pointer;
-        display: grid;
-        flex-direction: column;
-        align-items: left;
-        text-align: left;
-        padding: 10% 10% 10% 10%;
-        font-size: 18px;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        justify-content: left;
-        position: relative;
-        background: var(--card-color-background, rgba(53,53,53,0.9));
-        color: var(--card-color-text, white);
-        border-radius: 25px;
-        overflow: hidden;
-        grid-template-columns: 50% 50%;
-      }
+//   static get styles(): CSSResultGroup {
+//     return css`
+//       ha-card {
+//         cursor: pointer;
+//         display: grid;
+//         flex-direction: column;
+//         align-items: left;
+//         text-align: left;
+//         padding: 10% 10% 10% 10%;
+//         font-size: 18px;
+//         width: 100%;
+//         height: 100%;
+//         box-sizing: border-box;
+//         justify-content: left;
+//         position: relative;
+//         background: var(--card-color-background, rgba(53,53,53,0.9));
+//         color: var(--card-color-text, white);
+//         border-radius: 25px;
+//         overflow: hidden;
+//         grid-template-columns: 50% 50%;
+//       }
 
-      ha-icon {
-        width: 70%;
-        height: 80%;
-        padding-bottom: 15px;
-        margin: 0% 0% 0% 0%;
-        color: var(--paper-item-icon-color, #fdd835);
-        --mdc-icon-size: 100%;
-      }
+//       ha-icon {
+//         width: 70%;
+//         height: 80%;
+//         padding-bottom: 15px;
+//         margin: 0% 0% 0% 0%;
+//         color: var(--paper-item-icon-color, #fdd835);
+//         --mdc-icon-size: 100%;
+//       }
 
-      ha-icon + span {
-        text-align: left;
-      }
+//       ha-icon + span {
+//         text-align: left;
+//       }
 
-      span {
-        margin: 5% 50% 1% 0%;
-        padding: 0% 100% 1% 0%;
-      }
+//       span {
+//         margin: 5% 50% 1% 0%;
+//         padding: 0% 100% 1% 0%;
+//       }
 
-      ha-icon,
-      span {
-        outline: none;
-      }
+//       ha-icon,
+//       span {
+//         outline: none;
+//       }
 
-      .state {
-        margin: 0% 50% 5% 0%;
-        padding: 0% 100% 5% 0%;
-        text-align: left;
-        align-items: right;
-      }
+//       .state {
+//         margin: 0% 50% 5% 0%;
+//         padding: 0% 100% 5% 0%;
+//         text-align: left;
+//         align-items: right;
+//       }
 
-      .hassbut.state-off {
-        cursor: pointer;
-        text-align: center;
-      }
+//       .hassbut.state-off {
+//         cursor: pointer;
+//         text-align: center;
+//       }
 
-      .hassbut.state-on {
-        cursor: pointer;
-        text-align: center;
-      }
+//       .hassbut.state-on {
+//         cursor: pointer;
+//         text-align: center;
+//       }
 
-      .hassbut {
-        display: grid;
-        grid-template-columns: 90% 10%;
-      }
+//       .hassbut {
+//         display: grid;
+//         grid-template-columns: 90% 10%;
+//       }
 
-      .state-div {
-        align-items: left;
-        text-align: left;
-      }
+//       .state-div {
+//         align-items: left;
+//         text-align: left;
+//       }
 
-      .name-div {
-        align-items: left;
-        text-align: left;
-      }
+//       .name-div {
+//         align-items: left;
+//         text-align: left;
+//       }
 
-      .buttons_up:hover {
-        background-color: var(--secondary-text-color, #313132);
-        border-radius: 100%;
+//       .buttons_up:hover {
+//         background-color: var(--secondary-text-color, #313132);
+//         border-radius: 100%;
 
-      }
-      .buttons_stop:hover {
-        background-color: var(--secondary-text-color);
-        border-radius: 100%;
-      }
-      .buttons_down:hover {
-        background-color: var(--secondary-text-color);
-        border-radius: 100%;
-      }
+//       }
+//       .buttons_stop:hover {
+//         background-color: var(--secondary-text-color);
+//         border-radius: 100%;
+//       }
+//       .buttons_down:hover {
+//         background-color: var(--secondary-text-color);
+//         border-radius: 100%;
+//       }
 
-      .ha-icon-button{
-        cursor: pointer;
-        fill: #ffffff;
-        display: flex;
-        visibility: visible;
-      }
+//       .ha-icon-button{
+//         cursor: pointer;
+//         fill: #ffffff;
+//         display: flex;
+//         visibility: visible;
+//       }
 
-      mwc-list-item {
-        cursor: pointer;
-        white-space: nowrap;
-      }
+//       mwc-list-item {
+//         cursor: pointer;
+//         white-space: nowrap;
+//       }
 
-      .buttons_up {
-        display: flex;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-      }
+//       .buttons_up {
+//         display: flex;
+//         flex-direction: column;
+//         color: var(--card-color-bottom);
+//       }
 
-      .buttons_stop {
-        display: flex;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-      }
+//       .buttons_stop {
+//         display: flex;
+//         flex-direction: column;
+//         color: var(--card-color-bottom);
+//       }
 
-      .buttons_down {
-        display: flex;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-      }
+//       .buttons_down {
+//         display: flex;
+//         flex-direction: column;
+//         color: var(--card-color-bottom);
+//       }
 
-      .buttons_up, .state-on-blind-icon {
-        fill: #a9b1bc;
-      }
+//       .buttons_down {
+//         animation-direction: reverse;
+//         fill: #a9b1bc;
+//       }
 
-      .buttons_stop {
-        animation: stoper;
-      }
+//       .svgicon-blind {
+//         cursor: pointer;
+//         padding-bottom: 20px;
+//         max-width: 170px;
+//         transform: translate(62%, 55%) scale(2.5);
+//       }
 
-      .buttons_down {
-        animation-direction: reverse;
-        fill: #a9b1bc;
-      }
+//       .state {
+//         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+//       }
 
-      .svgicon-blind {
-        cursor: pointer;
-        padding-bottom: 20px;
-        max-width: 170px;
-        transform: translate(62%, 55%) scale(2.5);
-      }
+//       /* alteração ao aspeto persiana */
+//       .state-on-blind-icon {
+//         transform: translateY(-100%);
+//         transition: all 0.5s ease;
+//         fill: #a9b1bc;
+//       }
 
-      .state {
-        animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
+//       /* alteração ao aspeto persiana */
+//       .state-off-blind-icon {
+//         animation-direction: reverse;
+//         transition: all 0.5s ease;
+//         fill: #a9b1bc;
+//       }
 
-      /* alteração ao aspeto persiana */
-      .state-on-blind-icon {
-        transform: translateY(-100%);
-        transition: all 0.5s ease;
-        fill: #a9b1bc;
-      }
+//       /* alteração ao aspeto persiana */
+//       .state-on-shutter-icon {
+//         transform: translateY(-100%);
+//         transition: all 0.5s ease;
+//         fill: #a9b1bc;
+//       }
 
-      /* alteração ao aspeto persiana */
-      .state-off-blind-icon {
-        animation-direction: reverse;
-        transition: all 0.5s ease;
-        fill: #a9b1bc;
-      }
+//       /* alteração ao aspeto persiana */
+//       .state-off-shutter-icon {
+//         animation-direction: reverse;
+//         transition: all 0.5s ease;
+//         fill: #a9b1bc;
+//       }
 
-      /* alteração ao aspeto persiana */
-      .state-on-shutter-icon {
-        transform: translateY(-100%);
-        transition: all 0.5s ease;
-        fill: #a9b1bc;
-      }
+//       .state-unavailable {
+//         color: var(--state-icon-unavailable-color, #bdbdbd);
+//       }
 
-      /* alteração ao aspeto persiana */
-      .state-off-shutter-icon {
-        animation-direction: reverse;
-        transition: all 0.5s ease;
-        fill: #a9b1bc;
-      }
+//       .opacity {
+//         animation: opacity 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+//       }
 
-      .state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
-      }
+//       .reverse {
+//         animation-direction: reverse;
+//       }
 
-      .opacity {
-        animation: opacity 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
-
-      .reverse {
-        animation-direction: reverse;
-      }
-
-      @keyframes state {
-        0% {
-          fill: #9da0a2;
-        }
-        100% {
-          fill: #b68349;
-        }
-      }
+//       @keyframes state {
+//         0% {
+//           fill: #9da0a2;
+//         }
+//         100% {
+//           fill: #b68349;
+//         }
+//       }
 
 
-      @keyframes opacity {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-    `;
-  }
-}
-customElements.define("blind-card", BoilerplateCard);
+//       @keyframes opacity {
+//         0% {
+//           opacity: 0;
+//         }
+//         100% {
+//           opacity: 1;
+//         }
+//       }
+//     `;
+//   }
 
-function hass(_hass: any, _entityId: any, _percentagePosition: number) {
-  throw new Error("Function not implemented.");
 }
 
-function entityId(_hass: any, _entityId: any, _percentagePosition: number) {
-  throw new Error("Function not implemented.");
-}
+// customElements.define("blind-card", BoilerplateCard);
+customElements.define("blind-card", BlindCard);
 
-function blind(_blind: any) {
-  throw new Error("Function not implemented.");
-}
+// function hass(_hass: any, _entityId: any, _percentagePosition: number) {
+//   throw new Error("Function not implemented.");
+// }
 
-function updateBlindPosition(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
-  throw new Error("Function not implemented.");
-}
+// function entityId(_hass: any, _entityId: any, _percentagePosition: number) {
+//   throw new Error("Function not implemented.");
+// }
 
-function position(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
-  throw new Error("Function not implemented.");
-}
+// function blind(_blind: any) {
+//   throw new Error("Function not implemented.");
+// }
 
-function getPictureTop(_dragItem: Element) {
+// function updateBlindPosition(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
+//   throw new Error("Function not implemented.");
+// }
+
+// function position(_hass: (_hass: any, _entityId: any, _percentagePosition: number) => void, _entityId: (_hass: any, _entityId: any, _percentagePosition: number) => void, _position: any) {
+//   throw new Error("Function not implemented.");
+// }
+
+function getPictureTop(_picture: Element) {
   throw new Error("Function not implemented.");
 }

@@ -18,11 +18,10 @@ const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
-
-//const includeDomains = ["cover"];
-const includeDomains = ["switch", "cover"];
+const includeDomains = ['cover'];
 @customElement('persiana-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
+// export class BlindCardEditor extends HTMLElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
   @state() private _toggle?: boolean;
@@ -151,7 +150,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         </svg>Persiana de Tecido
     </paper-item>
     <paper-item class= "paper-item-plastico" .value=${[open_shutter, close_shutter]}>
-        <svg class="svg-platico" viewBox="0 0 50 50" height="24" width="24" >
+        <svg class="svg-plastico" viewBox="0 0 50 50" height="24" width="24" >
         <path class="opacity"  fill="#a9b1bc" d=${open_shutter}/>
         <path class="state" fill="#a9b1bc" d=${close_shutter}/>
         </svg>Persiana
@@ -264,7 +263,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         transform: translate(-10%, -5%) scale(1);
         margin-right: 2.5%;
       }
-      .svg-platico {
+      .svg-plastico {
         transform: translate(-10%, -5%) scale(1);
         margin-right: 2.5%;
       }
