@@ -21,7 +21,6 @@ const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 const includeDomains = ['cover'];
 @customElement('persiana-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
-// export class BlindCardEditor extends HTMLElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
   @state() private _toggle?: boolean;
@@ -40,16 +39,8 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return true;
   }
 
-  get _name(): string {
-    return this._config?.name || '';
-  }
-
-  get _show_name(): boolean {
-    return this._config?.show_name ?? true;
-  }
-
-  get _show_state(): boolean {
-    return this._config?.show_state ?? true;
+  get _name(): boolean {
+    return this._config?._name ?? true;
   }
 
   get _entity(): string {
@@ -72,12 +63,28 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return this._config?.hold_action || { action: 'none' };
   }
 
-  get _invert_percentage(): boolean {
-    return this._config?.invert_position || false;
-  }
-
   get _double_tap_action(): ActionConfig {
     return this._config?.double_tap_action || { action: 'none' };
+  }
+
+  get _invert_percentage(): boolean {
+    return this._config?.invert_percentage || false;
+  }
+
+  get _title_position(): string {
+    return this._config?.title_position || false;
+  }
+
+  get _buttons_position(): string {
+    return this._config?.buttons_position || false;
+  }
+
+  get _test_gui(): boolean {
+    return this._config.test_gui || false;
+  }
+
+  get _blind_color(): string {
+    return this._config?.blind_color || false;
   }
 
   protected render(): TemplateResult | void {
@@ -114,25 +121,15 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       <p>
       </p>
         <ha-formfield
-          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
+          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')}
           .dir=${this.dir}>
           <ha-switch
-            .checked=${this._show_name !== false}
-            .configValue=${'show_name'}
+            .checked=${this._name !== false}
+            .configValue=${'name'}
             @change=${this._change}>
           </ha-switch>
       </ha-formfield>
     </div>
-
-    <ha-formfield
-      .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
-      .dir=${this.dir}>
-        <ha-switch
-          .checked=${this._show_state !== false}
-          .configValue=${'show_state'}
-          @change=${this._change}>
-        </ha-switch>
-    </ha-formfield>
     <div>
 </div>
 

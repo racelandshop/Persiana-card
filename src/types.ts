@@ -6,29 +6,19 @@ declare global {
     'hui-error-card': LovelaceCard;
   }
 }
-
-// TODO Add your configuration elements here for type-checking
 export interface BoilerplateCardConfig extends LovelaceCardConfig {
-  show_buttons: true;
-  // entities: any;
-  // title: any;
-  // show_name: true;
-  // show_state: true;
-  // icon: any;
-  // show_icon: true;
-  type: string;
-  name?: string;
+  entity?: string;
+  buttonsPosition: string;
+  titlePosition: string;
+  invertPercentage: string;
+  blindColor: string;
   show_warning?: boolean;
-  // title_position: string;
-  // buttons_position: string;
-  invert_percentage: string;
-  // blind_color: string;
   show_error?: boolean;
   test_gui?: boolean;
-  entity?: string;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
+  name?: string;
 }
 export interface EditorTarget extends EventTarget {
   value?: string;
