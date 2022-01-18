@@ -84,28 +84,34 @@ export class BlindCard extends HTMLElement {
           entityId = entitiy.entity;
         }
 
+        //posição dos botões da persiana (posição: esquerda)
         let buttonsPosition = 'left';
         if (entitiy && entitiy.buttons_position) {
           buttonsPosition = entitiy.buttons_position.toLowerCase();
         }
 
+        //posição do título da persiana
         let titlePosition = 'top';
         if (entitiy && entitiy.title_position) {
           titlePosition = entitiy.title_position.toLowerCase();
         }
 
+        //se a percentagem da persiana quando se abre e desce não retorna valores negativos
         let invertPercentage = false;
         if (entitiy && entitiy.invert_percentage) {
           invertPercentage = entitiy.invert_percentage;
         }
 
+        //cor da persiana
         let blindColor = '#ffffff'
         if (entitiy && entitiy.blind_color) {
           blindColor = entitiy.blind_color;
         }
 
+        //separador da persiana e janela
         let blind = document.createElement('div');
 
+        //posição do icon da persiana e janela, posição do título, posição dos botões
         blind.className = 'sc-blind';
         blind.dataset.blind = entityId;
         blind.innerHTML = `
@@ -117,9 +123,9 @@ export class BlindCard extends HTMLElement {
         </div>
         <div class="sc-blind-middle" style="flex-direction: ` + (buttonsPosition == 'right' ? 'row-reserve' : 'row') + `;">
         <div class="sc-blind-buttons">
-        <ha-icon-button class="sc-blind-button" data-command="up"><ha-icon icon="mdiArrowUp"></ha-icon></ha-icon-button><br>
-        <ha-icon-button class="sc-blind-button" data-command="stop"><ha-icon icon="mdiStop"></ha-icon></ha-icon-button><br>
-        <ha-icon-button class="sc-blind-button" data-command="down"><ha-icon icon="mdiArrowDown"></ha-icon></ha-icon-button>
+        <ha-icon-button class="sc-blind-button" data-command="up"><ha-icon icon="mdi:arrow-up"></ha-icon></ha-icon-button><br>
+        <ha-icon-button class="sc-blind-button" data-command="stop"><ha-icon icon="mdi:stop"></ha-icon></ha-icon-button><br>
+        <ha-icon-button class="sc-blind-button" data-command="down"><ha-icon icon="mdi:arrow-down"></ha-icon></ha-icon-button>
         </div>
         <div class0"sc-blind-selector">
         <div class="sc-blind-selector-picture">
@@ -136,6 +142,7 @@ export class BlindCard extends HTMLElement {
         </div>
         `;
 
+        //declaração das variáveis relativas ao drag and drop
         let picture = blind.querySelector('.sc-blind-selector-picture');
         let slide = blind.querySelector('.sc-blind-selector-slide');
         let picker = blind.querySelector('.sc-blind-selector-picker');
@@ -149,6 +156,7 @@ export class BlindCard extends HTMLElement {
 
           _this.isUpdating = true;
 
+          //declaração dos modos que permitem mover a persiana dependendo da posição e toque do rato
           document.addEventListener('mousemove', mouseMove);
           document.addEventListener('touchmove', mouseMove);
           document.addEventListener('pointermove', mouseMove);
@@ -157,11 +165,13 @@ export class BlindCard extends HTMLElement {
           document.addEventListener('pointerup', mouseUp);
         };
 
+        //movimento do rato
         let mouseMove = function(event) {
           let newPosition = event.pageY - _this.getPictureTop(picture);
           _this.setPickerPosition(newPosition, picker, slide);
         };
 
+        //movimento do rato
         let mouseUp = function(event) {
           _this.isUpdating = false;
 
@@ -181,6 +191,7 @@ export class BlindCard extends HTMLElement {
             _this.updateBlindPosition(hass, entityId, 100 - percentagePosition);
           }
 
+          //permite mexer a persiana com o rato
           document.removeEventListener('mousemove', mouseMove);
           document.removeEventListener('touchmove', mouseMove);
           document.removeEventListener('pointermove', mouseMove);
@@ -193,13 +204,14 @@ export class BlindCard extends HTMLElement {
         picker.addEventListener('touchstart', mouseDown);
         picker.addEventListener('pointerdown', mouseDown);
 
-        // blind.querySelectorAll('.sc-blind-button').forEach(function (button) {
-        //   button.onclick = function () {
-        //     const command = this.dataset.command;
+        // blind.querySelectorAll('.sc-blind-button').forEach(function () {
+        //   const onclick: any = function () {
+        //     const command = _this.dataset.command;
 
-        blind.querySelectorAll('.sc-blind-button').forEach(function () {
-          const onclick: any = function () {
-            const command = _this.dataset.command;
+        //código que permite abrir a persiana clicando nos botões
+        blind.querySelectorAll('.sc-blind-button').forEach(function (button) {
+          button.onclick = function () {
+            const command = this.dataset.command;
 
             let service = '';
 
@@ -223,6 +235,7 @@ export class BlindCard extends HTMLElement {
         allBlinds.appendChild(blind);
       });
 
+      //aspecto da persiana na carta e qual a image a ser utilizada
       const style = document.createElement('style');
       style.textContent = `
       .sc-blinds {padding: 16px; }
@@ -232,10 +245,10 @@ export class BlindCard extends HTMLElement {
       .sc-blind-buttons { flex: 1; text-align: center; margin-top: 0.4rem; }
       .sc-blind-selector { flex: 1; }
       .sc-blind-selector-picture { position: relative; margin: auto; background-size: cover; min-height: 150px; max-height:100%; width: 153px; }
-      .sc-blind-selector-picture { background-image: url('/workspaces/persiana/images/shutter_open.png') }
+      .sc-blind-selector-picture { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAACXCAYAAAAGVvnKAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABzUlEQVR4nO3asQrCMBRA0Ub6/7/8HKSLIgp6KZRzpg4ZMlxeUsiamVlrbVCYme129ia4PpGRExk5kZETGTmRkRMZOZGRExk5kZETGTmRkRMZOZGRu23b4zkG/NvRlUlGbj8+juo8YORXzyejSUZu/7zEnY33vjn5TDJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiIycyciIjJzJyIiMnMnIiI7d/s2itVe+DCzPJyImMnMjIiYycyMi9/F3OzBn74MLuKKgaKaX1vC8AAAAASUVORK5CYII=') }
       .sc-blind-selector-slide { background-color: #ffffff; position: absolute; top: 19px; left: 6px; width: 92.5%; height: 0; }
       .sc-blind-selector-picker { position: absolute; top: 19px; left: 5px; width: 93.5%; cursor: pointer; height: 20px; background-repeat: no-repeat; }
-      .sc-blind-selector-picker { background-image: url('/workspaces/persiana/images/shutter_close.png') }
+      .sc-blind-selector-picker { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAACXCAYAAAAGVvnKAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABrUlEQVR4nO3asQ2AMAwAQYLYf2WzQboHge5aNy5errxmZg4InW8vwP+JjJzIyImMnMjIiYycyMiJjJzIyImMnMjIiYycyMiJjJzIyImM3LUbrrWe2oOP2/2+umTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERGTmTkREZOZORERk5k5ERG7toNZ+apPfgxl4ycyMiJjJzIyImMnMjI3Qn1CyuEAdsvAAAAAElFTkSuQmCC') }
       .sc-blind-top { text-align: center; margin-bottom: 1rem; }
       .sc-blind-bottom { text-align: center; margin-top: 1rem; }
       .sc-blind-label { display: inline-block; font-size: 20px; text-align: center; vertical-align: middle; horizontal-align: middle; }
@@ -245,17 +258,20 @@ export class BlindCard extends HTMLElement {
       this.appendChild(style);
     }
 
+    //declaração das entidades
     entities.forEach(function (entity) {
       let entityId = entity;
       if (entity && entity.entity) {
         entityId = entity.entity;
       }
 
+      //declaração da percentagem
       let invertPercentage = false;
       if (entity && entity.invert_percentage) {
         invertPercentage = entity.invert_percentage;
       }
 
+      //declaração das variáveis
       const blind = _this.card.querySelector('div[data-blind="' + entityId + '"]');
       const slide = blind.querySelector('.sc-blind-selector-slide');
       const picker = blind.querySelector('.sc-blind-selector-picker');
@@ -281,6 +297,8 @@ export class BlindCard extends HTMLElement {
       }
     });
   }
+
+  //declaração das variáveis
   getPictureTop(picture) {
     let pictureBox = picture.getBoundingClientRect();
     let body = document.body;
@@ -291,11 +309,13 @@ export class BlindCard extends HTMLElement {
     return pictureTop;
   }
 
+  //declaração da posição do picker pecentagem
   setPickerPositionPercentage(position, picker, slide) {
     let realPosition = (this.maxPosition - this.minPosition) * position / 100 + this.minPosition;
     this.setPickerPosition(realPosition, picker, slide);
   }
 
+  //declaração da posição do picker
   setPickerPosition(position, picker, slide) {
     if (position < this.minPosition)
       position = this.minPosition;
@@ -305,6 +325,7 @@ export class BlindCard extends HTMLElement {
     slide.style.height = position - this.minPosition + 'px';
   }
 
+  //atualização da posição da persiana
   updateBlindPosition(hass, entityId, position) {
     let blindPosition = Math.round(position);
     hass.callService('cover', 'set_cover_position', {
@@ -313,6 +334,7 @@ export class BlindCard extends HTMLElement {
     });
   }
 
+  //definição das entidades
   setConfig(config) {
     if (!config.entities) {
       throw new Error('You need to define entities');
@@ -323,6 +345,7 @@ export class BlindCard extends HTMLElement {
     this.isUpdating = false;
   }
 
+  //tamanho da carta
   getCardSize() {
     return this.config.entities.length + 1;
   }

@@ -105,31 +105,31 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             @value-changed=${this._valueChanged}
             allow-custom-entity>
           </ha-entity-picker>
-        </div class="card-config">
+      </div class="card-config">
       </div class="option">
 
-    <div class="side-by-side">
-        <paper-input
-          .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
-          .value=${this._name}
-          .configValue=${'name'}
-          @value-changed=${this._valueChanged}>
-        </paper-input>
-    </div class="side-by-side">
-
-    <div class="div-options">
-      <p>
-      </p>
-        <ha-formfield
-          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')}
-          .dir=${this.dir}>
-          <ha-switch
-            .checked=${this._name !== false}
+      <div class="side-by-side">
+          <paper-input
+            .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
+            .value=${this._name}
             .configValue=${'name'}
-            @change=${this._change}>
-          </ha-switch>
-      </ha-formfield>
-    </div>
+            @value-changed=${this._valueChanged}>
+          </paper-input>
+      </div class="side-by-side">
+
+      <div class="div-options">
+        <p>
+        </p>
+          <ha-formfield
+            .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')}
+            .dir=${this.dir}>
+            <ha-switch
+              .checked=${this._name !== false}
+              .configValue=${'name'}
+              @change=${this._change}>
+            </ha-switch>
+        </ha-formfield>
+      </div>
     <div>
 </div>
 
@@ -158,112 +158,112 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
 `;
 }
 
-  private _change(ev: Event): void{
-    if (!this._config || !this.hass) {
-      return;
-    }
-    if (ev.target) {
-      const target = ev.target as EditorTarget;
-    const value = target.checked;
-    if (this[`_${target.configValue}`] === value) {
-      return;
-    }
+private _change(ev: Event): void{
+  if (!this._config || !this.hass) {
+    return;
+  }
+  if (ev.target) {
+    const target = ev.target as EditorTarget;
+  const value = target.checked;
+  if (this[`_${target.configValue}`] === value) {
+    return;
+  }
 
-    fireEvent(this, 'config-changed', {
-      config: {
+  fireEvent(this, 'config-changed', {
+    config: {
+      ...this._config,
+      [target.configValue!]: value,
+    },
+  });
+  }
+}
+
+private _initialize(): void {
+  if (this.hass === undefined) return;
+  if (this._config === undefined) return;
+  if (this._helpers === undefined) return;
+  this._initialized = true;
+}
+
+private async loadCardHelpers(): Promise<void> {
+  this._helpers = await (window as any).loadCardHelpers();
+}
+
+private _valueChanged(ev): void {
+  if (!this._config || !this.hass) {
+    return;
+  }
+  const target = ev.target;
+  if (this[`_${target.configValue}`] === target.value) {
+    return;
+  }
+  if (target.configValue) {
+    if (target.value === '') {
+      const tmpConfig = { ...this._config };
+      delete tmpConfig[target.configValue];
+      this._config = tmpConfig;
+    } else {
+      this._config = {
         ...this._config,
-        [target.configValue!]: value,
-      },
-    });
+        [target.configValue]: target.checked !== undefined ? target.checked : target.value,
+      };
     }
   }
+  fireEvent(this, 'config-changed', { config: this._config });
+}
 
-  private _initialize(): void {
-    if (this.hass === undefined) return;
-    if (this._config === undefined) return;
-    if (this._helpers === undefined) return;
-    this._initialized = true;
+private _changed_icon(ev): void {
+  if (!this.hass || ev.target.selected === "") {
+    return;
   }
+  this._config = {
+    ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:blind-card'
+  }
+  console.log("this._config", this._config);
+  fireEvent(this, "config-changed", { config: this._config });
+}
 
-  private async loadCardHelpers(): Promise<void> {
-    this._helpers = await (window as any).loadCardHelpers();
-  }
-
-  private _valueChanged(ev): void {
-    if (!this._config || !this.hass) {
-      return;
+static get styles(): CSSResultGroup {
+  return css`
+    .option {
+      padding: 3% 0%;
+      cursor: pointer;
     }
-    const target = ev.target;
-    if (this[`_${target.configValue}`] === target.value) {
-      return;
+    .row {
+      display: flex;
+      margin-bottom: -14px;
+      pointer-events: none;
     }
-    if (target.configValue) {
-      if (target.value === '') {
-        const tmpConfig = { ...this._config };
-        delete tmpConfig[target.configValue];
-        this._config = tmpConfig;
-      } else {
-        this._config = {
-          ...this._config,
-          [target.configValue]: target.checked !== undefined ? target.checked : target.value,
-        };
-      }
+    .title {
+      padding-left: 16px;
+      margin-top: -6px;
+      pointer-events: none;
     }
-    fireEvent(this, 'config-changed', { config: this._config });
-  }
-
-  private _changed_icon(ev): void {
-    if (!this.hass || ev.target.selected === "") {
-      return;
+    .secondary {
+      padding-left: 40px;
+      color: var(--secondary-text-color);
+      pointer-events: none;
     }
-    this._config = {
-      ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:persiana-card'
+    .values {
+      padding-left: 16px;
+      background: var(--secondary-background-color);
+      display: grid;
     }
-    console.log("this._config", this._config);
-    fireEvent(this, "config-changed", { config: this._config });
-  }
-
-  static get styles(): CSSResultGroup {
-    return css`
-      .option {
-        padding: 3% 0%;
-        cursor: pointer;
-      }
-      .row {
-        display: flex;
-        margin-bottom: -14px;
-        pointer-events: none;
-      }
-      .title {
-        padding-left: 16px;
-        margin-top: -6px;
-        pointer-events: none;
-      }
-      .secondary {
-        padding-left: 40px;
-        color: var(--secondary-text-color);
-        pointer-events: none;
-      }
-      .values {
-        padding-left: 16px;
-        background: var(--secondary-background-color);
-        display: grid;
-      }
-      ha-formfield {
-        padding: 0px 10px 0px 20px;
-        max-width: 211px;
-      }
-      .dropdown-icon {
-        padding-left: 5%;
-      }
-      .svg-tecido {
-        transform: translate(-10%, -5%) scale(1);
-        margin-right: 2.5%;
-      }
-      .svg-plastico {
-        transform: translate(-10%, -5%) scale(1);
-        margin-right: 2.5%;
-      }
-    `;
-  }
+    ha-formfield {
+      padding: 0px 10px 0px 20px;
+      max-width: 211px;
+    }
+    .dropdown-icon {
+      padding-left: 5%;
+    }
+    .svg-tecido {
+      transform: translate(-10%, -5%) scale(1);
+      margin-right: 2.5%;
+    }
+    .svg-plastico {
+      transform: translate(-10%, -5%) scale(1);
+      margin-right: 2.5%;
+    }
+  `;
+}
 }
