@@ -14,8 +14,8 @@ const cardConfigStruct = {
   },
 };
 
-const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
-const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
+// const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
+const close_shutter = "M2.887 6.969v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18V8.102H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 1.945v.81H46.18v-1.618H2.887Zm0 1.946v.809H46.18v-1.621H2.887Zm0 1.945v.809H46.18v-1.621H2.887Zm0 1.942v.812H46.18v-1.62H2.887Zm0 1.945v.813H46.18V19.77H2.887Zm0 1.945v.809H46.18v-1.617H2.887Zm0 1.946v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18v-1.621H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 1.945v.81H46.18v-1.618H2.887Zm0 1.946v.809H46.18v-1.621H2.887Zm0 1.945V35H46.18v-1.621H2.887Zm0 1.942v.812H46.18v-1.62H2.887Zm0 1.945v.813H46.18V37.27H2.887Zm0 1.945v.809H46.18v-1.617H2.887Zm0 1.946v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18v-1.621H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 0";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 const includeDomains = ['cover'];
@@ -39,8 +39,20 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return true;
   }
 
-  get _name(): boolean {
-    return this._config?._name ?? true;
+  get _name(): string {
+    return this._config?.name || '';
+  }
+
+  get _show_name(): boolean {
+    return this._config?.show_name ?? true;
+  }
+
+  get _show_state(): boolean {
+    return this._config?.show_state ?? true;
+  }
+
+  get _show_buttons(): boolean {
+    return this._config?.show_buttons ?? true;
   }
 
   get _entity(): string {
@@ -116,20 +128,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             @value-changed=${this._valueChanged}>
           </paper-input>
       </div class="side-by-side">
-
-      <div class="div-options">
-        <p>
-        </p>
-          <ha-formfield
-            .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')}
-            .dir=${this.dir}>
-            <ha-switch
-              .checked=${this._name !== false}
-              .configValue=${'name'}
-              @change=${this._change}>
-            </ha-switch>
-        </ha-formfield>
-      </div>
     <div>
 </div>
 
@@ -146,9 +144,9 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         <path class="state" fill="#a9b1bc" d=${close_blind}/>
         </svg>Persiana de Tecido
     </paper-item>
-    <paper-item class= "paper-item-plastico" .value=${[open_shutter, close_shutter]}>
+    <paper-item class= "paper-item-plastico" .value=${[open_blind, close_shutter]}>
         <svg class="svg-plastico" viewBox="0 0 50 50" height="24" width="24" >
-        <path class="opacity"  fill="#a9b1bc" d=${open_shutter}/>
+        <path class="opacity"  fill="#a9b1bc" d=${open_blind}/>
         <path class="state" fill="#a9b1bc" d=${close_shutter}/>
         </svg>Persiana
     </paper-item>
@@ -217,7 +215,7 @@ private _changed_icon(ev): void {
     return;
   }
   this._config = {
-    ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:blind-card'
+    ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:persiana-card'
   }
   console.log("this._config", this._config);
   fireEvent(this, "config-changed", { config: this._config });

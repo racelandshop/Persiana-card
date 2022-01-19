@@ -8,6 +8,8 @@ declare global {
 }
 export interface BoilerplateCardConfig extends LovelaceCardConfig {
   entity?: string;
+  show_state: true;
+  show_name: true;
   buttonsPosition: string;
   titlePosition: string;
   invertPercentage: string;
