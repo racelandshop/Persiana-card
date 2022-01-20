@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
+
+import "./components/ha-icon-button";
+import "./components/ha-icon-button";/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -23,6 +25,10 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
+import { computeCloseIcon, computeOpenIcon } from "../src/common/entity/cover_icon";
+import { UNAVAILABLE } from "../src/data/entity";
+import { CoverEntity } from "../src/util/cover-model";
+// import "./ha-icon-button";
 // import "@material/mwc-list/mwc-list-item";
 
 // const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
@@ -73,7 +79,17 @@ export class BoilerplateCard extends LitElement {
   }
 
   @property({ attribute: false }) public hass!: HomeAssistant;
+  @property({ attribute: false }) public stateObj!: HassEntity;
+  @state() private _entityObj?: CoverEntity;
   @state() private config!: BoilerplateCardConfig;
+
+  // public willUpdate(changedProperties: PropertyValues): void {
+  //   super.willUpdate(changedProperties);
+
+  //   if (changedProperties.has("stateObj")) {
+  //     this._entityObj = new CoverEntity(this.hass, this.stateObj);
+  //   }
+  // }
 
   public setConfig(config: BoilerplateCardConfig): void {
     if (!config) {
@@ -301,6 +317,11 @@ export class BoilerplateCard extends LitElement {
   }
 
   protected render(): TemplateResult | void {
+
+    if (!this._entityObj) {
+      return html``;
+    }
+
     if (this.config.show_warning) {
       return this._showWarning(localize('common.show_warning'));
     }
@@ -313,63 +334,112 @@ export class BoilerplateCard extends LitElement {
       ? this.hass.states[this.config.entity]
       : undefined;
 
-  return html`
+    return html`
   <ha-card
         class="hassbut ${classMap({
-        "state-on": ifDefined(
-          stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-        "state-off": ifDefined(
-          stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-      })}"
+      "state-on": ifDefined(
+        stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+      "state-off": ifDefined(
+        stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+    })}"
         @action=${this._handleAction}
         @focus="${this.handleRippleFocus}"
         .actionHandler=${actionHandler({
-          hasHold: hasAction(this.config.hold_action),
-          hasDoubleClick: hasAction(this.config.double_tap_action),
-        })}
+      hasHold: hasAction(this.config.hold_action),
+      hasDoubleClick: hasAction(this.config.double_tap_action),
+    })}
         tabindex="0"
         .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
       >
       ${this.config.show_icon
-          ? html`
+        ? html`
             <svg class=${classMap({
-                "svgicon-blind":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-                "svgicon-shutter":
-                (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_blind])),
-                }
-                )
-            }
+          "svgicon-blind":
+            (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+          "svgicon-shutter":
+            (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_blind])),
+        }
+        )
+          }
               viewBox="0 0 50 50" height="75%" width="65%" >
               <path fill="#a9b1bc" d=${this.config.icon[0]} />
               <path class=${classMap({
-                "state-on-blind-icon":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) ==JSON.stringify([open_blind, close_blind])),
-                "state-off-blind-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-                "state-on-shutter-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_shutter])),
-                "state-off-shutter-icon":
-                  ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_shutter])),
-                "state-unavailable":
-                  ifDefined(stateObj? this.computeActiveState(stateObj) : undefined) === "unavailable",
-              }
-                  )
-              }
+            "state-on-blind-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+            "state-off-blind-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+            "state-on-shutter-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_shutter])),
+            "state-off-shutter-icon":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_shutter])),
+            "state-unavailable":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+          }
+          )
+          }
               d=${this.config.icon[1]} />
             </svg>
             `
-    : ""}
+        : ""}
     <div></div>
 
     ${this.config.show_name
-    ? html`
+        ? html`
       <div tabindex = "-1" class="name-div">
       ${this.config.name}
       </div>
     `: ""}
 
     ${this.config.show_buttons
+      ? html`
+        <div class="state">
+        <button.mdc-icon-button-up
+          class=${classMap({
+            hidden: !this._entityObj.supportsOpen,
+          })}
+          .label=${this.hass.localize(
+            "ui.dialogs.more_info_control.open_cover"
+          )}
+          .icon=${computeOpenIcon(this.stateObj)}
+          @click=${this._onOpenTap}
+          .disabled=${this._computeOpenDisabled()}
+        ></button.mdc-icon-button-up>
+        <button.mdc-icon-button-stop
+          class=${classMap({
+            hidden: !this._entityObj.supportsStop,
+          })}
+          .label=${this.hass.localize(
+            "ui.dialogs.more_info_control.stop_cover"
+          )}
+          icon="hass:stop"
+          @click=${this._onStopTap}
+          .disabled=${this.stateObj.state === UNAVAILABLE}
+        ></button.mdc-icon-button-stop>
+        <button.mdc-icon-button-down
+          class=${classMap({
+            hidden: !this._entityObj.supportsClose,
+          })}
+          .label=${this.hass.localize(
+            "ui.dialogs.more_info_control.close_cover"
+          )}
+          .icon=${computeCloseIcon(this.stateObj)}
+          @click=${this._onCloseTap}
+          .disabled=${this._computeClosedDisabled()}
+        ></button.mdc-icon-button-down>
+      </div>
+
+    `: "" }
+
+    ${this.config.show_state
+    ? html`
+      <div tabindex="-1" class="state-div">
+      ${this.translate_state(stateObj)}
+      <div class="position"></div>
+      </div>
+    `: ""}
+
+
+    <!-- ${this.config.show_buttons
     ? html`
         <slot class="buttons_up">
         <button.mdc-icon-button-up
@@ -411,9 +481,46 @@ export class BoilerplateCard extends LitElement {
         @click=${this._cardDown}
       >&#9660;
       </button.mdc-icon-button-down>
-    </slot>`: ""}
+    </slot>`: ""} -->
   </ha-card>
     `;
+  }
+
+  private _computeOpenDisabled(): boolean {
+    if (this.stateObj.state === UNAVAILABLE) {
+      return true;
+    }
+    const assumedState = this.stateObj.attributes.assumed_state === true;
+    return (
+      (this._entityObj.isFullyOpen || this._entityObj.isOpening) &&
+      !assumedState
+    );
+  }
+
+  private _computeClosedDisabled(): boolean {
+    if (this.stateObj.state === UNAVAILABLE) {
+      return true;
+    }
+    const assumedState = this.stateObj.attributes.assumed_state === true;
+    return (
+      (this._entityObj.isFullyClosed || this._entityObj.isClosing) &&
+      !assumedState
+    );
+  }
+
+  private _onOpenTap(ev): void {
+    ev.stopPropagation();
+    this._entityObj.openCover();
+  }
+
+  private _onCloseTap(ev): void {
+    ev.stopPropagation();
+    this._entityObj.closeCover();
+  }
+
+  private _onStopTap(ev): void {
+    ev.stopPropagation();
+    this._entityObj.stopCover();
   }
 
 private computeActiveState = (stateObj: HassEntity): string => {
@@ -487,6 +594,10 @@ private computeActiveState = (stateObj: HassEntity): string => {
         grid-template-columns: 50% 50%;
       }
 
+      .hidden {
+        visibility: hidden !important;
+      }
+
       ha-icon {
         width: 70%;
         height: 80%;
@@ -515,6 +626,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .state {
+        white-space: nowrap;
         margin: 0% 50% 5% 0%;
         padding: 0% 100% 5% 0%;
         text-align: left;
@@ -537,6 +649,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         display: grid;
         grid-template-columns: 50% 50%;
       }
+
       .button.mdc-icon-button {
         fill: #ffffff;
       }
@@ -570,6 +683,7 @@ private computeActiveState = (stateObj: HassEntity): string => {
         text-align: center;
         flex-direction: column;
         color: var(--card-color-bottom);
+        animation-play-state: paused;
       }
 
       .buttons_down {
@@ -578,6 +692,16 @@ private computeActiveState = (stateObj: HassEntity): string => {
         text-align: center;
         flex-direction: column;
         color: var(--card-color-bottom);
+      }
+
+      .buttons_up .state-on-blind-icon {
+        transform: scale(0);
+        transition: all 0.5s ease;
+      }
+
+      .buttons_down .state-off-blind-icon {
+        animation-direction: reverse;
+        transition: all 0.5s ease;
       }
 
       .state-div {
@@ -645,7 +769,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .state-on-blind-icon {
-        transform: scale(0);
         fill: #ffffff;
       }
 
@@ -654,7 +777,6 @@ private computeActiveState = (stateObj: HassEntity): string => {
       }
 
       .state-on-shutter-icon {
-        transform: scale(0);
         fill: #ffffff;
       }
 
@@ -696,3 +818,9 @@ private computeActiveState = (stateObj: HassEntity): string => {
     `;
   }
 }
+declare global {
+  interface HTMLElementTagNameMap {
+    "ha-cover-controls": BoilerplateCard;
+  }
+}
+
