@@ -119,7 +119,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
           </ha-entity-picker>
       </div class="card-config">
       </div class="option">
-
       <div class="side-by-side">
           <paper-input
             .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
@@ -130,7 +129,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       </div class="side-by-side">
     <div>
 </div>
-
 <paper-input-label-8>Escolha o icon: </paper-input-label-8>
 <paper-dropdown-menu class="dropdown-icon">
 <paper-listbox slot="dropdown-content"
