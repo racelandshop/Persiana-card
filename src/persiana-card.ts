@@ -23,9 +23,6 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
-import { computeCloseIcon, computeOpenIcon } from "../src/common/entity/cover_icon";
-import { UNAVAILABLE } from "../src/data/entity";
-import CoverEntity from "../src/util/cover-model";
 
 const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
@@ -72,18 +69,8 @@ export class BoilerplateCard extends LitElement {
     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
     }
 
-  @property({ attribute: false }) public homeassistant!: HomeAssistant;
-  @property({ attribute: false }) public stateObj!: HassEntity;
-  @state() private _entityObj?: CoverEntity;
-  @state() private config!: BoilerplateCardConfig;
-
-  public willUpdate(changedProperties: PropertyValues): void {
-    super.willUpdate(changedProperties);
-
-    if (changedProperties.has("stateObj")) {
-      this._entityObj = new CoverEntity(this.hass, this.stateObj);
-    }
-  }
+    @property({ attribute: false }) public homeassistant!: HomeAssistant;
+    @state() private config!: BoilerplateCardConfig;
 
     public setConfig(config: BoilerplateCardConfig): void {
       if (!config) {
@@ -211,51 +198,7 @@ export class BoilerplateCard extends LitElement {
         </div>
       `: ""}
 
-      ${this.config.show_state
-      ? html`
-        <div tabindex="-1" class="state-div">
-        ${this.translate_state(stateObj)}
-        <div class="position"></div>
-        </div>
-      `: ""}
-
-      <div class="state">
-        <slot
-          class=${classMap({
-            hidden: !this._entityObj.supportsOpen,
-          })}
-          .label=${this.hass.localize(
-            "ui.dialogs.more_info_control.open_cover"
-          )}
-          .icon=${computeOpenIcon(this.stateObj)}
-          @click=${this._onOpenTap}
-          .disabled=${this._computeOpenDisabled()}
-        ></slot>
-        <slot
-          class=${classMap({
-            hidden: !this._entityObj.supportsStop,
-          })}
-          .label=${this.hass.localize(
-            "ui.dialogs.more_info_control.stop_cover"
-          )}
-          data-icon="homeassistant:stop"
-          @click=${this._onStopTap}
-          .disabled=${this.stateObj.state === UNAVAILABLE}
-        ></slot>
-        <slot
-          class=${classMap({
-            hidden: !this._entityObj.supportsClose,
-          })}
-          .label=${this.hass.localize(
-            "ui.dialogs.more_info_control.close_cover"
-          )}
-          .icon=${computeCloseIcon(this.stateObj)}
-          @click=${this._onCloseTap}
-          .disabled=${this._computeClosedDisabled()}
-        ></slot>
-      </div>
-
-      <!-- ${this.config.show_buttons
+      ${this.config.show_buttons
       ? html`
         <slot class="buttons_up">
         <button.mdc-icon-button-up
@@ -297,47 +240,10 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardDown}
       >&#9660;
       </button.mdc-icon-button-down>
-      </slot>`: ""} -->
+      </slot>`: ""}
     </ha-card>
     `;
-  }
-
-  private _computeOpenDisabled(): boolean {
-    if (this.stateObj.state === UNAVAILABLE) {
-      return true;
     }
-    const assumedState = this.stateObj.attributes.assumed_state === true;
-    return (
-      (this._entityObj.isFullyOpen || this._entityObj.isOpening) &&
-      !assumedState
-    );
-  }
-
-  private _computeClosedDisabled(): boolean {
-    if (this.stateObj.state === UNAVAILABLE) {
-      return true;
-    }
-    const assumedState = this.stateObj.attributes.assumed_state === true;
-    return (
-      (this._entityObj.isFullyClosed || this._entityObj.isClosing) &&
-      !assumedState
-    );
-  }
-
-  private _onOpenTap(ev): void {
-    ev.stopPropagation();
-    this._entityObj.openCover();
-  }
-
-  private _onCloseTap(ev): void {
-    ev.stopPropagation();
-    this._entityObj.closeCover();
-  }
-
-  private _onStopTap(ev): void {
-    ev.stopPropagation();
-    this._entityObj.stopCover();
-  }
 
     private computeActiveState = (stateObj: HassEntity): string => {
       const domain = stateObj.entity_id.split(".")[0];
@@ -458,10 +364,6 @@ export class BoilerplateCard extends LitElement {
       .state-div {
         align-items: left;
         text-align: left;
-      }
-
-      .hidden {
-        visibility: hidden !important;
       }
 
       .name-div {
@@ -615,10 +517,4 @@ export class BoilerplateCard extends LitElement {
       }
     `;
     }
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "ha-cover-controls": BoilerplateCard;
-  }
 }
