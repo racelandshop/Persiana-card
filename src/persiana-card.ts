@@ -200,7 +200,7 @@ export class BoilerplateCard extends LitElement {
 
       ${this.config.show_buttons
       ? html`
-        <slot class="buttons_up">
+        <slot name="buttons_up"></slot>
         <button.mdc-icon-button-up
           .label=${localize("common.arrowup")}
           .path=${mdiArrowUp}
@@ -209,7 +209,7 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardUp}
         >&#9650;
         </button.mdc-icon-button-up>
-        </slot>
+        <!-- </slot> -->
 
       ${this.config.show_state
       ? html`
@@ -219,7 +219,7 @@ export class BoilerplateCard extends LitElement {
         </div>
       `: ""}
 
-      <slot class="buttons_stop">
+      <slot name="buttons_stop"></slot>
       <button.mdc-icon-button-stop
           .label=${localize("common.stop")}
           .path=${mdiStop}
@@ -228,10 +228,10 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardStop}
       >&#9724;
       </button.mdc-icon-button-stop>
-      </slot>
+      <!-- </slot> -->
       <div></div>
 
-      <slot class="buttons_down">
+      <slot name="buttons_down"></slot>
       <button.mdc-icon-button-down
           .label=${localize("common.arrowdown")}
           .path=${mdiArrowDown}
@@ -240,7 +240,8 @@ export class BoilerplateCard extends LitElement {
           @click=${this._cardDown}
       >&#9660;
       </button.mdc-icon-button-down>
-      </slot>`: ""}
+      <!-- </slot> -->
+      `: ""}
     </ha-card>
     `;
     }
@@ -371,38 +372,37 @@ export class BoilerplateCard extends LitElement {
         text-align: left;
       }
 
-      .buttons_up:hover {
-        background-color: var(--secondary-text-color, #313132);
-        border-radius: 100%;
-      }
-
-      .buttons_up:disabled {
-        fill: var(--secondary-text-color, #313132);
-      }
-      .buttons_stop:disabled {
-        fill: var(--secondary-text-color, #313132);
-      }
-      .buttons_down:disabled {
-        fill: var(--secondary-text-color, #313132);
-      }
-
-      .buttons_up:active {
-        .buttons_stop:disabled {
-          fill: var(--secondary-text-color, #313132);
-        }
-        .buttons_down:disabled {
-          fill: var(--secondary-text-color, #313132);
+      button.mdc-icon-button-up.move-arrow-down[disabled]{
+        .move-arrow-down{
+          visibility: hidden;
         }
       }
 
-      .buttons_stop:hover {
+      /* .buttons_up:active {
+        .buttons_down:hover {
+          display:none;
+        }
+        .buttons_stop:hover {
+          opacity: 0.1;
+        }
+      } */
+
+      .move-arrow-up:hover {
         background-color: var(--secondary-text-color, #313132);
         border-radius: 100%;
+        opacity: 0.5;
       }
 
-      .buttons_down:hover {
+      .stop:hover {
         background-color: var(--secondary-text-color, #313132);
         border-radius: 100%;
+        opacity: 0.5;
+      }
+
+      .move-arrow-down:hover {
+        background-color: var(--secondary-text-color, #313132);
+        border-radius: 100%;
+        opacity: 0.5;
       }
 
       .ha-icon-button{
@@ -417,7 +417,7 @@ export class BoilerplateCard extends LitElement {
         white-space: nowrap;
       }
 
-      .buttons_up {
+      .move-arrow-up {
         width: 2rem;
         display: flex;
         text-align: center;
@@ -425,7 +425,7 @@ export class BoilerplateCard extends LitElement {
         color: var(--card-color-bottom);
       }
 
-      .buttons_stop {
+      .stop {
         width: 2rem;
         display: flex;
         text-align: center;
@@ -434,7 +434,7 @@ export class BoilerplateCard extends LitElement {
         animation-play-state: paused;
       }
 
-      .buttons_down {
+      .move-arrow-down {
         width: 2rem;
         display: flex;
         text-align: center;
@@ -442,7 +442,7 @@ export class BoilerplateCard extends LitElement {
         color: var(--card-color-bottom);
       }
 
-      .buttons_down {
+      .move-arrow-down {
         animation-direction: reverse;
         fill: #a9b1bc;
       }
