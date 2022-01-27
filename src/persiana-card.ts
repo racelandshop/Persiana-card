@@ -96,71 +96,156 @@ export class BoilerplateCard extends LitElement {
       };
     }
 
-    set hass(_homeassistant: any) {
-      let dragItem = document.querySelector("svgicon-blind");
-      let container = document.querySelector("ha-card");
+  // set hass(_homeassistant: any) {
+  //   _$(function () {
+  //     let sliders = document.querySelector('.slider');
+  //     let isDown = false;
+  //     let startX;
+  //     let scrollleft;
 
-      let active = false;
-      let currentX;
-      let currentY;
-      let initialX;
-      let initialY;
-      let xOffset = 0;
-      let yOffset = 0;
+  //     sliders.addEventListener('mousedown', (e) => {
+  //       isDown = true;
+  //       sliders.classList.add('active');
+  //       startX = e.pageX - sliders.offsetLeft;
+  //       scrollleft = sliders.scrollLeft;
+  //     });
+  //     sliders.addEventListener('mouseleave', () => {
+  //       isDown = false;
+  //       sliders.classList.remove('active');
+  //     });
+  //     sliders.addEventListener('mouseup', () => {
+  //       isDown = false;
+  //       sliders.classList.remove('active');
+  //     });
+  //     sliders.addEventListener('mousemove', (e) => {
+  //       if (!isDown) return;
+  //       e.preventDefault();
+  //       let x = e.pageX - sliders.offsetLeft;
 
-      container.addEventListener("touchstart", dragStart, false);
-      container.addEventListener("touchend", dragEnd, false);
-      container.addEventListener("touchmove", drag, false);
+  //       let walk = (x - startX) * 3;
+  //       sliders.scrollLeft = (scrollleft - walk);
+  //     });
+  //     window.addEventListener("scroll", myFunction);
+  //     sliders.addEventListener("click", myFunction);
 
-      container.addEventListener("mousedown", dragStart, false);
-      container.addEventListener("mouseup", dragEnd, false);
-      container.addEventListener("mousemove", drag, false);
+  //     function myFunction(e) {
+  //       if (!isDown) return;
+  //       e.preventDefault();
+  //       let x = e.pageX - sliders.offsetLeft;
 
-      function dragStart(e) {
-        if (e.type === "touchstart") {
-          initialX = e.touches[0].clientX - xOffset;
-          initialY = e.touches[0].clientY - yOffset;
-        } else {
-          initialX = e.clientX - xOffset;
-          initialY = e.clientY - yOffset;
-        }
+  //       let walk = (x - startX) * 3;
+  //       sliders.scrollLeft = (scrollleft - walk);
+  //     }
 
-        if (e.target === dragItem) {
-          active = true;
-        }
-      }
+  //   })
+  // }
 
-      function dragEnd(_e) {
-        initialX = currentX;
-        initialY = currentY;
+  // set hass(_homeassistant: any) {
+  //   let dragged;
 
-        active = false;
-      }
+  //   document.addEventListener("drag", function (_event) {
+  //   }, false);
 
-      function drag(e) {
-        if (active) {
+  //   document.addEventListener("dragstart", function (event) {
+  //     dragged = event.target;
+  //     event.target.style.opacity = 0.5;
+  //   }, false);
 
-          e.preventDefault();
+  //   document.addEventListener("dragend", function (event) {
+  //     event.target.style.opacity = "";
+  //   }, false);
 
-          if (e.type === "touchmove") {
-            currentX = e.touches[0].clientX - initialX;
-            currentY = e.touches[0].clientY - initialY;
-          } else {
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-          }
+  //   document.addEventListener("dragover", function (event) {
+  //     event.preventDefault();
+  //   }, false);
 
-          xOffset = currentX;
-          yOffset = currentY;
+  //   document.addEventListener("dragenter", function (event) {
+  //     if (event.target.className = "dropzone") {
+  //       event.target.style.background = "purple";
+  //     }
+  //   }, false);
 
-          setTranslate(currentX, currentY, dragItem);
-        }
-      }
+  //   document.addEventListener("dragleave", function (event) {
+  //     if (event.target.className == "dropzone") {
+  //       event.target.style.background = "";
+  //     }
+  //   }, false);
 
-      function setTranslate(xPos, yPos, el) {
-        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-      }
-    }
+  //   document.addEventListener("drop", function (event) {
+  //     event.preventDefault();
+  //     if (event.target.className = "dropzone") {
+  //       event.target.style.background = "";
+  //       dragged.parentNode.removechild(dragged);
+  //       event.target.appendChild(dragged);
+  //     }
+  //   }, false);
+  // }
+
+    // set hass(_homeassistant: any) {
+    //   let dragItem = document.querySelector("svgicon-blind");
+    //   let container = document.querySelector("ha-card");
+
+    //   let active = false;
+    //   let currentX;
+    //   let currentY;
+    //   let initialX;
+    //   let initialY;
+    //   let xOffset = 0;
+    //   let yOffset = 0;
+
+    //   container.addEventListener("touchstart", dragStart, false);
+    //   container.addEventListener("touchend", dragEnd, false);
+    //   container.addEventListener("touchmove", drag, false);
+
+    //   container.addEventListener("mousedown", dragStart, false);
+    //   container.addEventListener("mouseup", dragEnd, false);
+    //   container.addEventListener("mousemove", drag, false);
+
+    //   function dragStart(e) {
+    //     if (e.type === "touchstart") {
+    //       initialX = e.touches[0].clientX - xOffset;
+    //       initialY = e.touches[0].clientY - yOffset;
+    //     } else {
+    //       initialX = e.clientX - xOffset;
+    //       initialY = e.clientY - yOffset;
+    //     }
+
+    //     if (e.target === dragItem) {
+    //       active = true;
+    //     }
+    //   }
+
+    //   function dragEnd(_e) {
+    //     initialX = currentX;
+    //     initialY = currentY;
+
+    //     active = false;
+    //   }
+
+    //   function drag(e) {
+    //     if (active) {
+
+    //       e.preventDefault();
+
+    //       if (e.type === "touchmove") {
+    //         currentX = e.touches[0].clientX - initialX;
+    //         currentY = e.touches[0].clientY - initialY;
+    //       } else {
+    //         currentX = e.clientX - initialX;
+    //         currentY = e.clientY - initialY;
+    //       }
+
+    //       xOffset = currentX;
+    //       yOffset = currentY;
+
+    //       setTranslate(currentX, currentY, dragItem);
+    //     }
+    //   }
+
+    //   function setTranslate(xPos, yPos, el) {
+    //     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    //   }
+    // }
 
     public translate_state(stateObj): string {
       if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
@@ -390,11 +475,7 @@ export class BoilerplateCard extends LitElement {
         margin: 0% 0% 0% 0%;
         color: var(--paper-item-icon-color, #fdd835);
         --mdc-icon-size: 100%;
-      }
-
-      .open_blind {
-        position: absolute;
-        cursor: move;
+        -webkit-overflow-scrolling: touch;
       }
 
       ha-icon + span {
@@ -443,37 +524,16 @@ export class BoilerplateCard extends LitElement {
         text-align: left;
       }
 
-      button.mdc-icon-button-up.move-arrow-down[disabled]{
-        .move-arrow-down{
-          visibility: hidden;
-        }
-      }
-
-      /* .buttons_up:active {
-        .buttons_down:hover {
-          display:none;
-        }
-        .buttons_stop:hover {
-          opacity: 0.1;
-        }
-      } */
-
       .move-arrow-up:hover {
-        background-color: var(--secondary-text-color, #313132);
-        border-radius: 100%;
-        opacity: 0.5;
+        opacity: 0.7;
       }
 
       .stop:hover {
-        background-color: var(--secondary-text-color, #313132);
-        border-radius: 100%;
-        opacity: 0.5;
+        opacity: 0.7;
       }
 
       .move-arrow-down:hover {
-        background-color: var(--secondary-text-color, #313132);
-        border-radius: 100%;
-        opacity: 0.5;
+        opacity: 0.7;
       }
 
       .ha-icon-button{
@@ -494,6 +554,7 @@ export class BoilerplateCard extends LitElement {
         text-align: center;
         flex-direction: column;
         color: var(--card-color-bottom);
+        padding-left: 25px;
       }
 
       .stop {
@@ -503,6 +564,7 @@ export class BoilerplateCard extends LitElement {
         flex-direction: column;
         color: var(--card-color-bottom);
         animation-play-state: paused;
+        padding-left: 25px;
       }
 
       .move-arrow-down {
@@ -511,6 +573,7 @@ export class BoilerplateCard extends LitElement {
         text-align: center;
         flex-direction: column;
         color: var(--card-color-bottom);
+        padding-left: 25px;
       }
 
       .move-arrow-down {
@@ -569,6 +632,26 @@ export class BoilerplateCard extends LitElement {
         animation-direction: reverse;
       }
 
+      button.mdc-icon-button-up.move-arrow-down[disabled]{
+        .move-arrow-down{
+          visibility: hidden;
+        }
+      }
+
+      /* .buttons_up:active {
+        .buttons_down:hover {
+          display:none;
+        }
+        .buttons_stop:hover {
+          opacity: 0.1;
+        }
+      } */
+
+      .svgicon-blind {
+        position: absolute;
+        cursor: move;
+      }
+
       @keyframes state {
         0% {
           fill: #9da0a2;
@@ -589,3 +672,7 @@ export class BoilerplateCard extends LitElement {
     `;
     }
 }
+
+// function _$(_arg0: () => void) {
+//   throw new Error("Function not implemented.");
+// }
