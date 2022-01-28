@@ -96,94 +96,9 @@ export class BoilerplateCard extends LitElement {
       };
     }
 
-  // set hass(_homeassistant: any) {
-  //   _$(function () {
-  //     let sliders = document.querySelector('.slider');
-  //     let isDown = false;
-  //     let startX;
-  //     let scrollleft;
-
-  //     sliders.addEventListener('mousedown', (e) => {
-  //       isDown = true;
-  //       sliders.classList.add('active');
-  //       startX = e.pageX - sliders.offsetLeft;
-  //       scrollleft = sliders.scrollLeft;
-  //     });
-  //     sliders.addEventListener('mouseleave', () => {
-  //       isDown = false;
-  //       sliders.classList.remove('active');
-  //     });
-  //     sliders.addEventListener('mouseup', () => {
-  //       isDown = false;
-  //       sliders.classList.remove('active');
-  //     });
-  //     sliders.addEventListener('mousemove', (e) => {
-  //       if (!isDown) return;
-  //       e.preventDefault();
-  //       let x = e.pageX - sliders.offsetLeft;
-
-  //       let walk = (x - startX) * 3;
-  //       sliders.scrollLeft = (scrollleft - walk);
-  //     });
-  //     window.addEventListener("scroll", myFunction);
-  //     sliders.addEventListener("click", myFunction);
-
-  //     function myFunction(e) {
-  //       if (!isDown) return;
-  //       e.preventDefault();
-  //       let x = e.pageX - sliders.offsetLeft;
-
-  //       let walk = (x - startX) * 3;
-  //       sliders.scrollLeft = (scrollleft - walk);
-  //     }
-
-  //   })
-  // }
-
-  // set hass(_homeassistant: any) {
-  //   let dragged;
-
-  //   document.addEventListener("drag", function (_event) {
-  //   }, false);
-
-  //   document.addEventListener("dragstart", function (event) {
-  //     dragged = event.target;
-  //     event.target.style.opacity = 0.5;
-  //   }, false);
-
-  //   document.addEventListener("dragend", function (event) {
-  //     event.target.style.opacity = "";
-  //   }, false);
-
-  //   document.addEventListener("dragover", function (event) {
-  //     event.preventDefault();
-  //   }, false);
-
-  //   document.addEventListener("dragenter", function (event) {
-  //     if (event.target.className = "dropzone") {
-  //       event.target.style.background = "purple";
-  //     }
-  //   }, false);
-
-  //   document.addEventListener("dragleave", function (event) {
-  //     if (event.target.className == "dropzone") {
-  //       event.target.style.background = "";
-  //     }
-  //   }, false);
-
-  //   document.addEventListener("drop", function (event) {
-  //     event.preventDefault();
-  //     if (event.target.className = "dropzone") {
-  //       event.target.style.background = "";
-  //       dragged.parentNode.removechild(dragged);
-  //       event.target.appendChild(dragged);
-  //     }
-  //   }, false);
-  // }
-
     // set hass(_homeassistant: any) {
-    //   let dragItem = document.querySelector("svgicon-blind");
-    //   let container = document.querySelector("ha-card");
+    //   let dragItem = document.querySelector("close_blind"); //svgicon-blind
+    //   let container = document.querySelector("svgicon-blind"); //ha-card
 
     //   let active = false;
     //   let currentX;
@@ -596,32 +511,40 @@ export class BoilerplateCard extends LitElement {
       .state-on-blind-icon {
         transform: translateY(-100%);
         transition: all 0.5s ease;
-        fill: #a9b1bc;
+        /* fill: #a9b1bc; */
+        color: var(--main-color);
       }
 
       /* alteração ao aspeto persiana */
       .state-off-blind-icon {
         animation-direction: reverse;
         transition: all 0.5s ease;
-        fill: #a9b1bc;
+        /* fill: #a9b1bc; */
+        color: var(--main-color);
       }
 
       /* alteração ao aspeto persiana */
       .state-on-shutter-icon {
         transform: translateY(-100%);
         transition: all 0.5s ease;
-        fill: #a9b1bc;
+        /* fill: #a9b1bc; */
+        color: var(--main-color);
       }
 
       /* alteração ao aspeto persiana */
       .state-off-shutter-icon {
         animation-direction: reverse;
         transition: all 0.5s ease;
-        fill: #a9b1bc;
+        /* fill: #a9b1bc; */
+        color: var(--main-color);
       }
 
       .state-unavailable {
         color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+
+      :root {
+        --main-color: bisque;
       }
 
       .opacity {

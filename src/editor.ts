@@ -129,7 +129,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       </div class="side-by-side">
     <div>
 </div>
-<paper-input-label-8>Escolha o icon: </paper-input-label-8>
+<paper-input-label-8>Escolha a persiana: </paper-input-label-8>
 <paper-dropdown-menu class="dropdown-icon">
 <paper-listbox slot="dropdown-content"
   attr-for-selected="value"

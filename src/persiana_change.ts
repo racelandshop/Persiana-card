@@ -37,11 +37,11 @@
 
 // (window as any).customCards = (window as any).customCards || [];
 // (window as any).customCards.push({
-//   type: 'blind-card',
+//   type: 'persiana-card',
 //   name: 'Persiana',
 //   preview: true //IMPORTANTE
 // });
-// @customElement('blind-card')
+// @customElement('persiana-card')
 
 // export class BoilerplateCard extends LitElement {
 //   [x: string]: any;
@@ -66,8 +66,7 @@
 //       entitiesFallback,
 //       includeDomains
 //     );
-//     //return { type: "custom:persiana-card", entity: "foundEntities[0]" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
-//     return { type: "custom:blind-card", entity: "foundEntities[0]" || "", "name": "Persiana", "buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
+//     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
 //     }
 
 //     @property({ attribute: false }) public homeassistant!: HomeAssistant;
@@ -96,6 +95,157 @@
 //         }
 //       };
 //     }
+
+//   // set hass(_homeassistant: any) {
+//   //   _$(function () {
+//   //     let sliders = document.querySelector('.slider');
+//   //     let isDown = false;
+//   //     let startX;
+//   //     let scrollleft;
+
+//   //     sliders.addEventListener('mousedown', (e) => {
+//   //       isDown = true;
+//   //       sliders.classList.add('active');
+//   //       startX = e.pageX - sliders.offsetLeft;
+//   //       scrollleft = sliders.scrollLeft;
+//   //     });
+//   //     sliders.addEventListener('mouseleave', () => {
+//   //       isDown = false;
+//   //       sliders.classList.remove('active');
+//   //     });
+//   //     sliders.addEventListener('mouseup', () => {
+//   //       isDown = false;
+//   //       sliders.classList.remove('active');
+//   //     });
+//   //     sliders.addEventListener('mousemove', (e) => {
+//   //       if (!isDown) return;
+//   //       e.preventDefault();
+//   //       let x = e.pageX - sliders.offsetLeft;
+
+//   //       let walk = (x - startX) * 3;
+//   //       sliders.scrollLeft = (scrollleft - walk);
+//   //     });
+//   //     window.addEventListener("scroll", myFunction);
+//   //     sliders.addEventListener("click", myFunction);
+
+//   //     function myFunction(e) {
+//   //       if (!isDown) return;
+//   //       e.preventDefault();
+//   //       let x = e.pageX - sliders.offsetLeft;
+
+//   //       let walk = (x - startX) * 3;
+//   //       sliders.scrollLeft = (scrollleft - walk);
+//   //     }
+
+//   //   })
+//   // }
+
+//   // set hass(_homeassistant: any) {
+//   //   let dragged;
+
+//   //   document.addEventListener("drag", function (_event) {
+//   //   }, false);
+
+//   //   document.addEventListener("dragstart", function (event) {
+//   //     dragged = event.target;
+//   //     event.target.style.opacity = 0.5;
+//   //   }, false);
+
+//   //   document.addEventListener("dragend", function (event) {
+//   //     event.target.style.opacity = "";
+//   //   }, false);
+
+//   //   document.addEventListener("dragover", function (event) {
+//   //     event.preventDefault();
+//   //   }, false);
+
+//   //   document.addEventListener("dragenter", function (event) {
+//   //     if (event.target.className = "dropzone") {
+//   //       event.target.style.background = "purple";
+//   //     }
+//   //   }, false);
+
+//   //   document.addEventListener("dragleave", function (event) {
+//   //     if (event.target.className == "dropzone") {
+//   //       event.target.style.background = "";
+//   //     }
+//   //   }, false);
+
+//   //   document.addEventListener("drop", function (event) {
+//   //     event.preventDefault();
+//   //     if (event.target.className = "dropzone") {
+//   //       event.target.style.background = "";
+//   //       dragged.parentNode.removechild(dragged);
+//   //       event.target.appendChild(dragged);
+//   //     }
+//   //   }, false);
+//   // }
+
+//     // set hass(_homeassistant: any) {
+//     //   let dragItem = document.querySelector("svgicon-blind");
+//     //   let container = document.querySelector("ha-card");
+
+//     //   let active = false;
+//     //   let currentX;
+//     //   let currentY;
+//     //   let initialX;
+//     //   let initialY;
+//     //   let xOffset = 0;
+//     //   let yOffset = 0;
+
+//     //   container.addEventListener("touchstart", dragStart, false);
+//     //   container.addEventListener("touchend", dragEnd, false);
+//     //   container.addEventListener("touchmove", drag, false);
+
+//     //   container.addEventListener("mousedown", dragStart, false);
+//     //   container.addEventListener("mouseup", dragEnd, false);
+//     //   container.addEventListener("mousemove", drag, false);
+
+//     //   function dragStart(e) {
+//     //     if (e.type === "touchstart") {
+//     //       initialX = e.touches[0].clientX - xOffset;
+//     //       initialY = e.touches[0].clientY - yOffset;
+//     //     } else {
+//     //       initialX = e.clientX - xOffset;
+//     //       initialY = e.clientY - yOffset;
+//     //     }
+
+//     //     if (e.target === dragItem) {
+//     //       active = true;
+//     //     }
+//     //   }
+
+//     //   function dragEnd(_e) {
+//     //     initialX = currentX;
+//     //     initialY = currentY;
+
+//     //     active = false;
+//     //   }
+
+//     //   function drag(e) {
+//     //     if (active) {
+
+//     //       e.preventDefault();
+
+//     //       if (e.type === "touchmove") {
+//     //         currentX = e.touches[0].clientX - initialX;
+//     //         currentY = e.touches[0].clientY - initialY;
+//     //       } else {
+//     //         currentX = e.clientX - initialX;
+//     //         currentY = e.clientY - initialY;
+//     //       }
+
+//     //       xOffset = currentX;
+//     //       yOffset = currentY;
+
+//     //       setTranslate(currentX, currentY, dragItem);
+//     //     }
+//     //   }
+
+//     //   function setTranslate(xPos, yPos, el) {
+//     //     el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+//     //   }
+//     // }
 
 //     public translate_state(stateObj): string {
 //       if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
@@ -128,7 +278,10 @@
 //       }
 //     }
 
-//     protected render(): TemplateResult | void {
+//   protected render(): TemplateResult | void {
+//       // if (!this._entityObj) {
+//       //   return html``;
+//       // }
 //       if (this.config.show_warning) {
 //         return this._showWarning(localize('common.show_warning'));
 //       }
@@ -198,7 +351,7 @@
 
 //       ${this.config.show_buttons
 //       ? html`
-//         <slot class="buttons_up">
+//         <slot name="buttons_up"></slot>
 //         <button.mdc-icon-button-up
 //           .label=${localize("common.arrowup")}
 //           .path=${mdiArrowUp}
@@ -207,7 +360,7 @@
 //           @click=${this._cardUp}
 //         >&#9650;
 //         </button.mdc-icon-button-up>
-//         </slot>
+//         <!-- </slot> -->
 
 //       ${this.config.show_state
 //       ? html`
@@ -217,7 +370,7 @@
 //         </div>
 //       `: ""}
 
-//       <slot class="buttons_stop">
+//       <slot name="buttons_stop"></slot>
 //       <button.mdc-icon-button-stop
 //           .label=${localize("common.stop")}
 //           .path=${mdiStop}
@@ -226,10 +379,10 @@
 //           @click=${this._cardStop}
 //       >&#9724;
 //       </button.mdc-icon-button-stop>
-//       </slot>
+//       <!-- </slot> -->
 //       <div></div>
 
-//       <slot class="buttons_down">
+//       <slot name="buttons_down"></slot>
 //       <button.mdc-icon-button-down
 //           .label=${localize("common.arrowdown")}
 //           .path=${mdiArrowDown}
@@ -238,7 +391,8 @@
 //           @click=${this._cardDown}
 //       >&#9660;
 //       </button.mdc-icon-button-down>
-//       </slot>`: ""}
+//       <!-- </slot> -->
+//       `: ""}
 //     </ha-card>
 //     `;
 //     }
@@ -321,6 +475,7 @@
 //         margin: 0% 0% 0% 0%;
 //         color: var(--paper-item-icon-color, #fdd835);
 //         --mdc-icon-size: 100%;
+//         -webkit-overflow-scrolling: touch;
 //       }
 
 //       ha-icon + span {
@@ -356,7 +511,7 @@
 
 //       .hassbut {
 //         display: grid;
-//         grid-template-columns: 90% 10%;
+//         grid-template-columns: 50% 50%;
 //       }
 
 //       .state-div {
@@ -369,20 +524,16 @@
 //         text-align: left;
 //       }
 
-//       .buttons_up:hover {
-//         background-color: var(--secondary-text-color, #313132);
-//         border-radius: 100%;
-
+//       .move-arrow-up:hover {
+//         opacity: 0.7;
 //       }
 
-//       .buttons_stop:hover {
-//         background-color: var(--secondary-text-color);
-//         border-radius: 100%;
+//       .stop:hover {
+//         opacity: 0.7;
 //       }
 
-//       .buttons_down:hover {
-//         background-color: var(--secondary-text-color);
-//         border-radius: 100%;
+//       .move-arrow-down:hover {
+//         opacity: 0.7;
 //       }
 
 //       .ha-icon-button{
@@ -397,25 +548,35 @@
 //         white-space: nowrap;
 //       }
 
-//       .buttons_up {
+//       .move-arrow-up {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
+//         padding-left: 25px;
 //       }
 
-//       .buttons_stop {
+//       .stop {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
+//         animation-play-state: paused;
+//         padding-left: 25px;
 //       }
 
-//       .buttons_down {
+//       .move-arrow-down {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
+//         padding-left: 25px;
 //       }
 
-//       .buttons_down {
+//       .move-arrow-down {
 //         animation-direction: reverse;
 //         fill: #a9b1bc;
 //       }
@@ -471,6 +632,26 @@
 //         animation-direction: reverse;
 //       }
 
+//       button.mdc-icon-button-up.move-arrow-down[disabled]{
+//         .move-arrow-down{
+//           visibility: hidden;
+//         }
+//       }
+
+//       /* .buttons_up:active {
+//         .buttons_down:hover {
+//           display:none;
+//         }
+//         .buttons_stop:hover {
+//           opacity: 0.1;
+//         }
+//       } */
+
+//       .svgicon-blind {
+//         position: absolute;
+//         cursor: move;
+//       }
+
 //       @keyframes state {
 //         0% {
 //           fill: #9da0a2;
@@ -491,3 +672,7 @@
 //     `;
 //     }
 // }
+
+// // function _$(_arg0: () => void) {
+// //   throw new Error("Function not implemented.");
+// // }

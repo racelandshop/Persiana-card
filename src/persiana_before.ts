@@ -37,167 +37,169 @@
 
 // (window as any).customCards = (window as any).customCards || [];
 // (window as any).customCards.push({
-//   type: 'blind-card',
+//   type: 'persiana-card',
 //   name: 'Persiana',
 //   preview: true //IMPORTANTE
 // });
 // @customElement('persiana-card')
 
 // export class BoilerplateCard extends LitElement {
-//     [x: string]: any;
+//   [x: string]: any;
 
-//     public static async getConfigElement(): Promise<LovelaceCardEditor> {
-//         return document.createElement('persiana-card-editor');
-//     }
+//   public static async getConfigElement(): Promise<LovelaceCardEditor> {
+//     return document.createElement('persiana-card-editor');
+//   }
 
-//     @queryAsync('mwc-ripple') private _ripple!: Promise<Ripple | null>;
+//   @queryAsync('mwc-ripple') private _ripple!: Promise<Ripple | null>;
 
-//     public static getStubConfig(
-//         hass: HomeAssistant,
-//         entities: string[],
-//         entitiesFallback: string[]
-//     ): BoilerplateCardConfig {
-//         const includeDomains = ["cover"];
-//         const maxEntities = 1;
-//         const foundEntities = findEntities(
-//             hass,
-//             maxEntities,
-//             entities,
-//             entitiesFallback,
-//             includeDomains
-//         );
-//         //return { type: "custom:persiana-card", entity: "foundEntities[0]" || "", "name": "Persiana", "title_position": "top", "buttons_position": "right", "invert_percentage": "false", blind_color: "#FFD580", entities: "any", title: "any", show_name: true, show_state: true, icon: [open_blind, close_blind], show_icon: true, show_buttons: true };
-//         return { type: "custom:blind-card", entity: "foundEntities[0]" || "", "name": "Persiana", "buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
+//   public static getStubConfig(
+//     hass: HomeAssistant,
+//     entities: string[],
+//     entitiesFallback: string[]
+//   ): BoilerplateCardConfig {
+//     const includeDomains = ["cover"];
+//     const maxEntities = 1;
+//     const foundEntities = findEntities(
+//       hass,
+//       maxEntities,
+//       entities,
+//       entitiesFallback,
+//       includeDomains
+//     );
+//     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
 //     }
 
 //     @property({ attribute: false }) public homeassistant!: HomeAssistant;
 //     @state() private config!: BoilerplateCardConfig;
 
 //     public setConfig(config: BoilerplateCardConfig): void {
-//         if (!config) {
-//             throw new Error(localize('common.invalidconfiguration'));
-//         }
-//         if (config.test_gui) {
-//             getLovelace().setEditMode(true);
-//         }
+//       if (!config) {
+//         throw new Error(localize('common.invalidconfiguration'));
+//       }
+//       if (config.test_gui) {
+//         getLovelace().setEditMode(true);
+//       }
 
-//         this.config = {
-//             show_icon: true,
-//             icon: 'mdi:blinds',
-//             ...config,
-//             tap_action: {
-//                 action: "toggle",
-//             },
-//             hold_action: {
-//                 action: "none",
-//             },
-//             double_tap_action: {
-//                 action: "none",
-//             }
-//         };
+//       this.config = {
+//         show_icon: true,
+//         icon: 'mdi:blinds',
+//         ...config,
+//         tap_action: {
+//             action: "toggle",
+//         },
+//         hold_action: {
+//             action: "none",
+//         },
+//         double_tap_action: {
+//             action: "none",
+//         }
+//       };
 //     }
 
 //     public translate_state(stateObj): string {
-//         if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
-//             return localize("states.on");
-//         }
-//         else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off") {
-//             return localize("states.off");
-//         }
-//         else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable") {
-//             return localize("states.unavailable");
-//         }
-//         else {
-//             return ""
-//         }
+//       if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
+//           return localize("states.on");
+//       }
+//       else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off") {
+//           return localize("states.off");
+//       }
+//       else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable") {
+//           return localize("states.unavailable");
+//       }
+//       else {
+//           return ""
+//       }
 //     }
 
 //     protected shouldUpdate(changedProps: PropertyValues): boolean {
-//         if (!this.config) {
-//             return false;
-//         }
-//         return hasConfigOrEntityChanged(this, changedProps, false);
+//       if (!this.config) {
+//           return false;
+//       }
+//       return hasConfigOrEntityChanged(this, changedProps, false);
 //     }
 
 //     protected renderSwitch(param): string {
-//         switch (param) {
-//             case 'foo':
-//                 return 'bar';
-//             default:
-//                 return 'foo';
-//         }
+//       switch (param) {
+//           case 'foo':
+//               return 'bar';
+//           default:
+//               return 'foo';
+//       }
 //     }
 
-//     protected render(): TemplateResult | void {
-//         if (this.config.show_warning) {
-//             return this._showWarning(localize('common.show_warning'));
-//         }
-//         if (this.config.show_error) {
-//             return this._showError(localize('common.show_error'));
-//         }
+//   protected render(): TemplateResult | void {
+//       // if (!this._entityObj) {
+//       //   return html``;
+//       // }
+//       if (this.config.show_warning) {
+//         return this._showWarning(localize('common.show_warning'));
+//       }
+//       if (this.config.show_error) {
+//         return this._showError(localize('common.show_error'));
+//       }
 
-//         const stateObj = this.config.entity
-//             ? this.hass.states[this.config.entity]
-//             : undefined;
+//       const stateObj = this.config.entity
+//         ? this.hass.states[this.config.entity]
+//         : undefined;
 
-//         return html`
-//   <ha-card
-//         class="hassbut ${classMap({
-//             "state-on": ifDefined(
-//                 stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-//             "state-off": ifDefined(
-//                 stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-//         })}"
-//           @action=${this._handleAction}
-//           @focus="${this.handleRippleFocus}"
-//           .actionHandler=${actionHandler({
-//             hasHold: hasAction(this.config.hold_action),
-//             hasDoubleClick: hasAction(this.config.double_tap_action),
-//         })}
-//         tabindex="0"
-//         .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
-//       >
+//       return html`
+//         <ha-card
+//           class="hassbut ${classMap({
+//               "state-on": ifDefined(
+//                   stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+//               "state-off": ifDefined(
+//                   stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+//           })}"
+//             @action=${this._handleAction}
+//             @focus="${this.handleRippleFocus}"
+//             .actionHandler=${actionHandler({
+//               hasHold: hasAction(this.config.hold_action),
+//               hasDoubleClick: hasAction(this.config.double_tap_action),
+//           })}
+//           tabindex="0"
+//           .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
+//         >
 //       ${this.config.show_icon
-//                 ? html`
-//             <svg class=${classMap({
-//                     "svgicon-blind":
-//                         (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-//                     "svgicon-shutter":
-//                         (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-//                 }
-//                 )
-//                     }
-//               viewBox="0 0 50 50" height="75%" width="65%" >
-//               <path fill="#a9b1bc" d=${this.config.icon[0]} />
-//               <path class=${classMap({
-//                         "state-on-blind-icon":
-//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-//                         "state-off-blind-icon":
-//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-//                         "state-on-shutter-icon":
-//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-//                         "state-off-shutter-icon":
-//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-//                         "state-unavailable":
-//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-//                     }
-//                     )
-//                     }
-//               d=${this.config.icon[1]} />
-//             </svg>
-//             `
-//                 : ""}
+//       ? html`
+//         <svg class=${classMap({
+//           "svgicon-blind":
+//               (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+//           "svgicon-shutter":
+//               (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
+//             }
+//             )
+//       }
+//         viewBox="0 0 50 50" height="75%" width="65%" >
+//         <path fill="#a9b1bc" d=${this.config.icon[0]} />
+//         <path class=${classMap({
+//           "state-on-blind-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//           "state-off-blind-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//           "state-on-shutter-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//           "state-off-shutter-icon":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//           "state-unavailable":
+//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+//         }
+//         )
+//         }
+//         d=${this.config.icon[1]} />
+//         </svg>
+//         `
+//         : ""}
 //       <div></div>
 
 //       ${this.config.show_name
-//                 ? html`
+//       ? html`
 //         <div tabindex = "-1" class="name-div">
 //         ${this.config.name}
 //         </div>
 //       `: ""}
 
 //       ${this.config.show_buttons
-//                 ? html`
+//       ? html`
 //         <slot class="buttons_up">
 //         <button.mdc-icon-button-up
 //           .label=${localize("common.arrowup")}
@@ -210,7 +212,7 @@
 //         </slot>
 
 //       ${this.config.show_state
-//                         ? html`
+//       ? html`
 //         <div tabindex="-1" class="state-div">
 //         ${this.translate_state(stateObj)}
 //         <div class="position"></div>
@@ -224,7 +226,7 @@
 //           title="Stop"
 //           class="stop"
 //           @click=${this._cardStop}
-//         >&#9724;
+//       >&#9724;
 //       </button.mdc-icon-button-stop>
 //       </slot>
 //       <div></div>
@@ -238,62 +240,62 @@
 //           @click=${this._cardDown}
 //       >&#9660;
 //       </button.mdc-icon-button-down>
-//     </slot>`: ""}
-//   </ha-card>
+//       </slot>`: ""}
+//     </ha-card>
 //     `;
 //     }
 
 //     private computeActiveState = (stateObj: HassEntity): string => {
-//         const domain = stateObj.entity_id.split(".")[0];
-//         let state = stateObj.state;
-//         if (domain === "climate") {
-//             state = stateObj.attributes.hvac_action;
-//         }
-//         return state;
+//       const domain = stateObj.entity_id.split(".")[0];
+//       let state = stateObj.state;
+//       if (domain === "climate") {
+//           state = stateObj.attributes.hvac_action;
+//       }
+//       return state;
 //     };
 
 //     private _handleAction(ev: ActionHandlerEvent): void {
-//         if (this.hass && this.config && ev.detail.action) {
-//             handleAction(this, this.hass, this.config, ev.detail.action);
-//         }
+//       if (this.hass && this.config && ev.detail.action) {
+//           handleAction(this, this.hass, this.config, ev.detail.action);
+//       }
 //     }
 
 //     private _showWarning(warning: string): TemplateResult {
-//         return html`
+//       return html`
 //       <hui-warning>${warning}</hui-warning>
 //     `;
 //     }
 
 //     private _showError(error: string): TemplateResult {
-//         const errorCard = document.createElement('hui-error-card');
-//         errorCard.setConfig({
-//             type: 'error',
-//             error,
-//             origConfig: this.config,
-//         });
-//         return html`
+//       const errorCard = document.createElement('hui-error-card');
+//       errorCard.setConfig({
+//           type: 'error',
+//           error,
+//           origConfig: this.config,
+//       });
+//       return html`
 //       ${errorCard}
 //     `;
 //     }
 
 //     private computeObjectId = (entityId: string): string =>
-//         entityId.substr(entityId.indexOf(".") + 1);
+//       entityId.substr(entityId.indexOf(".") + 1);
 
 //     private computeStateName = (stateObj: HassEntity): string =>
-//         stateObj.attributes.friendly_name === undefined
-//             ? this.computeObjectId(stateObj.entity_id).replace(/_/g, " ")
-//             : stateObj.attributes.friendly_name || "";
+//       stateObj.attributes.friendly_name === undefined
+//         ? this.computeObjectId(stateObj.entity_id).replace(/_/g, " ")
+//         : stateObj.attributes.friendly_name || "";
 
 //     private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
-//         return this._ripple;
+//       return this._ripple;
 //     });
 
 //     private handleRippleFocus() {
-//         this._rippleHandlers.startFocus();
+//       this._rippleHandlers.startFocus();
 //     }
 
 //     static get styles(): CSSResultGroup {
-//         return css`
+//     return css`
 //       ha-card {
 //         cursor: pointer;
 //         display: grid;
@@ -356,7 +358,7 @@
 
 //       .hassbut {
 //         display: grid;
-//         grid-template-columns: 90% 10%;
+//         grid-template-columns: 50% 50%;
 //       }
 
 //       .state-div {
@@ -372,14 +374,34 @@
 //       .buttons_up:hover {
 //         background-color: var(--secondary-text-color, #313132);
 //         border-radius: 100%;
-
 //       }
+
+//       .buttons_up:disabled {
+//         fill: var(--secondary-text-color, #313132);
+//       }
+//       .buttons_stop:disabled {
+//         fill: var(--secondary-text-color, #313132);
+//       }
+//       .buttons_down:disabled {
+//         fill: var(--secondary-text-color, #313132);
+//       }
+
+//       .buttons_up:active {
+//         .buttons_stop:disabled {
+//           fill: var(--secondary-text-color, #313132);
+//         }
+//         .buttons_down:disabled {
+//           fill: var(--secondary-text-color, #313132);
+//         }
+//       }
+
 //       .buttons_stop:hover {
-//         background-color: var(--secondary-text-color);
+//         background-color: var(--secondary-text-color, #313132);
 //         border-radius: 100%;
 //       }
+
 //       .buttons_down:hover {
-//         background-color: var(--secondary-text-color);
+//         background-color: var(--secondary-text-color, #313132);
 //         border-radius: 100%;
 //       }
 
@@ -396,19 +418,26 @@
 //       }
 
 //       .buttons_up {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
 //       }
 
 //       .buttons_stop {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
+//         animation-play-state: paused;
 //       }
 
 //       .buttons_down {
+//         width: 2rem;
 //         display: flex;
+//         text-align: center;
 //         flex-direction: column;
 //         color: var(--card-color-bottom);
 //       }
@@ -477,7 +506,6 @@
 //           fill: #b68349;
 //         }
 //       }
-
 
 //       @keyframes opacity {
 //         0% {
