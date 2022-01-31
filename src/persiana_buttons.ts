@@ -206,79 +206,79 @@
 //       }
 //     }
 
-//   protected render(): TemplateResult | void {
-//       if (!this._entityObj) {
-//         return html``;
-//       }
-//       if (this.config.show_warning) {
-//         return this._showWarning(localize('common.show_warning'));
-//       }
-//       if (this.config.show_error) {
-//         return this._showError(localize('common.show_error'));
-//       }
+//     protected render(): TemplateResult | void {
+//         if (!this._entityObj) {
+//             return html``;
+//         }
+//         if (this.config.show_warning) {
+//             return this._showWarning(localize('common.show_warning'));
+//         }
+//         if (this.config.show_error) {
+//             return this._showError(localize('common.show_error'));
+//         }
 
-//       const stateObj = this.config.entity
-//         ? this.hass.states[this.config.entity]
-//         : undefined;
+//         const stateObj = this.config.entity
+//             ? this.hass.states[this.config.entity]
+//             : undefined;
 
-//       return html`
+//         return html`
 //         <ha-card
 //           class="hassbut ${classMap({
-//               "state-on": ifDefined(
-//                   stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-//               "state-off": ifDefined(
-//                   stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-//           })}"
+//             "state-on": ifDefined(
+//                 stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+//             "state-off": ifDefined(
+//                 stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+//         })}"
 //             @action=${this._handleAction}
 //             @focus="${this.handleRippleFocus}"
 //             .actionHandler=${actionHandler({
-//               hasHold: hasAction(this.config.hold_action),
-//               hasDoubleClick: hasAction(this.config.double_tap_action),
-//           })}
+//             hasHold: hasAction(this.config.hold_action),
+//             hasDoubleClick: hasAction(this.config.double_tap_action),
+//         })}
 //           tabindex="0"
 //           .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
 //         >
 //       ${this.config.show_icon
-//       ? html`
+//                 ? html`
 //         <svg class=${classMap({
-//           "svgicon-blind":
-//               (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-//           "svgicon-shutter":
-//               (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-//             }
-//             )
-//       }
+//                     "svgicon-blind":
+//                         (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
+//                     "svgicon-shutter":
+//                         (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
+//                 }
+//                 )
+//                     }
 //         viewBox="0 0 50 50" height="75%" width="65%" >
 //         <path fill="#a9b1bc" d=${this.config.icon[0]} />
 //         <path class=${classMap({
-//           "state-on-blind-icon":
-//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-//           "state-off-blind-icon":
-//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-//           "state-on-shutter-icon":
-//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-//           "state-off-shutter-icon":
-//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-//           "state-unavailable":
-//               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-//         }
-//         )
-//         }
+//                         "state-on-blind-icon":
+//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//                         "state-off-blind-icon":
+//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+//                         "state-on-shutter-icon":
+//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//                         "state-off-shutter-icon":
+//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+//                         "state-unavailable":
+//                             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+//                     }
+//                     )
+//                     }
 //         d=${this.config.icon[1]} />
 //         </svg>
 //         `
-//         : ""}
+//                 : ""}
 //       <div></div>
 
 //       ${this.config.show_name
-//       ? html`
+//                 ? html`
 //         <div tabindex = "-1" class="name-div">
 //         ${this.config.name}
 //         </div>
 //       `: ""}
 
 //       ${this.config.show_state
-//       ? html`
+//                 ? html`
 //         <div tabindex="-1" class="state-div">
 //         ${this.translate_state(stateObj)}
 //         <div class="position"></div>
@@ -286,44 +286,41 @@
 //       `: ""}
 
 //       ${this.config.show_buttons
-//       ? html`
-//         <slot name="buttons_up"></slot>
+//         ? html`
+//         <div class="buttons">
 //         <button.mdc-icon-button-up
-//             .label=${this.hass.localize("ui.dialogs.more_info_control.open_cover")}
-//             .icon=${computeOpenIcon(this.stateObj)}
+//             .label=${localize("common.arrowup")}
 //             .path=${mdiArrowUp}
+//             .icon=${"#9650"}
 //             title="Abrir"
-//             class=${classMap({hidden: !this._entityObj.supportsOpen,})}
-//             @click=${this._onOpenTap}
+//             class="move-arrow-up"
+//             @click=${this._cardUp}
 //             .disabled=${this._computeOpenDisabled()}
-//         >&#9650;
+//         >
 //         </button.mdc-icon-button-up>
 
-//       <slot name="buttons_stop"></slot>
 //       <button.mdc-icon-button-stop
-//             .label=${this.hass.localize("ui.dialogs.more_info_control.stop_cover")}
-//             icon="hass:stop"
+//             .label=${localize("common.stop")}
 //             .path=${mdiStop}
+//             .icon=${"#9724"}
 //             title="Stop"
-//             class=${classMap({hidden: !this._entityObj.supportsStop,})}
-//             @click=${this._onStopTap}
+//             class="stop"
+//             @click=${this._cardStop}
 //             .disabled=${this.stateObj.state === UNAVAILABLE}
-//       >&#9724;
+//       >
 //       </button.mdc-icon-button-stop>
 
-//       <div></div>
-
-//       <slot name="buttons_down"></slot>
 //       <button.mdc-icon-button-down
-//             .label=${this.hass.localize("ui.dialogs.more_info_control.close_cover")}
-//             .icon=${computeCloseIcon(this.stateObj)}
+//             .label=${localize("common.arrowdown")}
 //             .path=${mdiArrowDown}
+//             .icon=${"#9660"}
 //             title="Fechar"
-//             class=${classMap({hidden: !this._entityObj.supportsClose,})}
-//             @click=${this._onCloseTap}
+//             class="move-arrow-down"
+//             @click=${this._cardDown}
 //           .disabled=${this._computeClosedDisabled()}
-//       >&#9660;
+//       >
 //       </button.mdc-icon-button-down>
+//     </div>
 
 //       `: ""}
 //     </ha-card>
@@ -352,22 +349,36 @@
 //     );
 //   }
 
-//   private _onOpenTap(ev): void {
-//     ev.stopPropagation();
-//     this._entityObj.openCover();
-//   }
+// //   private _cardUp(event): void {
+// //     event.stopPropagation();
+// //     this._entityObj.openCover();
+// //   }
 
-//   private _onCloseTap(ev): void {
-//     ev.stopPropagation();
-//     this._entityObj.closeCover();
-//   }
+// // hass.callService('cover', service, {
+// //     entity_id: entityId
+// //   });
 
-//   private _onStopTap(ev): void {
-//     ev.stopPropagation();
-//     this._entityObj.stopCover();
-//   }
+// //   private _cardDown(event): void {
+// //     event.stopPropagation();
+// //     this._entityObj.closeCover();
+// //   }
 
+// //   private _cardStop(event): void {
+// //     event.stopPropagation();
+// //     this._entityObj.stopCover();
+// //   }
 
+// private _cardUp(_event): void {
+//     this.hass.callService('cover', this._entityObj.openCover(), {entity_id: this._entityObj}); //entity_id: entityId
+// }
+
+// private _cardDown(_event): void {
+//     this.hass.callService('cover', this._entityObj.closeCover(), { entity_id: this._entityObj }); //entity_id: entityId
+// }
+
+// private _cardStop(_event): void {
+//     this.hass.callService('cover', this._entityObj.stopCover(), { entity_id: this._entityObj }); //entity_id: entityId
+// }
 
 //     private computeActiveState = (stateObj: HassEntity): string => {
 //       const domain = stateObj.entity_id.split(".")[0];
@@ -654,9 +665,9 @@
 // //   throw new Error("Function not implemented.");
 // // }
 
-// declare global {
-//     interface HTMLElementTagNameMap {
-//       "persiana-card": BoilerplateCard;
-//     }
-//   }
+// // declare global {
+// //     interface HTMLElementTagNameMap {
+// //       "persiana-card": BoilerplateCard;
+// //     }
+// //   }
 

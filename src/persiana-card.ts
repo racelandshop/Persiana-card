@@ -23,6 +23,7 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { mdiArrowDown, mdiArrowUp, mdiStop } from "@mdi/js";
+import { UNAVAILABLE } from "./data/entity";
 
 const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
@@ -162,7 +163,7 @@ export class BoilerplateCard extends LitElement {
     //   }
     // }
 
-    public translate_state(stateObj): string {
+    public translate_state(stateObj: HassEntity): string {
       if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on") {
           return localize("states.on");
       }
@@ -184,7 +185,7 @@ export class BoilerplateCard extends LitElement {
       return hasConfigOrEntityChanged(this, changedProps, false);
     }
 
-    protected renderSwitch(param): string {
+    protected renderSwitch(param: any): string {
       switch (param) {
           case 'foo':
               return 'bar';
@@ -253,9 +254,15 @@ export class BoilerplateCard extends LitElement {
         }
         d=${this.config.icon[1]} />
         </svg>
-        `
-        : ""}
-      <div></div>
+      `: ""}
+
+      ${this.config.show_state
+        ? html`
+          <div tabindex="-1" class="state-div">
+          ${this.translate_state(stateObj)}
+          <div class="position"></div>
+          </div>
+      `: ""}
 
       ${this.config.show_name
       ? html`
@@ -266,51 +273,86 @@ export class BoilerplateCard extends LitElement {
 
       ${this.config.show_buttons
       ? html`
-        <slot name="buttons_up"></slot>
-        <button.mdc-icon-button-up
-          .label=${localize("common.arrowup")}
-          .path=${mdiArrowUp}
-          title="Abrir"
-          class="move-arrow-up"
-          @click=${this._cardUp}
-        >&#9650;
-        </button.mdc-icon-button-up>
-        <!-- </slot> -->
-
-      ${this.config.show_state
-      ? html`
-        <div tabindex="-1" class="state-div">
-        ${this.translate_state(stateObj)}
-        <div class="position"></div>
-        </div>
-      `: ""}
-
-      <slot name="buttons_stop"></slot>
-      <button.mdc-icon-button-stop
-          .label=${localize("common.stop")}
-          .path=${mdiStop}
-          title="Stop"
-          class="stop"
-          @click=${this._cardStop}
-      >&#9724;
-      </button.mdc-icon-button-stop>
-      <!-- </slot> -->
+      <button.mdc-icon-button-up
+        .label=${this.hass.localize("common.arrowup")}
+        .path=${mdiArrowUp}
+        title="Abrir"
+        class="move-arrow-up"
+        @click=${this._cardUp}
+        .disabled=${this._computeOpenDisabled}
+      >&#9650;
+      </button.mdc-icon-button-up>
       <div></div>
 
-      <slot name="buttons_down"></slot>
+      <button.mdc-icon-button-stop
+        .label=${this.hass.localize("common.stop")}
+        .path=${mdiStop}
+        title="Stop"
+        class="stop"
+        @click=${this._cardStop}
+        .disabled=${this._computeStopDisabled}
+      >&#9724;
+      </button.mdc-icon-button-stop>
+      <div></div>
+
       <button.mdc-icon-button-down
-          .label=${localize("common.arrowdown")}
-          .path=${mdiArrowDown}
-          title="Fechar"
-          class="move-arrow-down"
-          @click=${this._cardDown}
+        .label=${this.hass.localize("common.arrowdown")}
+        .path=${mdiArrowDown}
+        title="Fechar"
+        class="move-arrow-down"
+        @click=${this._cardDown}
+        .disabled=${this._computeClosedDisabled}
       >&#9660;
       </button.mdc-icon-button-down>
-      <!-- </slot> -->
       `: ""}
     </ha-card>
     `;
+  }
+
+  private _computeStopDisabled(): boolean {
+    if (this.stateObj.state === UNAVAILABLE) {
+      return true;
     }
+    const assumedState = this.stateObj.attributes.assumed_state === true;
+    return (
+      (this._entityObj.isFullyOpen || this._entityObj.isOpening) || (this._entityObj.isFullyClosed || this._entityObj.isClosing) &&
+      !assumedState
+    );
+  }
+
+  private _computeOpenDisabled(): boolean {
+    if (this.stateObj.state === UNAVAILABLE) {
+      return true;
+    }
+    const assumedState = this.stateObj.attributes.assumed_state === true;
+    return (
+      (this._entityObj.isFullyOpen || this._entityObj.isOpening) &&
+      !assumedState
+    );
+  }
+
+  private _computeClosedDisabled(): boolean {
+    if (this.stateObj.state === UNAVAILABLE) {
+      return true;
+    }
+    const assumedState = this.stateObj.attributes.assumed_state === true;
+    return (
+      (this._entityObj.isFullyClosed || this._entityObj.isClosing) &&
+      !assumedState
+    );
+  }
+
+private _cardUp(_event: any): void {
+  this.hass.callService('cover', this._entityObj.openCover(), {entity_id: this._entityObj}); //entity_id: entityId
+}
+
+private _cardDown(_event: any): void {
+  this.hass.callService('cover', this._entityObj.closeCover(), { entity_id: this._entityObj }); //entity_id: entityId
+}
+
+private _cardStop(_event: any): void {
+  this.hass.callService('cover', this._entityObj.stopCover(), { entity_id: this._entityObj }); //entity_id: entityId
+}
 
     private computeActiveState = (stateObj: HassEntity): string => {
       const domain = stateObj.entity_id.split(".")[0];
