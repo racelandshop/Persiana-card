@@ -30,6 +30,10 @@ const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 
+const stop = "M5.875 23v17.086h38.184V5.914H5.875Zm0 0";
+const up = "m19.664 12.648-5.223 5.258h4.653v22.18h11.75v-22.18h4.648l-5.222-5.258c-2.872-2.89-5.254-5.253-5.301-5.253-.051 0-2.434 2.363-5.305 5.253Zm0 0";
+const down = "M19.094 17.004v11.09H14.44l5.27 5.289 5.258 5.304 5.254-5.304 5.27-5.29h-4.65V5.915h-11.75Zm0 0";
+
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
   'color: orange; font-weight: bold; background: black',
@@ -67,12 +71,11 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "button": [up, stop, down], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
     }
 
     @property({ attribute: false }) public homeassistant!: HomeAssistant;
     @state() private config!: BoilerplateCardConfig;
-
     public setConfig(config: BoilerplateCardConfig): void {
       if (!config) {
         throw new Error(localize('common.invalidconfiguration'));
@@ -83,8 +86,10 @@ export class BoilerplateCard extends LitElement {
 
       this.config = {
         show_icon: true,
+        show_button: true,
         icon: 'mdi:blinds',
         ...config,
+        button: true,
         tap_action: {
             action: "toggle",
         },
@@ -233,9 +238,7 @@ export class BoilerplateCard extends LitElement {
               (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
           "svgicon-shutter":
               (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-            }
-            )
-      }
+        })}
         viewBox="0 0 50 50" height="75%" width="65%" >
         <path fill="#a9b1bc" d=${this.config.icon[0]} />
         <path class=${classMap({
@@ -249,11 +252,36 @@ export class BoilerplateCard extends LitElement {
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
           "state-unavailable":
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-        }
-        )
-        }
+        })}
         d=${this.config.icon[1]} />
         </svg>
+      `: ""}
+
+      ${this.config.show_button
+        ? html`
+        <svg class=${classMap({
+          "svgicon-buttons":
+            (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
+        })}
+        viewBox="0 0 50 50" height="75%" width="65%" >
+        <path fill="#a9b1bc" d=${this.config.button[0]} />
+        <path class=${classMap({
+          "state-on-buttons-icon":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
+          "state-off-buttons-icon":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
+          "state-unavailable":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+      })}
+      d=${this.config.button[1]}>
+      </svg>
+      `: ""}
+
+      ${this.config.show_name
+      ? html`
+        <div tabindex = "-1" class="name-div">
+        ${this.config.name}
+        </div>
       `: ""}
 
       ${this.config.show_state
@@ -264,14 +292,10 @@ export class BoilerplateCard extends LitElement {
           </div>
       `: ""}
 
-      ${this.config.show_name
-      ? html`
-        <div tabindex = "-1" class="name-div">
-        ${this.config.name}
-        </div>
-      `: ""}
 
-      ${this.config.show_buttons
+
+
+      <!-- ${this.config.show_buttons
       ? html`
       <button.mdc-icon-button-up
         .label=${this.hass.localize("common.arrowup")}
@@ -304,7 +328,7 @@ export class BoilerplateCard extends LitElement {
         .disabled=${this._computeClosedDisabled}
       >&#9660;
       </button.mdc-icon-button-down>
-      `: ""}
+      `: ""} -->
     </ha-card>
     `;
   }
@@ -453,17 +477,14 @@ private _cardStop(_event: any): void {
         margin: 0% 50% 5% 0%;
         padding: 0% 100% 5% 0%;
         text-align: left;
-        align-items: right;
       }
 
       .hassbut.state-off {
-        cursor: pointer;
-        text-align: center;
+        text-align: left;
       }
 
       .hassbut.state-on {
-        cursor: pointer;
-        text-align: center;
+        text-align: left;
       }
 
       .hassbut {
@@ -472,8 +493,8 @@ private _cardStop(_event: any): void {
       }
 
       .state-div {
+        padding: 0% 100% 10% 0%;
         align-items: left;
-        text-align: left;
       }
 
       .name-div {
@@ -539,10 +560,16 @@ private _cardStop(_event: any): void {
       }
 
       .svgicon-blind {
+        /* position: absolute;
+        cursor: move; */
         cursor: pointer;
         padding-bottom: 20px;
         max-width: 170px;
         transform: translate(62%, 55%) scale(2.5);
+      }
+
+      .svgicon-buttons {
+        cursor: pointer;
       }
 
       .state {
@@ -581,7 +608,11 @@ private _cardStop(_event: any): void {
         color: var(--main-color);
       }
 
-      .state-unavailable {
+      .blind-icon-state-unavailable {
+        color: var(--state-icon-unavailable-color, #bdbdbd);
+      }
+
+      .shutter-icon-state-unavailable{
         color: var(--state-icon-unavailable-color, #bdbdbd);
       }
 
@@ -612,16 +643,13 @@ private _cardStop(_event: any): void {
         }
       } */
 
-      .svgicon-blind {
-        position: absolute;
-        cursor: move;
-      }
-
       @keyframes state {
         0% {
+          transform: none;
           fill: #9da0a2;
         }
         100% {
+          transform: scale(0);
           fill: #b68349;
         }
       }
