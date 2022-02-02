@@ -88,8 +88,8 @@ export class BoilerplateCard extends LitElement {
         show_icon: true,
         show_button: true,
         icon: 'mdi:blinds',
+        button: 'mdi:ArrowUpDownBold',
         ...config,
-        button: true,
         tap_action: {
             action: "toggle",
         },
@@ -257,27 +257,28 @@ export class BoilerplateCard extends LitElement {
         </svg>
       `: ""}
 
-      ${this.config.show_button
-        ? html`
+
+     ${this.config.show_buttonup
+        ? html `
         <svg class=${classMap({
-          "svgicon-buttons":
-            (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
+          "svgicon-buttonup":
+            (JSON.stringify(this.config.buttonup) == JSON.stringify([up])),
         })}
         viewBox="0 0 50 50" height="75%" width="65%" >
-        <path fill="#a9b1bc" d=${this.config.button[0]} />
+        <path fill="#a9b1bc" d=${this.config.buttonup[0]} />
         <path class=${classMap({
-          "state-on-buttons-icon":
-          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
-          "state-off-buttons-icon":
-          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([up, stop, down])),
+          "state-on-buttonup":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.buttonup) == JSON.stringify([up])),
+          "state-off-buttonup":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.buttonup) == JSON.stringify([up])),
           "state-unavailable":
           ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
       })}
-      d=${this.config.button[1]}>
+      d=${this.config.buttonup[0]}>
       </svg>
-      `: ""}
+    `: ""}
 
-      ${this.config.show_name
+    ${this.config.show_name
       ? html`
         <div tabindex = "-1" class="name-div">
         ${this.config.name}
@@ -291,6 +292,9 @@ export class BoilerplateCard extends LitElement {
           <div class="position"></div>
           </div>
       `: ""}
+
+
+
 
 
 
@@ -489,7 +493,7 @@ private _cardStop(_event: any): void {
 
       .hassbut {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 50% 16% 16% 16%;
       }
 
       .state-div {
@@ -574,6 +578,13 @@ private _cardStop(_event: any): void {
 
       .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      }
+
+      .state-on-button{
+        color: var(--main-color);
+      }
+      .state-off-button {
+        color: var(--main-color);
       }
 
       /* alteração ao aspeto persiana */
