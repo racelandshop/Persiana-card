@@ -1,10 +1,4 @@
-/* eslint-disable @typescript-eslint/adjacent-overload-signatures */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable prefer-const */
-/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
@@ -30,9 +24,9 @@ const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 
-const stop = "M5.875 23v17.086h38.184V5.914H5.875Zm0 0";
-const up = "m19.664 12.648-5.223 5.258h4.653v22.18h11.75v-22.18h4.648l-5.222-5.258c-2.872-2.89-5.254-5.253-5.301-5.253-.051 0-2.434 2.363-5.305 5.253Zm0 0";
-const down = "M19.094 17.004v11.09H14.44l5.27 5.289 5.258 5.304 5.254-5.304 5.27-5.29h-4.65V5.915h-11.75Zm0 0";
+const stop = "M7.344 23.738v14.867H42.59V8.871H7.344Zm0 0";
+const up = "m15.34 17.004-9.547 9.61h13.3v13.472h11.75V26.613h13.298l-9.547-9.61c-5.254-5.288-9.578-9.608-9.625-9.608-.051 0-4.375 4.32-9.63 9.609Zm0 0";
+const down = "M19.094 12.648v6.739H5.793l9.594 9.64 9.582 9.66 9.578-9.66 9.594-9.64H30.844V5.914h-11.75Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
@@ -71,7 +65,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "button": [up, stop, down], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
+    return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "buttonup": [up], "buttonstop": [stop], "buttondown": [down], "show_buttonup": true, "show_buttonstop": true, "show_buttondown": true, "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
     }
 
     @property({ attribute: false }) public homeassistant!: HomeAssistant;
@@ -260,6 +254,7 @@ export class BoilerplateCard extends LitElement {
 
      ${this.config.show_buttonup
         ? html `
+        <div>
         <svg class=${classMap({
           "svgicon-buttonup":
             (JSON.stringify(this.config.buttonup) == JSON.stringify([up])),
@@ -274,9 +269,56 @@ export class BoilerplateCard extends LitElement {
           "state-unavailable":
           ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
       })}
-      d=${this.config.buttonup[0]}>
+      d=${this.config.buttonup[1]}>
       </svg>
+    </div>
     `: ""}
+
+    ${this.config.show_buttonstop
+        ? html`
+        <div>
+          <svg class=${classMap({
+            "svgicon-buttonstop":
+                (JSON.stringify(this.config.buttonstop) == JSON.stringify([stop])),
+          })}
+          viewBox="0 0 50 50" height="75%" width="65%" >
+          <path fill="#a9b1bc" d=${this.config.buttonstop[0]} />
+          <path class=${classMap({
+            "state-on-buttonstop":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.buttonstop) == JSON.stringify([stop])),
+            "state-off-buttonstop":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.buttonstop) == JSON.stringify([stop])),
+            "state-unavailable":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+          })}
+          d=${this.config.buttonstop[1]}>
+          </svg>
+        </div>
+    `: ""}
+
+    ${this.config.show_buttondown
+        ? html`
+        <div>
+          <svg class=${classMap({
+            "svgicon-buttondown":
+                (JSON.stringify(this.config.buttondown) == JSON.stringify([down])),
+          })}
+          viewBox="0 0 50 50" height="75%" width="65%" >
+          <path fill="#a9b1bc" d=${this.config.buttondown[0]} />
+          <path class=${classMap({
+            "state-on-buttondown":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.buttondown) == JSON.stringify([down])),
+            "state-off-buttondown":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.buttondown) == JSON.stringify([down])),
+            "state-unavailable":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+          })}
+          d=${this.config.buttondown[1]}>
+        </svg>
+        </div>
+
+        `: ""}
+
 
     ${this.config.show_name
       ? html`
@@ -493,7 +535,7 @@ private _cardStop(_event: any): void {
 
       .hassbut {
         display: grid;
-        grid-template-columns: 50% 16% 16% 16%;
+        grid-template-columns: 40% 20% 20% 20%;
       }
 
       .state-div {
@@ -504,18 +546,8 @@ private _cardStop(_event: any): void {
       .name-div {
         align-items: left;
         text-align: left;
-      }
-
-      .move-arrow-up:hover {
-        opacity: 0.7;
-      }
-
-      .stop:hover {
-        opacity: 0.7;
-      }
-
-      .move-arrow-down:hover {
-        opacity: 0.7;
+        padding-top: 25px;
+        padding-bottom: 55px;
       }
 
       .ha-icon-button{
@@ -530,7 +562,7 @@ private _cardStop(_event: any): void {
         white-space: nowrap;
       }
 
-      .move-arrow-up {
+      /* .move-arrow-up {
         width: 2rem;
         display: flex;
         text-align: center;
@@ -561,7 +593,7 @@ private _cardStop(_event: any): void {
       .move-arrow-down {
         animation-direction: reverse;
         fill: #a9b1bc;
-      }
+      } */
 
       .svgicon-blind {
         /* position: absolute;
@@ -572,8 +604,70 @@ private _cardStop(_event: any): void {
         transform: translate(62%, 55%) scale(2.5);
       }
 
-      .svgicon-buttons {
+      .state-on-buttonup {
+        .state-on-blind-icon {
+          transform: scale(0);
+          fill: #ffffff;
+        }
+      }
+
+      .state-on-buttondown {
+        .state-off-blind-icon {
+          fill: #a9b1bc;
+        }
+      }
+
+      .state-on-buttonstop {
+        animation-play-state: paused;
+      }
+
+      .state-off-buttonup {
+        .state-off-blind-icon {
+          transform: none;
+        }
+      }
+
+      .svgicon-buttonup:hover {
+        opacity: 0.7;
+      }
+
+      .svgicon-buttonstop:hover {
+        opacity: 0.7;
+      }
+
+      .svgicon-buttondown:hover {
+        opacity: 0.7;
+      }
+
+      .svgicon-buttonup {
         cursor: pointer;
+        width: 2rem;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        flex-direction: column;
+        color: var(--card-color-bottom);
+      }
+
+      .svgicon-buttonstop {
+        cursor: pointer;
+        cursor: pointer;
+        width: 2rem;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        flex-direction: column;
+        color: var(--card-color-bottom);
+      }
+
+      .svgicon-buttondown {
+        cursor: pointer;
+        width: 2rem;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        flex-direction: column;
+        color: var(--card-color-bottom);
       }
 
       .state {
