@@ -5,7 +5,6 @@ import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
 import { BoilerplateCardConfig, EditorTarget } from './types';
 import { customElement, property, state } from 'lit/decorators';
-// import { assert } from 'superstruct';
 
 const cardConfigStruct = {
   required: {
@@ -14,19 +13,14 @@ const cardConfigStruct = {
   },
 };
 
-// const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
-const close_shutter = "M2.887 6.969v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18V8.102H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 1.945v.81H46.18v-1.618H2.887Zm0 1.946v.809H46.18v-1.621H2.887Zm0 1.945v.809H46.18v-1.621H2.887Zm0 1.942v.812H46.18v-1.62H2.887Zm0 1.945v.813H46.18V19.77H2.887Zm0 1.945v.809H46.18v-1.617H2.887Zm0 1.946v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18v-1.621H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 1.945v.81H46.18v-1.618H2.887Zm0 1.946v.809H46.18v-1.621H2.887Zm0 1.945V35H46.18v-1.621H2.887Zm0 1.942v.812H46.18v-1.62H2.887Zm0 1.945v.813H46.18V37.27H2.887Zm0 1.945v.809H46.18v-1.617H2.887Zm0 1.946v.808H46.18v-1.62H2.887Zm0 1.941v.813H46.18v-1.621H2.887Zm0 1.945v.813H46.18v-1.621H2.887Zm0 0";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
-const stop = "M7.344 23.738v14.867H42.59V8.871H7.344Zm0 0";
-const up = "m15.34 17.004-9.547 9.61h13.3v13.472h11.75V26.613h13.298l-9.547-9.61c-5.254-5.288-9.578-9.608-9.625-9.608-.051 0-4.375 4.32-9.63 9.609Zm0 0";
-const down = "M19.094 12.648v6.739H5.793l9.594 9.64 9.582 9.66 9.578-9.66 9.594-9.64H30.844V5.914h-11.75Zm0 0";
-
-const includeDomains = ['cover'];
+const includeDomains = ["cover","switch"];
 @customElement('persiana-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
+  @property() public icon_value?: string;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
@@ -133,7 +127,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       </div class="side-by-side">
     <div>
 </div>
-<paper-input-label-8>Escolha a persiana: </paper-input-label-8>
+<paper-input-label-8>Persiana: </paper-input-label-8>
 <paper-dropdown-menu class="dropdown-icon">
 <paper-listbox slot="dropdown-content"
   attr-for-selected="value"
@@ -144,13 +138,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         <svg class="svg-tecido" viewBox="0 0 50 50" height="24" width="24" >
         <path class="opacity" fill="#a9b1bc" d=${open_blind}/>
         <path class="state" fill="#a9b1bc" d=${close_blind}/>
-        </svg>Persiana de Tecido
-    </paper-item>
-    <paper-item class= "paper-item-plastico" .value=${[open_blind, close_shutter]}>
-        <svg class="svg-plastico" viewBox="0 0 50 50" height="24" width="24" >
-        <path class="opacity"  fill="#a9b1bc" d=${open_blind}/>
-        <path class="state" fill="#a9b1bc" d=${close_shutter}/>
-        </svg>Persiana
+        </svg>Estore
     </paper-item>
 </paper-listbox>
 </paper-dropdown-menu>
@@ -257,10 +245,6 @@ static get styles(): CSSResultGroup {
       padding-left: 5%;
     }
     .svg-tecido {
-      transform: translate(-10%, -5%) scale(1);
-      margin-right: 2.5%;
-    }
-    .svg-plastico {
       transform: translate(-10%, -5%) scale(1);
       margin-right: 2.5%;
     }
