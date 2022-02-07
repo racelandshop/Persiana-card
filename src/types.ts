@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 declare global {
   interface HTMLElementTagNameMap {
@@ -11,9 +10,9 @@ export interface BoilerplateCardConfig extends LovelaceCardConfig {
   show_state: true;
   show_name: true;
   show_buttons: true;
-  show_buttonup: true;
-  show_buttonstop: true;
-  show_buttondown: true;
+  // show_buttonup: true;
+  // show_buttonstop: true;
+  // show_buttondown: true;
   buttonsPosition: string;
   titlePosition: string;
   invertPercentage: string;

@@ -18,7 +18,6 @@ declare global {
 }
 class ActionHandler extends HTMLElement implements ActionHandler {
   public holdTime = 500;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public ripple: any;
   protected timer?: number;
   protected held = false;

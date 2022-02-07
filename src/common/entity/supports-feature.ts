@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { HassEntity } from "home-assistant-js-websocket";
 
 export const supportsFeature = (
