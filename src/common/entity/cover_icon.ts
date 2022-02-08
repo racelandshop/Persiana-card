@@ -80,7 +80,7 @@ export const coverIcon = (state?: string, stateObj?: HassEntity): string => {
 };
 
 export const computeOpenIcon = (stateObj: HassEntity): string => {
-  switch (stateObj.attributes.device_class) {
+  switch (stateObj?.attributes.device_class) {
     case "awning":
     case "door":
     case "gate":
@@ -91,7 +91,7 @@ export const computeOpenIcon = (stateObj: HassEntity): string => {
 };
 
 export const computeCloseIcon = (stateObj: HassEntity): string => {
-  switch (stateObj.attributes.device_class) {
+  switch (stateObj?.attributes.device_class) {
     case "awning":
     case "door":
     case "gate":

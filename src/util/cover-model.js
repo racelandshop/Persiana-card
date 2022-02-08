@@ -5,7 +5,7 @@ export default class CoverEntity {
   constructor(hass, stateObj) {
     this.hass = hass;
     this.stateObj = stateObj;
-    this._attr = stateObj.attributes;
+    this._attr = stateObj?.attributes;
     this._feat = this._attr.supported_features;
   }
 
@@ -13,14 +13,14 @@ export default class CoverEntity {
     if (this._attr.current_position !== undefined) {
       return this._attr.current_position === 100;
     }
-    return this.stateObj.state === "open";
+    return this.stateObj?.state === "open";
   }
 
   get isFullyClosed() {
     if (this._attr.current_position !== undefined) {
       return this._attr.current_position === 0;
     }
-    return this.stateObj.state === "closed";
+    return this.stateObj?.state === "closed";
   }
 
   get isFullyOpenTilt() {
@@ -32,11 +32,11 @@ export default class CoverEntity {
   }
 
   get isOpening() {
-    return this.stateObj.state === "opening";
+    return this.stateObj?.state === "opening";
   }
 
   get isClosing() {
-    return this.stateObj.state === "closing";
+    return this.stateObj?.state === "closing";
   }
 
   get supportsOpen() {

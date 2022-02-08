@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
@@ -15,15 +16,13 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { UNAVAILABLE } from "./data/entity";
-import { computeCloseIcon, computeOpenIcon } from "./common/entity/cover_icon";
+// import { computeCloseIcon, computeOpenIcon } from "./common/entity/cover_icon";
 
-const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
-const close_shutter = "M3.527 7.941v1.457h42.008V6.48H3.527Zm0 3.239v1.46h42.008V9.724H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.243v1.457h42.008v-2.918H3.527Zm0 3.238v1.46h42.008v-2.917H3.527Zm0 3.242v1.457h42.008v-2.914H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 3.238v1.461h42.008v-2.918H3.527Zm0 3.243v1.457h42.008V38.89H3.527Zm0 3.242v1.457h42.008v-2.918H3.527Zm0 0";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 
 console.info(
-  `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
+  `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}`,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
 );
@@ -32,8 +31,8 @@ console.info(
 (window as any).customCards.push({
   type: 'persiana-card',
   name: 'Persiana',
-  preview: true, //IMPORTANTE
-  description: "Uma carta que permite controlar persianas"
+  preview: true,
+  description: 'Uma carta que permite controlar persianas'
 });
 @customElement('persiana-card')
 
@@ -41,7 +40,6 @@ export class BoilerplateCard extends LitElement {
   stateObj: any;
   hass: any;
   private _entityObj: any;
-  // [x: string]: any;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('persiana-card-editor');
@@ -54,7 +52,7 @@ export class BoilerplateCard extends LitElement {
     entities: string[],
     entitiesFallback: string[]
   ): BoilerplateCardConfig {
-    const includeDomains = ["cover","switch"];
+    const includeDomains = ["cover"];
     const maxEntities = 1;
     const foundEntities = findEntities(
       hass,
@@ -139,10 +137,10 @@ export class BoilerplateCard extends LitElement {
       return html`
         <ha-card
           class="hassbut ${classMap({
-              "state-on": ifDefined(
-                  stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-              "state-off": ifDefined(
-                  stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+            "state-on": ifDefined(
+              stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+            "state-off": ifDefined(
+              stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
           })}"
             @action=${this._handleAction}
             @focus="${this.handleRippleFocus}"
@@ -158,10 +156,7 @@ export class BoilerplateCard extends LitElement {
         <svg class=${classMap({
           "svgicon-blind":
               (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
-          "svgicon-shutter":
-              (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
-            }
-            )
+        })
       }
         viewBox="0 0 50 50" height="75%" width="65%" >
         <path fill="#a9b1bc" d=${this.config.icon[0]} />
@@ -170,14 +165,9 @@ export class BoilerplateCard extends LitElement {
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
           "state-off-blind-icon":
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
-          "state-on-shutter-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
-          "state-off-shutter-icon":
-              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
           "state-unavailable":
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
-        }
-        )
+        })
         }
         d=${this.config.icon[1]} />
         </svg>
@@ -199,31 +189,29 @@ export class BoilerplateCard extends LitElement {
       `: ""}
 
       ${this.config.show_buttons
-        ? html`
-      <div class="button">
-      <button.mdc-icon-button-up
-        class=${classMap({hidden: !this._entityObj.supportsOpen})}
-        .label=${this.hass.localize("common.arrowup")}
-        .icon=${computeOpenIcon(this.stateObj)}
+      ? html`
+      <div class="buttons">
+      <mwc-icon-button
+        class=${classMap({hidden: !this._entityObj?.supportsOpen})}
+        .label=${this.hass.localize("ui.dialogs.more_info_control.open_cover")}
         @click=${this._onOpenTap}
         .disabled=${this._computeOpenDisabled()}
-      ></button.mdc-icon-button-up>
-
-      <button.mdc-icon-button-stop
-        .label=${this.hass.localize("common.stop")}
-        class=${classMap({hidden: !this._entityObj.supportsStop})}
+      >&#9650;
+      </mwc-icon-button>
+      <mwc-icon-button
+        class=${classMap({hidden: !this._entityObj?.supportsStop})}
+        .label=${this.hass.localize("ui.dialogs.more_info_control.stop_cover")}
         @click=${this._onStopTap}
-        icon="hass:stop"
-        .disabled=${this.stateObj.state === UNAVAILABLE}
-      ></button.mdc-icon-button-stop>
-
-      <button.mdc-icon-button-down
-        .label=${this.hass.localize("common.arrowdown")}
-        class=${classMap({hidden: !this._entityObj.supportsClose})}
+        .disabled=${this.stateObj?.state === UNAVAILABLE}
+      >&#9724;
+      </mwc-icon-button>
+      <mwc-icon-button
+        class=${classMap({hidden: !this._entityObj?.supportsClose})}
+        .label=${this.hass.localize("ui.dialogs.more_info_control.close_cover")}
         @click=${this._onCloseTap}
-        .icon=${computeCloseIcon(this.stateObj)}
         .disabled=${this._computeClosedDisabled()}
-      ></button.mdc-icon-button-down>
+      >&#9660;
+      </mwc-icon-button>
       </div>
       `: ""}
     </ha-card>
@@ -231,92 +219,114 @@ export class BoilerplateCard extends LitElement {
   }
 
   private _computeOpenDisabled(): boolean {
-    if (this.stateObj.state === UNAVAILABLE) {
+    if (this.stateObj?.state === UNAVAILABLE) {
       return true;
     }
-    const assumedState = this.stateObj.attributes.assumed_state === true;
-    return (
-      (this._entityObj.isFullyOpen || this._entityObj.isOpening) &&
-      !assumedState
-    );
+    const assumedState = this.stateObj?.attributes.assumed_state === true;
+    return ((this._entityObj?.isFullyOpen || this._entityObj?.isOpening) && !assumedState);
   }
 
   private _computeClosedDisabled(): boolean {
-    if (this.stateObj.state === UNAVAILABLE) {
+    if (this.stateObj?.state === UNAVAILABLE) {
       return true;
     }
-    const assumedState = this.stateObj.attributes.assumed_state === true;
-    return (
-      (this._entityObj.isFullyClosed || this._entityObj.isClosing) &&
-      !assumedState
-    );
+    const assumedState = this.stateObj?.attributes.assumed_state === true;
+    return ((this._entityObj?.isFullyClosed || this._entityObj?.isClosing) && !assumedState);
   }
 
-    private _onOpenTap(ev): void {
-      ev.stopPropagation();
-      this.hass.callService('open_cover', this._entityObj.openCover(), {entity_id: this._entityObj}); //entity_id: entityId
+  private _onOpenTap(): void {
+    this._entityObj?.openCover();
+  }
+
+  private _onCloseTap(): void {
+    this._entityObj?.closeCover();
+  }
+
+  private _onStopTap(): void {
+    this._entityObj?.stopCover();
+  }
+
+
+  // private _onOpenTap(ev): void {
+  //   ev.stopPropagation();
+  //   this._entityObj?.openCover();
+  // }
+
+  // private _onStopTap(ev): void {
+  //   ev.stopPropagation();
+  //   this._entityObj?.stopCover();
+  // }
+
+  // private _onCloseTap(ev): void {
+  //   ev.stopPropagation();
+  //   this._entityObj?.closeCover();
+  // }
+
+  // private _onOpenTap(ev): void {
+  //   ev.stopPropagation();
+  //   this.hass.callService("open_cover", this._entityObj?.openCover(), {entity_id: this?._entityObj});
+  // }
+
+  // private _onStopTap(ev): void {
+  //   ev.stopPropagation();
+  //   this.hass.callService("stop_cover", this._entityObj?.stopCover(), {entity_id: this?._entityObj});
+  // }
+
+  // private _onCloseTap(ev): void {
+  //   ev.stopPropagation();
+  //   this.hass.callService("close_cover", this._entityObj?.closeCover(), {entity_id: this?._entityObj});
+  // }
+
+  private computeActiveState = (stateObj: HassEntity): string => {
+    const domain = stateObj?.entity_id.split(".")[0];
+    let state = stateObj?.state;
+    if (domain === "climate") {
+      state = stateObj?.attributes.hvac_action;
     }
+    return state;
+  };
 
-    private _onCloseTap(ev): void {
-      ev.stopPropagation();
-      this.hass.callService('close_cover', this._entityObj.closeCover(), { entity_id: this._entityObj }); //entity_id: entityId
+  private _handleAction(ev: ActionHandlerEvent): void {
+    if (this.hass && this.config && ev.detail.action) {
+      handleAction(this, this.hass, this.config, ev.detail.action);
     }
+  }
 
-    private _onStopTap(ev): void {
-      ev.stopPropagation();
-      this.hass.callService('stop_cover', this._entityObj.stopCover(), { entity_id: this._entityObj }); //entity_id: entityId
-    }
+  private _showWarning(warning: string): TemplateResult {
+    return html`
+    <hui-warning>${warning}</hui-warning>
+  `;
+  }
 
-    private computeActiveState = (stateObj: HassEntity): string => {
-      const domain = stateObj.entity_id.split(".")[0];
-      let state = stateObj.state;
-      if (domain === "climate") {
-          state = stateObj.attributes.hvac_action;
-      }
-      return state;
-    };
-
-    private _handleAction(ev: ActionHandlerEvent): void {
-      if (this.hass && this.config && ev.detail.action) {
-          handleAction(this, this.hass, this.config, ev.detail.action);
-      }
-    }
-
-    private _showWarning(warning: string): TemplateResult {
-      return html`
-      <hui-warning>${warning}</hui-warning>
-    `;
-    }
-
-    private _showError(error: string): TemplateResult {
-      const errorCard = document.createElement('hui-error-card');
-      errorCard.setConfig({
-          type: 'error',
-          error,
-          origConfig: this.config,
-      });
-      return html`
-      ${errorCard}
-    `;
-    }
-
-    private computeObjectId = (entityId: string): string =>
-      entityId.substr(entityId.indexOf(".") + 1);
-
-    private computeStateName = (stateObj: HassEntity): string =>
-      stateObj.attributes.friendly_name === undefined
-        ? this.computeObjectId(stateObj.entity_id).replace(/_/g, " ")
-        : stateObj.attributes.friendly_name || "";
-
-    private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
-      return this._ripple;
+  private _showError(error: string): TemplateResult {
+    const errorCard = document.createElement('hui-error-card');
+    errorCard.setConfig({
+      type: 'error',
+      error,
+      origConfig: this.config,
     });
+    return html`
+    ${errorCard}
+    `;
+  }
 
-    private handleRippleFocus() {
-      this._rippleHandlers.startFocus();
-    }
+  private computeObjectId = (entityId: string): string =>
+    entityId.substr(entityId.indexOf(".") + 1);
 
-    static get styles(): CSSResultGroup {
+  private computeStateName = (stateObj: HassEntity): string =>
+    stateObj?.attributes.friendly_name === undefined
+      ? this.computeObjectId(stateObj?.entity_id).replace(/_/g, " ")
+      : stateObj?.attributes.friendly_name || "";
+
+  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
+    return this._ripple;
+  });
+
+  private handleRippleFocus() {
+    this._rippleHandlers.startFocus();
+  }
+
+  static get styles(): CSSResultGroup {
     return css`
       ha-card {
         cursor: pointer;
@@ -390,32 +400,23 @@ export class BoilerplateCard extends LitElement {
       }
 
       .name-div {
+        padding-top: 18px;
+        padding-bottom: 41px;
         align-items: left;
         text-align: left;
       }
 
-      .supportsOpen:active {
-        visibility: hidden;
+      .div.buttons {
+        align-items: left;
+        text-align: left;
       }
 
-      .supportsStop:active {
-        visibility: hidden;
+      .mdc-icon-button {
+        padding: 6px 6px 6px 6px;
       }
 
-      .supportsClose:active {
-        visibility: hidden;
-      }
-
-      .supportsOpen:hover {
-        opacity: 0.7;
-      }
-
-      .supportsStop:hover {
-        opacity: 0.7;
-      }
-
-      .supportsClose:hover {
-        opacity: 0.7;
+      .mwc-icon-button {
+        padding: 6px 6px 6px 6px;
       }
 
       .ha-icon-button{
@@ -428,36 +429,6 @@ export class BoilerplateCard extends LitElement {
       mwc-list-item {
         cursor: pointer;
         white-space: nowrap;
-      }
-
-      .supportsOpen {
-        width: 2rem;
-        display: flex;
-        text-align: center;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-        padding-left: 25px;
-      }
-
-      .supportsStop {
-        width: 2rem;
-        display: flex;
-        text-align: center;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-        animation-play-state: paused;
-        padding-left: 25px;
-      }
-
-      .supportsClose {
-        width: 2rem;
-        display: flex;
-        text-align: center;
-        flex-direction: column;
-        color: var(--card-color-bottom);
-        padding-left: 25px;
-        animation-direction: reverse;
-        fill: #a9b1bc;
       }
 
       .svgicon-blind {
@@ -481,22 +452,6 @@ export class BoilerplateCard extends LitElement {
 
       /* alteração ao aspeto persiana */
       .state-off-blind-icon {
-        animation-direction: reverse;
-        transition: all 0.5s ease;
-        /* fill: #a9b1bc; */
-        color: var(--main-color);
-      }
-
-      /* alteração ao aspeto persiana */
-      .state-on-shutter-icon {
-        transform: translateY(-100%);
-        transition: all 0.5s ease;
-        /* fill: #a9b1bc; */
-        color: var(--main-color);
-      }
-
-      /* alteração ao aspeto persiana */
-      .state-off-shutter-icon {
         animation-direction: reverse;
         transition: all 0.5s ease;
         /* fill: #a9b1bc; */

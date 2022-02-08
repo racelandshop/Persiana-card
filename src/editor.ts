@@ -15,7 +15,7 @@ const cardConfigStruct = {
 
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
-const includeDomains = ["cover","switch"];
+const includeDomains = ["cover"];
 @customElement('persiana-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -37,65 +37,21 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     return true;
   }
 
-  get _name(): string {
-    return this._config?.name || '';
-  }
-
-  get _show_name(): boolean {
-    return this._config?.show_name ?? true;
-  }
-
-  get _show_state(): boolean {
-    return this._config?.show_state ?? true;
-  }
-
-  get _show_buttons(): boolean {
-    return this._config?.show_buttons ?? true;
-  }
-
-  get _entity(): string {
-    return this._config?.entity || '';
-  }
-
-  get _show_warning(): boolean {
-    return this._config?.show_warning || false;
-  }
-
-  get _show_error(): boolean {
-    return this._config?.show_error || false;
-  }
-
-  get _tap_action(): ActionConfig {
-    return this._config?.tap_action || { action: 'none' };
-  }
-
-  get _hold_action(): ActionConfig {
-    return this._config?.hold_action || { action: 'none' };
-  }
-
-  get _double_tap_action(): ActionConfig {
-    return this._config?.double_tap_action || { action: 'none' };
-  }
-
-  get _invert_percentage(): boolean {
-    return this._config?.invert_percentage || false;
-  }
-
-  get _title_position(): string {
-    return this._config?.title_position || false;
-  }
-
-  get _buttons_position(): string {
-    return this._config?.buttons_position || false;
-  }
-
-  get _test_gui(): boolean {
-    return this._config.test_gui || false;
-  }
-
-  get _blind_color(): string {
-    return this._config?.blind_color || false;
-  }
+  get _name(): string {return this._config?.name || '';}
+  get _show_name(): boolean {return this._config?.show_name ?? true;}
+  get _show_state(): boolean {return this._config?.show_state ?? true;}
+  get _show_buttons(): boolean {return this._config?.show_buttons ?? true;}
+  get _entity(): string {return this._config?.entity || '';}
+  get _show_warning(): boolean {return this._config?.show_warning || false;}
+  get _show_error(): boolean {return this._config?.show_error || false;}
+  get _tap_action(): ActionConfig {return this._config?.tap_action || { action: 'none' };}
+  get _hold_action(): ActionConfig {return this._config?.hold_action || { action: 'none' };}
+  get _double_tap_action(): ActionConfig {return this._config?.double_tap_action || { action: 'none' };}
+  get _invert_percentage(): boolean {return this._config?.invert_percentage || false;}
+  get _title_position(): string {return this._config?.title_position || false;}
+  get _buttons_position(): string {return this._config?.buttons_position || false;}
+  get _test_gui(): boolean {return this._config.test_gui || false;}
+  get _blind_color(): string {return this._config?.blind_color || false;}
 
   protected render(): TemplateResult | void {
     if (!this.hass || !this._helpers) {
@@ -104,45 +60,45 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     this._helpers.importMoreInfoControl('climate');
 
     return html`
-      <div class="card-config">
-      <div class="option" .option=${'required'}>
-          <ha-entity-picker
-            .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
-            .hass=${this.hass}
-            .value=${this._entity}
-            .configValue=${'entity'}
-            .includeDomains=${includeDomains}
-            @value-changed=${this._valueChanged}
-            allow-custom-entity>
-          </ha-entity-picker>
-      </div class="card-config">
-      </div class="option">
-      <div class="side-by-side">
-          <paper-input
-            .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
-            .value=${this._name}
-            .configValue=${'name'}
-            @value-changed=${this._valueChanged}>
-          </paper-input>
-      </div class="side-by-side">
-    <div>
-</div>
-<paper-input-label-8>Persiana: </paper-input-label-8>
-<paper-dropdown-menu class="dropdown-icon">
-<paper-listbox slot="dropdown-content"
-  attr-for-selected="value"
-  .configValue=${"icon"}
-  selected='1'
-  @iron-select=${this._changed_icon}>
-    <paper-item class= "paper-item-tecido" .value=${[open_blind, close_blind]}>
+    <div class="card-config">
+    <div class="option" .option=${'required'}>
+      <ha-entity-picker
+        .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.entity')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
+        .hass=${this.hass}
+        .value=${this._entity}
+        .configValue=${'entity'}
+        .includeDomains=${includeDomains}
+        @value-changed=${this._valueChanged}
+        allow-custom-entity>
+      </ha-entity-picker>
+    </div class="card-config">
+    </div class="option">
+    <div class="side-by-side">
+      <paper-input
+        .label="${this.hass.localize('ui.panel.lovelace.editor.card.generic.name')} (${this.hass.localize('ui.panel.lovelace.editor.card.config.optional')})"
+        .value=${this._name}
+        .configValue=${'name'}
+        @value-changed=${this._valueChanged}>
+      </paper-input>
+    </div class="side-by-side">
+  <div>
+  </div>
+  <paper-input-label-8>Persiana: </paper-input-label-8>
+  <paper-dropdown-menu class="dropdown-icon">
+  <paper-listbox slot="dropdown-content"
+    attr-for-selected="value"
+    .configValue=${"icon"}
+    selected='1'
+    @iron-select=${this._changed_icon}>
+      <paper-item class= "paper-item-tecido" .value=${[open_blind, close_blind]}>
         <svg class="svg-tecido" viewBox="0 0 50 50" height="24" width="24" >
         <path class="opacity" fill="#a9b1bc" d=${open_blind}/>
         <path class="state" fill="#a9b1bc" d=${close_blind}/>
         </svg>Estore
-    </paper-item>
-</paper-listbox>
-</paper-dropdown-menu>
-</div>
+      </paper-item>
+  </paper-listbox>
+  </paper-dropdown-menu>
+  </div>
 `;
 }
 
