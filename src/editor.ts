@@ -15,7 +15,7 @@ const cardConfigStruct = {
 
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
-const includeDomains = ["cover"];
+const includeDomains = ["cover"]; //"switch"
 @customElement('persiana-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
