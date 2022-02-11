@@ -81,6 +81,28 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
         @value-changed=${this._valueChanged}>
       </paper-input>
     </div class="side-by-side">
+
+    <div class="div-option">
+      <p>
+      </p>
+        <ha-formfield
+          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
+          .dir=${this.dir}>
+          <ha-switch
+            .checked=${this._show_name !== false}
+            .configValue=${'show_name'}
+            @change=${this._change}>
+          </ha-switch>  Mostrar o nome?
+        </ha-formfield>
+        <ha-formfield
+          .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
+          .dir=${this.dir}>
+          <ha-switch
+          .checked=${this._show_state !== false}
+          .configValue=${'show_state'}
+          @change=${this._change}>
+          </ha-switch>  Mostrar o estado?
+        </ha-formfield>
   <div>
   </div>
   <paper-input-label-8>Persiana: </paper-input-label-8>

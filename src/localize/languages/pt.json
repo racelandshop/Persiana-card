@@ -3,13 +3,10 @@
     "version": "Versão",
     "invalid_configuration": "Configuração Inválida",
     "show_warning": "Mostrar Aviso",
-    "show_error": "Mostrar Erro",
-    "arrowup": "Abrir",
-    "arrowdown": "Fechar",
-    "stop": "Stop"
+    "show_error": "Mostrar Erro"
   },
   "states":{
-    "on": "100%",
-    "off": "0%"
+    "on": "Aberto",
+    "off": "Fechado"
 }
 }
