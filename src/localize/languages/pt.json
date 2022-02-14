@@ -6,7 +6,10 @@
     "show_error": "Mostrar Erro"
   },
   "states":{
-    "on": "Aberto",
-    "off": "Fechado"
+    "open": "Aberta",
+    "closed": "Fechada",
+    "on": "Aberta",
+    "off": "Fechada",
+    "unavailable": "Indisponível"
 }
 }
