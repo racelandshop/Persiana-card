@@ -20,7 +20,7 @@ import { UNAVAILABLE } from "./data/entity";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
-const close_shutter = "M2.246 6.969v1.457H46.82V5.508H2.246Zm0 4.535v1.46H46.82v-2.917H2.246Zm0 4.539V17.5H46.82v-2.918H2.246Zm0 4.535v1.457H46.82v-2.914H2.246Zm0 4.539v1.457H46.82v-2.918H2.246Zm0 4.535v1.457H46.82v-2.914H2.246Zm0 4.539v1.457H46.82V32.73H2.246Zm0 4.536v1.457H46.82V37.27H2.246Zm0 5.507v2.434H46.82v-4.863H2.246Zm0 0";
+const close_shutter = "M2.887 26.41v20.258H46.18V6.156H2.887ZM45.535 9.883v.812H3.527v-1.62h42.008Zm0 4.539v.808H3.527v-1.62h42.008Zm0 4.535v.813H3.527v-1.622h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 0";
 
 console.info(
   `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}`,
@@ -78,6 +78,14 @@ export class BoilerplateCard extends LitElement {
       },
     };
   }
+
+  //drag slider:
+
+
+
+
+
+  //end of drag slider
 
   public translate_state(stateObj): string{
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "open") {
@@ -145,7 +153,7 @@ export class BoilerplateCard extends LitElement {
           "svgicon-blind":
             (JSON.stringify(this.config.icon) == JSON.stringify([close_blind, open_blind])),
           "svgicon-shutter":
-            (JSON.stringify(this.config.icon) == JSON.stringify([close_shutter, open_shutter])),
+            (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
           }
           )
         }
@@ -173,31 +181,28 @@ export class BoilerplateCard extends LitElement {
       ? html`
       <div class="buttons">
       <mwc-icon-button
-        class=${classMap({
-          hidden: !this._entityObj?.supportsOpen,
-        })}
+        class=${classMap({hidden: !this._entityObj?.supportsOpen})}
         .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
         icon="&#9650"
         @click=${this._onOpenTap}
         .disabled=${this._computeOpenDisabled()}
+        title="Abrir"
       ></mwc-icon-button>
       <mwc-icon-button
-        class=${classMap({
-          hidden: !this._entityObj?.supportsStop,
-        })}
+        class=${classMap({hidden: !this._entityObj?.supportsStop})}
         .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
         icon="&#9724"
         @click=${this._onStopTap}
         .disabled=${this.stateObj?.state === UNAVAILABLE}
+        title="Stop"
       ></mwc-icon-button>
       <mwc-icon-button
-        class=${classMap({
-          hidden: !this._entityObj?.supportsClose,
-        })}
+        class=${classMap({hidden: !this._entityObj?.supportsClose})}
         .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
         icon="&#9660"
         @click=${this._onCloseTap}
         .disabled=${this._computeClosedDisabled()}
+        title="Fechar"
       ></mwc-icon-button>
       </div>
       `: ""}
@@ -481,4 +486,3 @@ export class BoilerplateCard extends LitElement {
     `;
     }
 }
-
