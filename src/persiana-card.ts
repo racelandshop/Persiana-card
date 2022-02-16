@@ -16,6 +16,7 @@ import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 import { localize } from './localize/localize';
 import { UNAVAILABLE } from "./data/entity";
+import { fireEvent } from "custom-card-helpers";
 
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
@@ -72,10 +73,13 @@ export class BoilerplateCard extends LitElement {
     this.config = {
       show_icon: true,
       icon: 'mdi:blinds',
-      ...config,
       tap_action: {
         action: "toggle",
       },
+      hold_action: {
+        action: "more-info",
+      },
+      ...config,
     };
   }
 
@@ -146,6 +150,13 @@ export class BoilerplateCard extends LitElement {
         tabindex="0"
         .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
     >
+
+    <mwc-icon-button
+      class="more-info"
+      label="Open more info"
+      @click=${this._handleMoreInfo}
+      tabindex="0"
+    ></mwc-icon-button>
 
     ${this.config.show_icon
       ? html`
@@ -260,8 +271,14 @@ export class BoilerplateCard extends LitElement {
     this?.hass.callService({ entity_id: this?._entityObj?.stopcover() });
   }
 
+  // callService() {
+  //   this?.hass.callService({ entity_id: this?.service });
+  // }
+
   callService() {
-    this?.hass.callService({ entity_id: this?.service });
+    this?.hass.callService('opencover', this?.service, {entity_id: this?._entityObj.openCover()});
+    this?.hass.callService('closecover', this?.service, {entity_id: this?._entityObj.closeCover()});
+    this?.hass.callService('stopcover', this?.service, {entity_id: this?._entityObj.stopCover()});
   }
 
   private computeActiveState = (stateObj: HassEntity): string => {
@@ -313,6 +330,12 @@ export class BoilerplateCard extends LitElement {
     this._rippleHandlers.startFocus();
   }
 
+  private _handleMoreInfo() {
+    fireEvent(this, "hass-more-info", {
+      entityId: this.config?.entity,
+    });
+  }
+
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
@@ -332,6 +355,16 @@ export class BoilerplateCard extends LitElement {
         color: var(--card-color-text, white);
         border-radius: 25px;
         overflow: hidden;
+      }
+
+      .more-info {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        border-radius: 100%;
+        color: var(--secondary-text-color);
+        z-index: 1;
       }
 
       ha-icon {

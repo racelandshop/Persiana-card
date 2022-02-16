@@ -69,11 +69,11 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
   }
 
   get _tap_action(): ActionConfig {
-    return this._config?.tap_action || { action: 'more-info' };
+    return this._config?.tap_action || { action: 'none' };
   }
 
   get _hold_action(): ActionConfig {
-    return this._config?.hold_action || { action: 'none' };
+    return this._config?.hold_action || { action: 'more-info' };
   }
 
   get _double_tap_action(): ActionConfig {
@@ -105,6 +105,15 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
       return html``;
     }
     this._helpers.importMoreInfoControl('climate');
+
+    const actions = [
+      "more-info",
+      "toggle",
+      "navigate",
+      "url",
+      "call-service",
+      "none",
+    ];
 
     return html`
       <div class="card-config">
