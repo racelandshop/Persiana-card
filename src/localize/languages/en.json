@@ -6,8 +6,10 @@
     "show_error": "Show Error"
   },
   "states":{
-    "open": "Aberto",
+    "open": "Aberta",
     "closed": "Fechado",
+    "stoped": "Parada",
+    "stop": "Parada",
     "on": "Aberta",
     "off": "Fechada",
     "unavailable": "Indisponível"

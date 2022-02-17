@@ -250,7 +250,6 @@ private _changed_icon(ev): void {
   this._config = {
     ...this._config, [ev.target.configValue]: ev.target.selected, "type": 'custom:persiana-card'
   }
-  console.log("this._config", this._config);
   fireEvent(this, "config-changed", { config: this._config });
 }
 

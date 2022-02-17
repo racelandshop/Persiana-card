@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
@@ -24,12 +23,12 @@ const open_shutter = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 
 const close_shutter = "M2.887 26.41v20.258H46.18V6.156H2.887ZM45.535 9.883v.812H3.527v-1.62h42.008Zm0 4.539v.808H3.527v-1.62h42.008Zm0 4.535v.813H3.527v-1.622h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 0";
 
 console.info(
-  `%c  RACELAND-persiana-card \n%c  ${localize('common.version')} ${CARD_VERSION}`,
+  `%c  RACELAND-persiana-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
 );
 
-(window as any).customCards = (window as any).customCards || [];
+(window as any).customCards = (window as any).customCards || "", [];
 (window as any).customCards.push({
   type: 'persiana-card',
   name: 'Persiana',
@@ -51,7 +50,13 @@ export class BoilerplateCard extends LitElement {
   ): BoilerplateCardConfig {
     const includeDomains = ["cover"];
     const maxEntities = 1;
-    const foundEntities = findEntities(hass, maxEntities, entities, entitiesFallback, includeDomains);
+    const foundEntities = findEntities(
+      hass,
+      maxEntities,
+      entities,
+      entitiesFallback,
+      includeDomains
+    );
     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" ,"buttonsPosition": "left", "titlePosition": "top", "invertPercentage": "false", blindColor: "#ffffff" };
   }
 
@@ -62,6 +67,7 @@ export class BoilerplateCard extends LitElement {
 
   @property({ attribute: false }) public homeassistant!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
+
   public setConfig(config: BoilerplateCardConfig): void {
     if (!config) {
       throw new Error(localize('common.invalidconfiguration'));
@@ -73,23 +79,15 @@ export class BoilerplateCard extends LitElement {
     this.config = {
       show_icon: true,
       icon: 'mdi:blinds',
+      ...config,
       tap_action: {
         action: "toggle",
       },
       hold_action: {
         action: "more-info",
       },
-      ...config,
     };
   }
-
-  //drag slider:
-
-
-
-
-
-  //end of drag slider
 
   public translate_state(stateObj): string{
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "open") {
@@ -140,6 +138,8 @@ export class BoilerplateCard extends LitElement {
           stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
         "state-off": ifDefined(
           stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+        "state-stop": ifDefined(
+          stateObj ? this.computeActiveState(stateObj) : undefined) === "stop",
       })}"
         @action=${this._handleAction}
         @focus="${this.handleRippleFocus}"
@@ -175,10 +175,14 @@ export class BoilerplateCard extends LitElement {
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
           "state-off-blind-icon":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
+          "state-stop-blind-icon":
+            ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop" && (JSON.stringify(this.config.icon) == JSON.stringify([open_blind, close_blind])),
           "state-on-shutter-icon":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
           "state-off-shutter-icon":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
+          "state-stop-shutter-icon":
+            ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop" && (JSON.stringify(this.config.icon) == JSON.stringify([open_shutter, close_shutter])),
           "state-unavailable":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
         }
@@ -309,9 +313,7 @@ export class BoilerplateCard extends LitElement {
       error,
       origConfig: this.config,
     });
-    return html`
-    ${errorCard}
-    `;
+    return html` ${errorCard} `;
   }
 
   private computeObjectId = (entityId: string): string =>
