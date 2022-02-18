@@ -1,0 +1,1 @@
+export const callService = (ev) => ev.callService();

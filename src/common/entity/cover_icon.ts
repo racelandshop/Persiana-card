@@ -1,9 +1,7 @@
-/** Return an icon representing a cover state. */
 import { HassEntity } from "home-assistant-js-websocket";
 
 export const coverIcon = (state?: string, stateObj?: HassEntity): string => {
-  const open = state !== "closed";
-
+const open = state !== "closed";
   switch (stateObj?.attributes.device_class) {
     case "garage":
       switch (state) {
@@ -66,7 +64,6 @@ export const coverIcon = (state?: string, stateObj?: HassEntity): string => {
           return "hass:window-open";
       }
   }
-
   switch (state) {
     case "opening":
       return "hass:arrow-up-box";
@@ -78,7 +75,6 @@ export const coverIcon = (state?: string, stateObj?: HassEntity): string => {
       return "hass:window-open";
   }
 };
-
 export const computeOpenIcon = (stateObj: HassEntity): string => {
   switch (stateObj?.attributes.device_class) {
     case "awning":
@@ -89,7 +85,6 @@ export const computeOpenIcon = (stateObj: HassEntity): string => {
       return "hass:arrow-up";
   }
 };
-
 export const computeCloseIcon = (stateObj: HassEntity): string => {
   switch (stateObj?.attributes.device_class) {
     case "awning":

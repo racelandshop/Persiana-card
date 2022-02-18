@@ -1,30 +1,23 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable-next-line @typescript-eslint/no-empty-function */
 import { noChange } from 'lit';
 import { AttributePart, directive, Directive, DirectiveParameters } from 'lit/directive';
 import { ActionHandlerDetail, ActionHandlerOptions } from 'custom-card-helpers/dist/types';
 import { fireEvent } from 'custom-card-helpers';
 
 const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0;
-interface ActionHandler extends HTMLElement {
-  holdTime: number;
-  bind(element: Element, options): void;
-}
-interface ActionHandlerElement extends HTMLElement {
-  actionHandler?: boolean;
-}
-declare global {
-  interface HASSDomEvents {
-    action: ActionHandlerDetail;
-  }
-}
+
+interface ActionHandler extends HTMLElement {holdTime: number; bind(element: Element, options): void}
+interface ActionHandlerElement extends HTMLElement {actionHandler?: boolean}
+declare global {interface HASSDomEvents {action: ActionHandlerDetail}}
 class ActionHandler extends HTMLElement implements ActionHandler {
   public holdTime = 500;
   public ripple: any;
   protected timer?: number;
   protected held = false;
   private dblClickTimeout?: number;
-
   constructor() {
     super();
     this.ripple = document.createElement('mwc-ripple');
@@ -39,10 +32,8 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       pointerEvents: 'none',
       zIndex: '999',
     });
-
     this.appendChild(this.ripple);
     this.ripple.primary = true;
-
     ['touchcancel', 'mouseout', 'mouseup', 'touchmove', 'mousewheel', 'wheel', 'scroll'].forEach(ev => {
       document.addEventListener(
         ev,
@@ -51,7 +42,7 @@ class ActionHandler extends HTMLElement implements ActionHandler {
           this.stopAnimation();
           this.timer = undefined;
         },
-        { passive: true },
+        {passive: true},
       );
     });
   }
@@ -60,15 +51,12 @@ class ActionHandler extends HTMLElement implements ActionHandler {
     if (element.actionHandler) {
       return;
     }
+
     element.actionHandler = true;
     element.addEventListener('contextmenu', (ev: Event) => {
       const e = ev || window.event;
-      if (e.preventDefault) {
-        e.preventDefault();
-      }
-      if (e.stopPropagation) {
-        e.stopPropagation();
-      }
+      if (e.preventDefault) {e.preventDefault()}
+      if (e.stopPropagation) {e.stopPropagation()}
       e.cancelBubble = true;
       e.returnValue = false;
       return false;
@@ -85,7 +73,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
         x = (ev as MouseEvent).pageX;
         y = (ev as MouseEvent).pageY;
       }
-
       this.timer = window.setTimeout(() => {
         this.startAnimation(x, y);
         this.held = true;
@@ -93,7 +80,6 @@ class ActionHandler extends HTMLElement implements ActionHandler {
     };
 
     const end = (ev: Event): void => {
-      // Prevent mouse event if touch event
       ev.preventDefault();
       if (['touchend', 'touchcancel'].includes(ev.type) && this.timer === undefined) {
         return;
@@ -101,9 +87,8 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       clearTimeout(this.timer);
       this.stopAnimation();
       this.timer = undefined;
-      if (this.held) {
-        fireEvent(element, 'action', { action: 'hold' });
-      } else if (options.hasDoubleClick) {
+      if (this.held) { fireEvent(element, 'action', { action: 'hold' }) }
+      else if (options.hasDoubleClick) {
         if ((ev.type === 'click' && (ev as MouseEvent).detail < 2) || !this.dblClickTimeout) {
           this.dblClickTimeout = window.setTimeout(() => {
             this.dblClickTimeout = undefined;
@@ -114,15 +99,10 @@ class ActionHandler extends HTMLElement implements ActionHandler {
           this.dblClickTimeout = undefined;
           fireEvent(element, 'action', { action: 'double_tap' });
         }
-      } else {
-        fireEvent(element, 'action', { action: 'tap' });
-      }
+      } else {fireEvent(element, 'action', { action: 'tap' })}
     };
 
-    const handleEnter = (ev: KeyboardEvent): void => {
-      if (ev.keyCode !== 13) {
-        return;
-      }
+    const handleEnter = (ev: KeyboardEvent): void => {if (ev.keyCode !== 13) {return}
       end(ev);
     };
 
@@ -151,14 +131,11 @@ class ActionHandler extends HTMLElement implements ActionHandler {
     this.style.display = 'none';
   }
 }
-// TODO You need to replace all instances of "action-handler-boilerplate" with "action-handler-<your card name>"
-customElements.define('action-handler-persiana-card', ActionHandler);
 
+customElements.define('action-handler-persiana-card', ActionHandler);
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector('action-handler-persiana-card')) {
-    return body.querySelector('action-handler-persiana-card') as ActionHandler;
-  }
+  if (body.querySelector('action-handler-persiana-card')) {return body.querySelector('action-handler-persiana-card') as ActionHandler}
   const actionhandler = document.createElement('action-handler-persiana-card');
   body.appendChild(actionhandler);
   return actionhandler as ActionHandler;
@@ -166,9 +143,7 @@ const getActionHandler = (): ActionHandler => {
 
 export const actionHandlerBind = (element: ActionHandlerElement, options?: ActionHandlerOptions): void => {
   const actionhandler: ActionHandler = getActionHandler();
-  if (!actionhandler) {
-    return;
-  }
+  if (!actionhandler) {return}
   actionhandler.bind(element, options);
 };
 
@@ -178,7 +153,6 @@ export const actionHandler = directive(
       actionHandlerBind(part.element as ActionHandlerElement, options);
       return noChange;
     }
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     render(_options?: ActionHandlerOptions) {}
   },
 );
