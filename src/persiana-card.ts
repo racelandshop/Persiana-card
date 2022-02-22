@@ -241,25 +241,49 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyClosed || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private _onOpenTap(ev) {
-    ev.callService();
-    this?.hass.callService({ entity_id: this?._entityObj?.opencover() });
+  private _onOpenTap() {
+    this.hass.callService("cover.open_cover", "turn-on", {
+      entity_id: this.stateObj?.entity_id
+    });
   }
 
-  private _onCloseTap(ev) {
-    ev.callService();
-    this?.hass.callService({ entity_id: this?._entityObj?.closecover() });
+  private _onCloseTap() {
+    this.hass.callService("cover.close_cover", "turn-on", {
+      entity_id: this.stateObj?.entity_id
+    });
   }
 
-  private _onStopTap(ev) {
-    ev.callService();
-    this?.hass.callService({ entity_id: this?._entityObj?.stopcover() });
+  private _onStopTap() {
+    this.hass.callService("cover.stop_cover", "turn-on", {
+      entity_id: this.stateObj?.entity_id
+    });
   }
+
+  // private _onOpenTap(ev) {
+  //   ev.callService();
+  //   this?.hass.callService({ entity_id: this?._entityObj?.opencover() });
+  // }
+
+  // private _onCloseTap(ev) {
+  //   ev.callService();
+  //   this?.hass.callService({ entity_id: this?._entityObj?.closecover() });
+  // }
+
+  // private _onStopTap(ev) {
+  //   ev.callService();
+  //   this?.hass.callService({ entity_id: this?._entityObj?.stopcover() });
+  // }
+
+  // callService() {
+  //   this?.hass.callService('opencover', this?.service, {entity_id: this?._entityObj.openCover()});
+  //   this?.hass.callService('closecover', this?.service, {entity_id: this?._entityObj.closeCover()});
+  //   this?.hass.callService('stopcover', this?.service, {entity_id: this?._entityObj.stopCover()});
+  // }
 
   callService() {
-    this?.hass.callService('opencover', this?.service, {entity_id: this?._entityObj.openCover()});
-    this?.hass.callService('closecover', this?.service, {entity_id: this?._entityObj.closeCover()});
-    this?.hass.callService('stopcover', this?.service, {entity_id: this?._entityObj.stopCover()});
+    this?.hass.callService('cover.open_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
+    this?.hass.callService('cover.close_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
+    this?.hass.callService('cover.stop_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
   }
 
   private computeActiveState = (stateObj: HassEntity): string => {
