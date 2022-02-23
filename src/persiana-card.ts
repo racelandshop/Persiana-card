@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
@@ -20,7 +21,11 @@ import { fireEvent } from "custom-card-helpers";
 const open_blind = "M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0";
 const close_blind = "M3.848 26.09v18.957h41.367V7.129H3.848Zm0 0";
 
-console.info(`%c  RACELAND-persiana-card \n%c  ${localize("common.version")} ${CARD_VERSION}`, 'color: orange; font-weight: bold; background: black', 'color: white; font-weight: bold; background: dimgray');
+console.info(
+  `%c  RACELAND-persiana-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
+  'color: orange; font-weight: bold; background: black',
+  'color: white; font-weight: bold; background: dimgray'
+);
 
 (window as any).customCards = (window as any).customCards || "", [];
 (window as any).customCards.push({
@@ -31,8 +36,11 @@ console.info(`%c  RACELAND-persiana-card \n%c  ${localize("common.version")} ${C
 });
 @customElement('persiana-card')
 export class BoilerplateCard extends LitElement {
-  public static async getConfigElement(): Promise<LovelaceCardEditor> {return document.createElement('persiana-card-editor')}
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
+    return document.createElement('persiana-card-editor')
+  }
   @queryAsync('mwc-ripple') private _ripple!: Promise<Ripple | null>;
+
   public static getStubConfig(
     hass: HomeAssistant,
     entities: string[],
@@ -51,11 +59,11 @@ export class BoilerplateCard extends LitElement {
   }
 
   stateObj: any;
-  hass: any;
+  //hass: any;
   private _entityObj: any;
   service: any;
 
-  @property({ attribute: false }) public homeassistant!: HomeAssistant;
+  @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
 
   public setConfig(config: BoilerplateCardConfig): void {
@@ -85,7 +93,7 @@ export class BoilerplateCard extends LitElement {
     else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "closed") {
       return localize("states.off");
     }
-    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stoped") {
+    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop") {
       return localize("states.stop");
     }
     else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable") {
@@ -116,9 +124,12 @@ export class BoilerplateCard extends LitElement {
   return html`
     <ha-card
       class="hassbut ${classMap({
-        "state-on": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-        "state-off": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-        "state-stop": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop",
+        "state-on":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+        "state-off":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+        "state-stop":
+          ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop",
       })}"
         @action=${this._handleAction}
         @focus="${this.handleRippleFocus}"
@@ -188,7 +199,9 @@ export class BoilerplateCard extends LitElement {
       <div tabindex="-1" class="state-div">
         ${this.translate_state(stateObj)}
       <div class="position"></div>
-      </div><div></div>
+      </div>
+      <div>
+      </div>
     `: ""
   }
     </ha-card>
@@ -200,9 +213,12 @@ export class BoilerplateCard extends LitElement {
       return html`
         <ha-icon
           class="blind-icon ${classMap({
-            "state-on-blinds": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-            "state-off": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-            "state-unavailable": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+            "state-on-blinds":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+            "state-off":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+            "state-unavailable":
+              ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
           })}"
           tabindex="-1"
           data-domain0${ifDefined(
@@ -219,9 +235,12 @@ export class BoilerplateCard extends LitElement {
       <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%">
         <path fill="#d3d3d3" d=${this.config.icon[0]} />
         <path class=${classMap({
-          "state-on-blind-icon": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
-          "state-off": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
-          "state-unavailable": ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
+          "state-on-blind-icon":
+            ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
+          "state-off":
+            ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
+          "state-unavailable":
+            ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "unavailable",
         })}
         d=${this.config.icon[1]} />
       </svg>`
@@ -230,60 +249,35 @@ export class BoilerplateCard extends LitElement {
   }
 
   private _computeOpenDisabled(): boolean {
-    if (this.stateObj?.state === UNAVAILABLE) {return true}
+    if (this.stateObj?.state === UNAVAILABLE) {
+      return true
+    }
     const assumedState = this.stateObj?.attributes.assumed_state === true;
     return ((this._entityObj?.isFullyOpen || this._entityObj?.isOpening) && !assumedState);
   }
 
   private _computeClosedDisabled(): boolean {
-    if (this.stateObj?.state === UNAVAILABLE) {return true}
+    if (this.stateObj?.state === UNAVAILABLE) {
+      return true
+    }
     const assumedState = this.stateObj?.attributes.assumed_state === true;
     return ((this._entityObj?.isFullyClosed || this._entityObj?.isClosing) && !assumedState);
   }
 
   private _onOpenTap() {
-    this.hass.callService("cover.open_cover", "turn-on", {
-      entity_id: this.stateObj?.entity_id
+    this.hass.callService("cover.open_cover", "toggle", {
+      entity_id: this?.stateObj
     });
   }
-
   private _onCloseTap() {
-    this.hass.callService("cover.close_cover", "turn-on", {
-      entity_id: this.stateObj?.entity_id
+    this.hass.callService("cover.close_cover", "toggle", {
+      entity_id: this?.stateObj
     });
   }
-
   private _onStopTap() {
-    this.hass.callService("cover.stop_cover", "turn-on", {
-      entity_id: this.stateObj?.entity_id
+    this.hass.callService("cover.stop_cover", "toggle", {
+      entity_id: this?.stateObj
     });
-  }
-
-  // private _onOpenTap(ev) {
-  //   ev.callService();
-  //   this?.hass.callService({ entity_id: this?._entityObj?.opencover() });
-  // }
-
-  // private _onCloseTap(ev) {
-  //   ev.callService();
-  //   this?.hass.callService({ entity_id: this?._entityObj?.closecover() });
-  // }
-
-  // private _onStopTap(ev) {
-  //   ev.callService();
-  //   this?.hass.callService({ entity_id: this?._entityObj?.stopcover() });
-  // }
-
-  // callService() {
-  //   this?.hass.callService('opencover', this?.service, {entity_id: this?._entityObj.openCover()});
-  //   this?.hass.callService('closecover', this?.service, {entity_id: this?._entityObj.closeCover()});
-  //   this?.hass.callService('stopcover', this?.service, {entity_id: this?._entityObj.stopCover()});
-  // }
-
-  callService() {
-    this?.hass.callService('cover.open_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
-    this?.hass.callService('cover.close_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
-    this?.hass.callService('cover.stop_cover', "turn-on", this?.service, {entity_id: this.stateObj?.entity_id()});
   }
 
   private computeActiveState = (stateObj: HassEntity): string => {
@@ -294,7 +288,9 @@ export class BoilerplateCard extends LitElement {
   };
 
   private _handleAction(ev: ActionHandlerEvent): void {
-    if (this.hass && this.config && ev.detail.action) {handleAction(this, this.hass, this.config, ev.detail.action)}
+    if (this.hass && this.config && ev.detail.action) {
+      handleAction(this, this.hass, this.config, ev.detail.action)
+    }
   }
 
   private _showWarning(warning: string): TemplateResult {
@@ -318,11 +314,19 @@ export class BoilerplateCard extends LitElement {
       ? this.computeObjectId(stateObj?.entity_id).replace(/_/g, " ")
       : stateObj?.attributes.friendly_name || "";
 
-  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {return this._ripple});
+  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
+    return this._ripple
+  });
 
-  private handleRippleFocus() {this._rippleHandlers.startFocus()}
+  private handleRippleFocus() {
+    this._rippleHandlers.startFocus()
+  }
 
-  private _handleMoreInfo() {fireEvent(this, "hass-more-info", {entityId: this.config?.entity})}
+  private _handleMoreInfo() {
+    fireEvent(this, "hass-more-info", {
+      entityId: this.config?.entity
+    })
+  }
 
   static get styles(): CSSResultGroup {
     return css`

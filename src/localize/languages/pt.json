@@ -8,7 +8,6 @@
   "states":{
     "open": "Aberta",
     "closed": "Fechada",
-    "stoped": "Parada",
     "stop": "Parada",
     "on": "Aberta",
     "off": "Fechada",
