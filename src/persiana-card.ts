@@ -142,16 +142,16 @@ export class BoilerplateCard extends LitElement {
     >
 
     ${this.config.show_icon
-      ?this.renderIcon(stateObj)
-      : ""
+     ?this.renderIcon(stateObj)
+     : ""
+      ? html`
+        <ha-icon
+          label="Open more info"
+          @click=${this._handleMoreInfo}
+          tabindex="0">
+        </ha-icon>
+      `:""
     }
-
-    <mwc-icon-button
-      class="more-info"
-      label="Open more info"
-      @click=${this._handleMoreInfo}
-      tabindex="0">
-    </mwc-icon-button>
 
     ${this.config.show_buttons
       ? html`
@@ -213,7 +213,7 @@ export class BoilerplateCard extends LitElement {
       return html`
         <ha-icon
           class="blind-icon ${classMap({
-            "state-on-blinds":
+            "state-on":
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
             "state-off":
               ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
@@ -235,7 +235,7 @@ export class BoilerplateCard extends LitElement {
       <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%">
         <path fill="#d3d3d3" d=${this.config.icon[0]} />
         <path class=${classMap({
-          "state-on-blind-icon":
+          "state-on":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "on",
           "state-off":
             ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "off",
@@ -349,12 +349,21 @@ export class BoilerplateCard extends LitElement {
         overflow: hidden;
       }
 
+      svg {
+        cursor: row-resize;
+        display: block;
+        fill: #a57537;
+      }
+
+      /* .state-on {
+        transform: scale(0);
+      } */
+
       .more-info {
         position: absolute;
         cursor: pointer;
         top: 0;
         right: 0;
-        border-radius: 100%;
         color: var(--secondary-text-color);
         z-index: 1;
       }
@@ -449,24 +458,6 @@ export class BoilerplateCard extends LitElement {
 
       .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
-
-      .state-on-blind-icon {
-        transform: scale(0);
-        fill: #ffffff;
-      }
-
-      .state-off-blind-icon {
-        fill: #a9b1bc;
-      }
-
-      .state-on-shutter-icon {
-        transform: scale(0);
-        fill: #ffffff;
-      }
-
-      .state-off-shutter-icon {
-        fill: #a9b1bc;
       }
 
       .state-unavailable {
