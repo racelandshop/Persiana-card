@@ -58,10 +58,8 @@ export class BoilerplateCard extends LitElement {
     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" };
   }
 
-  stateObj: any;
-  //hass: any;
-  private _entityObj: any;
-  service: any;
+  stateObj;
+  private _entityObj;
 
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
@@ -145,11 +143,10 @@ export class BoilerplateCard extends LitElement {
      ?this.renderIcon(stateObj)
      : ""
       ? html`
-        <ha-icon
-          label="Open more info"
-          @click=${this._handleMoreInfo}
+        <svg
+          .actionHandler=${actionHandler({hasHold: hasAction(this.config.tap_action)})}
           tabindex="0">
-        </ha-icon>
+        </svg>
       `:""
     }
 
@@ -161,7 +158,7 @@ export class BoilerplateCard extends LitElement {
             .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
             icon="&#9650"
             @click=${this._onOpenTap}
-            .disabled=${this._computeOpenDisabled()}
+            .disabled=${this._computeOpenDisabled}
             title="Abrir">
           </mwc-icon-button>
           <mwc-icon-button
@@ -169,15 +166,15 @@ export class BoilerplateCard extends LitElement {
             .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
             icon="&#9724"
             @click=${this._onStopTap}
-            .disabled=${this.stateObj?.state === UNAVAILABLE}
-            title="Stop">
+            disabled=${this.stateObj?.state === UNAVAILABLE}
+            title="Parar">
           </mwc-icon-button>
           <mwc-icon-button
             class=${classMap({hidden: !this._entityObj?.supportsClose})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
             icon="&#9660"
             @click=${this._onCloseTap}
-            .disabled=${this._computeClosedDisabled()}
+            .disabled=${this._computeClosedDisabled}
             title="Fechar">
           </mwc-icon-button>
         </div>
@@ -264,17 +261,17 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyClosed || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private _onOpenTap() {
+  private _onOpenTap() : void{
     this.hass.callService("cover.open_cover", "toggle", {
       entity_id: this?.stateObj
     });
   }
-  private _onCloseTap() {
+  private _onCloseTap() : void{
     this.hass.callService("cover.close_cover", "toggle", {
       entity_id: this?.stateObj
     });
   }
-  private _onStopTap() {
+  private _onStopTap() : void{
     this.hass.callService("cover.stop_cover", "toggle", {
       entity_id: this?.stateObj
     });
@@ -349,15 +346,18 @@ export class BoilerplateCard extends LitElement {
         overflow: hidden;
       }
 
+      /* .svgicon-blind.state-on {
+        transform: scale(0);
+      } */
+
       svg {
         cursor: row-resize;
         display: block;
-        fill: #a57537;
+        fill: #856133;
+        .state-on {
+          transform: scale(0);
+        }
       }
-
-      /* .state-on {
-        transform: scale(0);
-      } */
 
       .more-info {
         position: absolute;
@@ -430,6 +430,7 @@ export class BoilerplateCard extends LitElement {
 
       .mwc-icon-button {
         padding: 6px 6px 6px 6px;
+        fill: #ffffff;
       }
 
       .ha-icon-button{
