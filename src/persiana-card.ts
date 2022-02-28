@@ -58,8 +58,8 @@ export class BoilerplateCard extends LitElement {
     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" };
   }
 
-  stateObj;
-  private _entityObj;
+  stateObj: { state: string; attributes: { assumed_state: boolean; }; };
+  private _entityObj: { supportsOpen: any; supportsStop: any; supportsClose: any; isFullyOpen: any; isOpening: any; isFullyClose: any; isClosing: any; };
 
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
@@ -88,7 +88,7 @@ export class BoilerplateCard extends LitElement {
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "open") {
       return localize("states.on");
     }
-    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "closed") {
+    else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "close") {
       return localize("states.off");
     }
     else if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "stop") {
@@ -152,55 +152,57 @@ export class BoilerplateCard extends LitElement {
 
     ${this.config.show_buttons
       ? html`
-        <div class="buttons">
-          <mwc-icon-button
+        <slot name="buttons_up">
+          <button.mdc-icon-button-up
             class=${classMap({hidden: !this._entityObj?.supportsOpen})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
-            icon="&#9650"
             @click=${this._onOpenTap}
             .disabled=${this._computeOpenDisabled}
-            title="Abrir">
-          </mwc-icon-button>
-          <mwc-icon-button
+            title="Abrir">&#9650;
+          </button.mdc-icon-button-up>
+        </slot>
+        <slot name="buttons_stop">
+          <button.mdc-icon-button-stop
             class=${classMap({hidden: !this._entityObj?.supportsStop})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
-            icon="&#9724"
             @click=${this._onStopTap}
-            disabled=${this.stateObj?.state === UNAVAILABLE}
-            title="Parar">
-          </mwc-icon-button>
-          <mwc-icon-button
+            .disabled=${this.stateObj?.state === UNAVAILABLE}
+            title="Parar">&#9724;
+          </button.mdc-icon-button-stop>
+        </slot>
+        <slot name="buttons_down">
+          <button.mdc-icon-button-down
             class=${classMap({hidden: !this._entityObj?.supportsClose})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
-            icon="&#9660"
             @click=${this._onCloseTap}
-            .disabled=${this._computeClosedDisabled}
-            title="Fechar">
-          </mwc-icon-button>
-        </div>
+            .disabled=${this._computeCloseDisabled}
+            title="Fechar">&#9660;
+          </button.mdc-icon-button-down>
+        </slot>
       `: ""
     }
 
-  ${this.config.show_name
-    ? html`
-      <div tabindex = "-1" class="name-div">
-        ${this.config.name}
-      </div>
-      <div>
-      </div>
-    `: ""
-  }
+    ${this.config.show_name
+      ? html`
+        <div tabindex = "-1" class="name-div">
+          ${this.config.name}
+        </div>
+        <div>
+        </div>
+      `: ""
+    }
+    <div></div>
+    <div></div>
 
-  ${this.config.show_state
-    ? html`
-      <div tabindex="-1" class="state-div">
-        ${this.translate_state(stateObj)}
-      <div class="position"></div>
-      </div>
-      <div>
-      </div>
-    `: ""
-  }
+    ${this.config.show_state
+      ? html`
+        <div tabindex="-1" class="state-div">
+          ${this.translate_state(stateObj)}
+        <div class="position"></div>
+        </div>
+        <div></div>
+      `: ""
+    }
     </ha-card>
     `;
   }
@@ -253,26 +255,28 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyOpen || this._entityObj?.isOpening) && !assumedState);
   }
 
-  private _computeClosedDisabled(): boolean {
+  private _computeCloseDisabled(): boolean {
     if (this.stateObj?.state === UNAVAILABLE) {
       return true
     }
     const assumedState = this.stateObj?.attributes.assumed_state === true;
-    return ((this._entityObj?.isFullyClosed || this._entityObj?.isClosing) && !assumedState);
+    return ((this._entityObj?.isFullyClose || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private _onOpenTap() : void{
+  private _onOpenTap(){
     this.hass.callService("cover.open_cover", "toggle", {
       entity_id: this?.stateObj
     });
   }
-  private _onCloseTap() : void{
-    this.hass.callService("cover.close_cover", "toggle", {
+
+  private _onCloseTap(){
+    this.hass.callService("cover.close_cover", "toogle", {
       entity_id: this?.stateObj
     });
   }
-  private _onStopTap() : void{
-    this.hass.callService("cover.stop_cover", "toggle", {
+
+  private _onStopTap(){
+    this.hass.callService("cover.stop_cover", "toogle", {
       entity_id: this?.stateObj
     });
   }
@@ -343,12 +347,7 @@ export class BoilerplateCard extends LitElement {
         background: var(--card-color-background, rgba(53,53,53,0.9));
         color: var(--card-color-text, white);
         border-radius: 25px;
-        overflow: hidden;
       }
-
-      /* .svgicon-blind.state-on {
-        transform: scale(0);
-      } */
 
       svg {
         cursor: row-resize;
@@ -381,7 +380,15 @@ export class BoilerplateCard extends LitElement {
         text-align: left;
       }
 
-      .buttons:hover {
+      .buttons_up:hover{
+        opacity: 0.7;
+      }
+
+      .buttons_stop:hover{
+        opacity: 0.7;
+      }
+
+      .buttons_down:hover{
         opacity: 0.7;
       }
 
@@ -411,12 +418,15 @@ export class BoilerplateCard extends LitElement {
 
       .hassbut {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: 50% 16.6% 16.6% 16.6%;
       }
 
       .state-div {
         align-items: left;
-        padding: 0% 100% 12% 0%;
+        padding-top: 5px;
+        padding-right: 100%;
+        padding-bottom: 12%;
+
       }
 
       .name-div {
@@ -429,7 +439,6 @@ export class BoilerplateCard extends LitElement {
       }
 
       .mwc-icon-button {
-        padding: 6px 6px 6px 6px;
         fill: #ffffff;
       }
 
