@@ -84,6 +84,7 @@ export class BoilerplateCard extends LitElement {
     };
   }
 
+
   public translate_state(stateObj): string{
     if (ifDefined(stateObj ? this.computeActiveState(stateObj) : undefined) === "open") {
       return localize("states.on");
@@ -185,21 +186,20 @@ export class BoilerplateCard extends LitElement {
     ${this.config.show_name
       ? html`
         <div tabindex = "-1" class="name-div">
-          ${this.config.name}
-        </div>
-        <div>
-        </div>
+          ${this.config.name}</div>
+        <div></div>
       `: ""
     }
     <div></div>
     <div></div>
 
+
     ${this.config.show_state
       ? html`
         <div tabindex="-1" class="state-div">
           ${this.translate_state(stateObj)}
-        <div class="position"></div>
-        </div>
+            <div class="position">
+          </div></div>
         <div></div>
       `: ""
     }
@@ -231,7 +231,7 @@ export class BoilerplateCard extends LitElement {
     }
     else if (Array.isArray(this.config.icon) === true) {
       return html`
-      <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%">
+      <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%" onload="makeDraggable(evt)">
         <path fill="#d3d3d3" d=${this.config.icon[0]} />
         <path class=${classMap({
           "state-on":
@@ -244,8 +244,36 @@ export class BoilerplateCard extends LitElement {
         d=${this.config.icon[1]} />
       </svg>`
     }
+
+    // function makeDraggable(evt) {
+    //   const svg = evt.target;
+    //   svg.addEventListener('mousedown', startDrag);
+    //   svg.addEventListener('mousemove', drag);
+    //   svg.addEventListener('mouseup', endDrag);
+    //   svg.addEventListener('mouseleave', endDrag);
+
+    //   let selectedElement = false;
+
+    //   function startDrag(evt) {
+    //     if (evt.target.classList.contains('draggable')) {
+    //       selectedElement = evt.target;
+    //     }
+    //   }
+    //   function drag(evt) {
+    //     if (selectedElement) {
+    //       evt.preventDefault();
+    //       let y = parseFloat(selectedElement.getAttributeNS(null, "y"));
+    //       selectedElement.setAttributeNS(null, "y", y + 0.1);
+    //     }
+    //   }
+    //   function endDrag(evt) {
+    //     selectedElement = null;
+    //   }
+    // }
+
     return ""
   }
+
 
   private _computeOpenDisabled(): boolean {
     if (this.stateObj?.state === UNAVAILABLE) {
@@ -263,22 +291,16 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyClose || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private _onOpenTap(){
-    this.hass.callService("cover.open_cover", "toggle", {
-      entity_id: this?.stateObj
-    });
-  }
-
-  private _onCloseTap(){
-    this.hass.callService("cover.close_cover", "toogle", {
-      entity_id: this?.stateObj
-    });
+  private _onOpenTap() {
+    this.hass.callService('cover.open_cover', 'toggle', { entity_id: this?.stateObj });
   }
 
   private _onStopTap(){
-    this.hass.callService("cover.stop_cover", "toogle", {
-      entity_id: this?.stateObj
-    });
+    this.hass.callService('cover.stop_cover', 'toggle', { entity_id: this?.stateObj });
+  }
+
+  private _onCloseTap(){
+    this.hass.callService('cover.close_cover', 'toggle', { entity_id: this?.stateObj });
   }
 
   private computeActiveState = (stateObj: HassEntity): string => {
@@ -352,7 +374,7 @@ export class BoilerplateCard extends LitElement {
       svg {
         cursor: row-resize;
         display: block;
-        fill: #856133;
+        fill: #ffd580;
         .state-on {
           transform: scale(0);
         }
@@ -453,6 +475,10 @@ export class BoilerplateCard extends LitElement {
         cursor: pointer;
         white-space: nowrap;
       }
+
+      /* .state-on  {
+        transform: scale(0);
+      } */
 
       .svgicon-blind {
         padding-bottom: 20px;

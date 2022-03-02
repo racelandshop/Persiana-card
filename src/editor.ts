@@ -74,15 +74,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     <div class="div-option">
       <p></p>
       <ha-formfield
-        .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_name')}
-        .dir=${this.dir}>
-          <ha-switch
-            .checked=${this._show_name !== false}
-            .configValue=${'show_name'}
-            @change=${this._change}>
-          </ha-switch>  Mostrar o nome?
-      </ha-formfield>
-      <ha-formfield
         .label=${this.hass.localize('ui.panel.lovelace.editor.card.generic.show_state')}
         .dir=${this.dir}>
           <ha-switch
@@ -108,7 +99,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
             <paper-item .value=${[open_shutter, close_shutter]}>
               <svg class="svg-estore" viewBox="0 0 50 50" height="24" width="24" >
                 <path fill="#a9b1bc" d="M.32 2.398c0 1.72.13 2.559.48 2.918.419.418.481 3.274.481 21.875V48.61h46.5V27.191c0-18.601.063-21.457.48-21.875.352-.359.481-1.199.481-2.918V0H.32ZM46.18 26.41v20.258H2.887V6.156H46.18Zm0 0"/>
-                <path fill="#856133" d="M2.887 26.41v20.258H46.18V6.156H2.887ZM45.535 9.883v.812H3.527v-1.62h42.008Zm0 4.539v.808H3.527v-1.62h42.008Zm0 4.535v.813H3.527v-1.622h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 0"/>
+                <path fill="#ffd580" d="M2.887 26.41v20.258H46.18V6.156H2.887ZM45.535 9.883v.812H3.527v-1.62h42.008Zm0 4.539v.808H3.527v-1.62h42.008Zm0 4.535v.813H3.527v-1.622h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 4.534v.813H3.527v-1.621h42.008Zm0 4.54v.808H3.527v-1.621h42.008Zm0 0"/>
               </svg>Estore
             </paper-item>
           </paper-listbox>
@@ -181,7 +172,7 @@ static get styles(): CSSResultGroup {
     }
 
     .svg {
-      fill: #856133;
+      fill: #ffd580;
     }
 
     .title {
@@ -209,19 +200,19 @@ static get styles(): CSSResultGroup {
 
     .dropdown-icon {
       padding-left: 5%;
-      color: #856133;
+      color: #ffd580;
     }
 
     .svg-cortina {
       transform: translate(-10%, -5%) scale(1);
       margin-right: 2.5%;
-      fill: #856133;
+      fill: #ffd580;
     }
 
     .svg-estore {
       transform: translate(-10%, -5%) scale(0.90);
       margin-right: 2.5%;
-      fill: #856133;
+      fill: #ffd580;
     }
   `;}
 }
