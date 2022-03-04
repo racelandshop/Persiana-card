@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
-import { html, TemplateResult, css, PropertyValues, CSSResultGroup, LitElement} from 'lit';
+import { html, TemplateResult, css, PropertyValues, CSSResultGroup, LitElement } from 'lit';
 import { HassEntity } from 'home-assistant-js-websocket'
 import { queryAsync } from 'lit-element'
 import { customElement, property, state } from "lit/decorators";
@@ -157,8 +158,8 @@ export class BoilerplateCard extends LitElement {
           <button.mdc-icon-button-up
             class=${classMap({hidden: !this._entityObj?.supportsOpen})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
-            @click=${this._onOpenTap}
-            .disabled=${this._computeOpenDisabled}
+            @click=${this.onOpenTap}
+            .disabled=${this.computeOpenDisabled}
             title="Abrir">&#9650;
           </button.mdc-icon-button-up>
         </slot>
@@ -166,7 +167,7 @@ export class BoilerplateCard extends LitElement {
           <button.mdc-icon-button-stop
             class=${classMap({hidden: !this._entityObj?.supportsStop})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
-            @click=${this._onStopTap}
+            @click=${this.onStopTap}
             .disabled=${this.stateObj?.state === UNAVAILABLE}
             title="Parar">&#9724;
           </button.mdc-icon-button-stop>
@@ -175,8 +176,8 @@ export class BoilerplateCard extends LitElement {
           <button.mdc-icon-button-down
             class=${classMap({hidden: !this._entityObj?.supportsClose})}
             .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
-            @click=${this._onCloseTap}
-            .disabled=${this._computeCloseDisabled}
+            @click=${this.onCloseTap}
+            .disabled=${this.computeCloseDisabled}
             title="Fechar">&#9660;
           </button.mdc-icon-button-down>
         </slot>
@@ -231,7 +232,7 @@ export class BoilerplateCard extends LitElement {
     }
     else if (Array.isArray(this.config.icon) === true) {
       return html`
-      <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%" onload="makeDraggable(evt)">
+      <svg class="svgicon" viewBox="0 0 50 50" height="75%" width="65%">
         <path fill="#d3d3d3" d=${this.config.icon[0]} />
         <path class=${classMap({
           "state-on":
@@ -244,38 +245,32 @@ export class BoilerplateCard extends LitElement {
         d=${this.config.icon[1]} />
       </svg>`
     }
-
-    // function makeDraggable(evt) {
-    //   const svg = evt.target;
-    //   svg.addEventListener('mousedown', startDrag);
-    //   svg.addEventListener('mousemove', drag);
-    //   svg.addEventListener('mouseup', endDrag);
-    //   svg.addEventListener('mouseleave', endDrag);
-
-    //   let selectedElement = false;
-
-    //   function startDrag(evt) {
-    //     if (evt.target.classList.contains('draggable')) {
-    //       selectedElement = evt.target;
-    //     }
-    //   }
-    //   function drag(evt) {
-    //     if (selectedElement) {
-    //       evt.preventDefault();
-    //       let y = parseFloat(selectedElement.getAttributeNS(null, "y"));
-    //       selectedElement.setAttributeNS(null, "y", y + 0.1);
-    //     }
-    //   }
-    //   function endDrag(evt) {
-    //     selectedElement = null;
-    //   }
-    // }
-
+    const svg = document.getElementById('svgicon');
+    let startX, startY, elementX, elementY, element;
+    svg.addEventListener('mousedown', e => {
+      const className = svg.getAttributeNS(null, 'class');
+      if (className.indexOf('draggable') >= 0) {
+        startX = e.offsetX;
+        startY = e.offsetY;
+        element = e.target;
+        elementX = +element.getAttributeNS(null, 'x');
+        elementY = +element.getAttributeNS(null, 'y');
+        svg.addEventListener('mousemove', this.onmousemove);
+      }
+    });
+    onmousemove = e => {
+      const x = e.offsetX;
+      const y = e.offsetY;
+      element.setAttributeNS(null, 'x', elementX + x - startX);
+      element.setAttributeNS(null, 'y', elementY + y - startY);
+    };
+    svg.addEventListener('mouseup', _e => {
+      svg.removeEventListener('mousemove', this.onmousemove);
+    });
     return ""
   }
 
-
-  private _computeOpenDisabled(): boolean {
+  private computeOpenDisabled(): boolean {
     if (this.stateObj?.state === UNAVAILABLE) {
       return true
     }
@@ -283,7 +278,7 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyOpen || this._entityObj?.isOpening) && !assumedState);
   }
 
-  private _computeCloseDisabled(): boolean {
+  private computeCloseDisabled(): boolean {
     if (this.stateObj?.state === UNAVAILABLE) {
       return true
     }
@@ -291,15 +286,15 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyClose || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private _onOpenTap() {
-    this.hass.callService('cover.open_cover', 'toggle', { entity_id: this?.stateObj });
+  private onOpenTap() {
+    this.hass.callService('cover.open_cover', 'toggle', { entity_id: this!.stateObj });
   }
 
-  private _onStopTap(){
+  private onStopTap(){
     this.hass.callService('cover.stop_cover', 'toggle', { entity_id: this?.stateObj });
   }
 
-  private _onCloseTap(){
+  private onCloseTap(){
     this.hass.callService('cover.close_cover', 'toggle', { entity_id: this?.stateObj });
   }
 
