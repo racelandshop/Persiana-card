@@ -37,6 +37,9 @@ console.info(
 });
 @customElement('persiana-card')
 export class BoilerplateCard extends LitElement {
+  supportsOpen: any;
+  supportsStop: any;
+  supportsClose: any;
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     return document.createElement('persiana-card-editor')
   }
@@ -59,8 +62,11 @@ export class BoilerplateCard extends LitElement {
     return { type: "custom:persiana-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true, "show_buttons": true, "show_preview": true, "icon": [open_blind, close_blind], "name": "Persiana" };
   }
 
-  stateObj: { state: string; attributes: { assumed_state: boolean; }; };
-  private _entityObj: { supportsOpen: any; supportsStop: any; supportsClose: any; isFullyOpen: any; isOpening: any; isFullyClose: any; isClosing: any; };
+  stateObj: { state: string; attributes: { assumed_state: any; }; };
+  open_cover: any;
+  stop_cover: any;
+  close_cover: any;
+  _entityObj: { open_cover: any; stop_cover: any; close_cover: any; supportsOpen: any; supportsStop: any; supportsClose: any; isFullyOpen: any; isOpening: any; isFullyClose: any; isClosing: any;};
 
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: BoilerplateCardConfig;
@@ -191,9 +197,6 @@ export class BoilerplateCard extends LitElement {
         <div></div>
       `: ""
     }
-    <div></div>
-    <div></div>
-
 
     ${this.config.show_state
       ? html`
@@ -201,7 +204,6 @@ export class BoilerplateCard extends LitElement {
           ${this.translate_state(stateObj)}
             <div class="position">
           </div></div>
-        <div></div>
       `: ""
     }
     </ha-card>
@@ -271,11 +273,11 @@ export class BoilerplateCard extends LitElement {
   }
 
   private computeOpenDisabled(): boolean {
-    if (this.stateObj?.state === UNAVAILABLE) {
+    if (this.open_cover?.state === UNAVAILABLE) {
       return true
     }
-    const assumedState = this.stateObj?.attributes.assumed_state === true;
-    return ((this._entityObj?.isFullyOpen || this._entityObj?.isOpening) && !assumedState);
+    const assumedState = this.open_cover?.attributes.assumed_state === true;
+    return ((this._entityObj.isFullyOpen || this._entityObj.isOpening) && !assumedState);
   }
 
   private computeCloseDisabled(): boolean {
@@ -286,16 +288,17 @@ export class BoilerplateCard extends LitElement {
     return ((this._entityObj?.isFullyClose || this._entityObj?.isClosing) && !assumedState);
   }
 
-  private onOpenTap() {
-    this.hass.callService('cover.open_cover', 'toggle', { entity_id: this!.stateObj });
+  private onOpenTap(): void {
+    this.hass.callService,({ entity_id: this?.supportsOpen });
   }
 
-  private onStopTap(){
-    this.hass.callService('cover.stop_cover', 'toggle', { entity_id: this?.stateObj });
+  private onStopTap(): void {
+    this.hass.callService,({ entity_id: this?.supportsStop });
   }
 
-  private onCloseTap(){
-    this.hass.callService('cover.close_cover', 'toggle', { entity_id: this?.stateObj });
+  private onCloseTap(): void {
+    this.hass.callService,({ entity_id: this?.supportsClose });
+    //this.hass.callService('cover.close_cover', 'toggle', { entity_id: this?.stateObj });
   }
 
   private computeActiveState = (stateObj: HassEntity): string => {
@@ -440,10 +443,8 @@ export class BoilerplateCard extends LitElement {
 
       .state-div {
         align-items: left;
-        padding-top: 5px;
-        padding-right: 100%;
-        padding-bottom: 12%;
-
+        padding-top: 19px;
+        padding-bottom: 6px;
       }
 
       .name-div {
@@ -470,10 +471,6 @@ export class BoilerplateCard extends LitElement {
         cursor: pointer;
         white-space: nowrap;
       }
-
-      /* .state-on  {
-        transform: scale(0);
-      } */
 
       .svgicon-blind {
         padding-bottom: 20px;
