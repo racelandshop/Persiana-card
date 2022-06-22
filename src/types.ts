@@ -1,4 +1,5 @@
 import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
+import { HassEntityAttributeBase, HassEntityBase } from 'home-assistant-js-websocket/dist/types';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,4 +29,13 @@ export interface EditorTarget extends EventTarget {
   configValue?: string;
   type?: HTMLInputElement['type'];
   config: ActionConfig;
+}
+
+interface CoverEntityAttributes extends HassEntityAttributeBase {
+  current_position: number;
+  current_tilt_position: number;
+}
+
+export interface CoverEntity extends HassEntityBase {
+  attributes: CoverEntityAttributes;
 }
