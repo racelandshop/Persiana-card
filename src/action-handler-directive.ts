@@ -132,11 +132,11 @@ class ActionHandler extends HTMLElement implements ActionHandler {
   }
 }
 
-customElements.define('action-handler-persiana-card', ActionHandler);
+customElements.define('action-handler-blind-card', ActionHandler);
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector('action-handler-persiana-card')) {return body.querySelector('action-handler-persiana-card') as ActionHandler}
-  const actionhandler = document.createElement('action-handler-persiana-card');
+  if (body.querySelector('action-handler-blind-card')) {return body.querySelector('action-handler-blind-card') as ActionHandler}
+  const actionhandler = document.createElement('action-handler-blind-card');
   body.appendChild(actionhandler);
   return actionhandler as ActionHandler;
 };

@@ -9,36 +9,36 @@ import { customElement, property, query, state } from "lit/decorators";
 import { findEntities } from "./././find-entities";
 import { ifDefined } from "lit/directives/if-defined";
 import { classMap } from "lit/directives/class-map";
-import { styleMap } from "lit/directives/style-map";
-import { HomeAssistant, hasConfigOrEntityChanged, hasAction, ActionHandlerEvent, handleAction, LovelaceCardEditor, getLovelace, computeStateDomain } from 'custom-card-helpers';
+import { HomeAssistant, hasConfigOrEntityChanged, LovelaceCardEditor, getLovelace} from 'custom-card-helpers';
 import './editor';
-import type { BoilerplateCardConfig, CoverEntity } from './types';
-import { actionHandler } from './action-handler-directive';
-import { arrowDown, arrowUp, CARD_VERSION, pause, blind_closed, blind_open } from './const';
+import type { BoilerplateCardConfig} from './types';
+import { arrowDown, CARD_VERSION, blind_closed, blind_open, mdiDotsVertical } from './const';
 import { localize } from './localize/localize';
 import { UNAVAILABLE } from "./data/entity";
 import { fireEvent } from "custom-card-helpers";
+import { debounce } from "./common/debounce";
+import ResizeObserver from "./common/resizeObserver";
 
 console.info(
-  `%c  RACELAND-persiana-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
+  `%c  RACELAND-blind-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray'
 );
 
 (window as any).customCards = (window as any).customCards || "", [];
 (window as any).customCards.push({
-  type: 'persiana-card',
-  name: 'Persiana',
+  type: 'blind-card',
+  name: localize("common.name"),
   preview: true,
-  description: 'Uma carta que permite controlar persianas'
+  description: `${localize("common.description")}`
 });
-@customElement('persiana-card')
+@customElement('blind-card')
 export class BoilerplateCard extends LitElement {
   supportsOpen: any;
   supportsStop: any;
   supportsClose: any;
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    return document.createElement('persiana-card-editor')
+    return document.createElement('blind-card-editor')
   }
   @queryAsync('mwc-ripple') private _ripple!: Promise<Ripple | null>;
 
@@ -50,6 +50,13 @@ export class BoilerplateCard extends LitElement {
 
   @property({ attribute: false }) public invertPercentage!: boolean;
 
+  @property({ type: Boolean }) public showButtons = true;
+
+  @property({ type: Boolean }) public isMedium = false;
+
+  @property({ type: Boolean }) public isSmall = false;
+
+  @state() private config!: BoilerplateCardConfig;
 
   private maxPosition!: number;
   private minPosition!: number;
@@ -70,14 +77,14 @@ export class BoilerplateCard extends LitElement {
       includeDomains
     );
     return {
-      type: "custom:persiana-card",
+      type: "custom:blind-card",
       entity: foundEntities[0] || "",
       "show_name": true,
       "show_state": true,
       "show_buttons": true,
       "show_preview": true,
       "icon": blind_closed + ":" + blind_open,
-      "name": "Persiana"
+      "name": localize("common.name")
     };
   }
 
@@ -85,39 +92,16 @@ export class BoilerplateCard extends LitElement {
   open_cover: any;
   stop_cover: any;
   close_cover: any;
-  _entityObj: { open_cover: any; stop_cover: any; close_cover: any; supportsOpen: any; supportsStop: any; supportsClose: any; isFullyOpen: any; isOpening: any; isFullyClose: any; isClosing: any;};
+  _entityObj: { open_cover: any; stop_cover: any; close_cover: any; supportsOpen: any; supportsStop: any; supportsClose: any; isFullyOpen: any; isOpening: any; isFullyClose: any; isClosing: any };
 
-  @state() private config!: BoilerplateCardConfig;
 
   @query('.sc-blind-selector-picker') private picker: any
   @query('.sc-blind-selector-slide') private slide: any
+  @query('.sc-blind-selector-slide-medium') private slideMedium: any
+  @query('.sc-blind-selector-slide-small') private slideSmall: any
   @query('.sc-blind-selector-picture') private picture: any
 
 
-  public setConfig(config: BoilerplateCardConfig): void {
-    if (!config) {
-      throw new Error(localize('common.invalidconfiguration'));
-    }
-    if (config.test_gui) {
-      getLovelace().setEditMode(true);
-    }
-    this.maxPosition = 127;
-    this.minPosition = 0;
-    this.config = config;
-    this.isUpdating = false;
-
-    this.config = {
-      show_icon: true,
-      icon: 'mdi:blinds',
-      ...config,
-      tap_action: {
-        action: "toggle",
-      },
-      hold_action: {
-        action: "more-info",
-      },
-    };
-  }
 
 
   public translate_state(stateObj: HassEntity): string{
@@ -138,6 +122,7 @@ export class BoilerplateCard extends LitElement {
 
   protected firstUpdated() {
     // console.log(this.picker, this.slide, this.picture);
+    this._attachResizeObserver();
     this.slide.style.height =  (this.maxPosition - this.minPosition) + 'px';
     // console.log("first updated", this.picker);
     ['mousedown', 'touchstart', 'pointerdown'].forEach((type) => {
@@ -145,7 +130,119 @@ export class BoilerplateCard extends LitElement {
     });
 
   }
+  private _resizeObserver?: ResizeObserver;
 
+  private async _attachResizeObserver(): Promise<void> {
+    if (!this._resizeObserver) {
+      this._resizeObserver = new ResizeObserver(
+        debounce(
+          (entries: any) => {
+            const entry = entries[0];
+            const rootGrid = this.closest("div");
+            if (
+              rootGrid &&
+              entry.contentRect.width <= rootGrid.clientWidth / 2 &&
+              entry.contentRect.width > rootGrid.clientWidth / 3
+              ) {
+                const stateLabel =
+                this.shadowRoot?.querySelector(".sc-blind-label");
+                stateLabel?.classList.remove("sc-blind-label");
+                stateLabel?.classList.add("sc-blind-label-medium");
+              const stateSelector =
+                this.shadowRoot?.querySelector(".sc-blind-selector");
+                stateSelector?.classList.remove("sc-blind-selector");
+              stateSelector?.classList.add("sc-blind-selector-medium");
+              const stateMedium =
+                this.shadowRoot?.querySelector(".sc-blind-middle");
+                stateMedium?.classList.remove("sc-blind-middle");
+              stateMedium?.classList.add("sc-blind-middle-medium");
+              const stateSlide =
+                this.shadowRoot?.querySelector(".sc-blind-selector-slide");
+                stateSlide?.classList.remove("sc-blind-selector-slide");
+              stateSlide?.classList.add("sc-blind-selector-slide-medium");
+              const stateContainer =
+                this.shadowRoot?.querySelector(".container");
+                stateContainer?.classList.remove("container");
+              stateContainer?.classList.add("container-medium");
+              const statePosition =
+              this.shadowRoot?.querySelector(".sc-blind-position");
+              statePosition?.classList.remove("sc-blind-position");
+              statePosition?.classList.add("sc-blind-position-small");
+              const stateCard =
+                this.shadowRoot?.querySelector(".hassbut");
+                stateCard?.classList.remove("hassbut");
+                stateCard?.classList.add("hassbut-small");
+              this.showButtons = false;
+              this.isMedium = true;
+            }
+            if (
+              rootGrid &&
+              entry.contentRect.width <= rootGrid.clientWidth / 3 &&
+              entry.contentRect.width !== 0
+              ) {
+                const stateLabel =
+                this.shadowRoot?.querySelector(".sc-blind-label");
+                stateLabel?.classList.remove("sc-blind-label");
+              stateLabel?.classList.add("sc-blind-label-small");
+              const stateContainer =
+                this.shadowRoot?.querySelector(".container");
+                stateContainer?.classList.remove("container");
+              stateContainer?.classList.add("container-small");
+              const stateMedium =
+              this.shadowRoot?.querySelector(".sc-blind-middle");
+              stateMedium?.classList.remove("sc-blind-middle");
+              stateMedium?.classList.add("sc-blind-middle-small");
+              const stateSelector =
+              this.shadowRoot?.querySelector(".sc-blind-selector");
+              stateSelector?.classList.remove("sc-blind-selector");
+              stateSelector?.classList.add("sc-blind-selector-small");
+              const statePosition =
+              this.shadowRoot?.querySelector(".sc-blind-position");
+              statePosition?.classList.remove("sc-blind-position");
+              statePosition?.classList.add("sc-blind-position-small");
+              const stateSlide =
+                this.shadowRoot?.querySelector(".sc-blind-selector-slide");
+                stateSlide?.classList.remove("sc-blind-selector-slide");
+              stateSlide?.classList.add("sc-blind-selector-slide-small");
+              const stateCard =
+                this.shadowRoot?.querySelector(".hassbut");
+                stateCard?.classList.remove("hassbut");
+                stateCard?.classList.add("hassbut-small");
+              this.showButtons = false;
+              this.isSmall = true;
+            }
+          },
+          250,
+          true
+          )
+      );
+    }
+
+    this._resizeObserver.observe(this);
+  }
+
+  public setConfig(config: BoilerplateCardConfig): void {
+    if (!config) {
+      throw new Error(localize('common.invalidconfiguration'));
+    }
+    if (config.test_gui) {
+      getLovelace().setEditMode(true);
+    }
+    this.config = config;
+    this.isUpdating = false;
+
+    this.config = {
+      show_icon: true,
+      icon: 'mdi:blinds',
+      ...config,
+      tap_action: {
+        action: "toggle",
+      },
+      hold_action: {
+        action: "more-info",
+      },
+    };
+  }
 
   protected shouldUpdate(changedProps: PropertyValues): boolean {
     if (!this.config) {return false}
@@ -156,6 +253,21 @@ export class BoilerplateCard extends LitElement {
   protected render(): TemplateResult | void {
     if (this.config.show_warning) {return this._showWarning(localize('common.show_warning'))}
     if (this.config.show_error) { return this._showError(localize('common.show_error')) }
+    if (this.isSmall) {
+      this.maxPosition = 55;
+      this.minPosition = 0;
+      console.log('small')
+    }
+    else if (this.isMedium) {
+      this.maxPosition = 88;
+      this.minPosition = 0;
+      console.log('medium')
+    }
+    else {
+      this.maxPosition = 111;
+      this.minPosition = 0;
+      console.log('large')
+    }
     this.stateObj = this.config.entity
     ? this.hass.states[this.config.entity]
       : undefined;
@@ -173,8 +285,17 @@ export class BoilerplateCard extends LitElement {
 
 
 
-        .label=${`persiana: ${this.config.entity || 'No Entity Defined'}`}
+        .label=${`blind: ${this.config.entity || 'No Entity Defined'}`}
     >
+    <ha-icon-button
+          class="more-info"
+          .label=${this.hass!.localize(
+            "ui.panel.lovelace.cards.show_more_info"
+          )}
+          .path=${mdiDotsVertical}
+          @click=${this._handleMoreInfo}
+          tabindex="0"
+        ></ha-icon-button>
     ${this.config.show_state
       ? html`
         <div  class="sc-blind-position"
@@ -213,7 +334,7 @@ export class BoilerplateCard extends LitElement {
                     `
                   : ""}
 
-              ${this.config.show_buttons
+              ${this.showButtons
               ? html`
               <div id="buttons">
                   <div class="buttons" >
@@ -286,7 +407,7 @@ export class BoilerplateCard extends LitElement {
 
   private setPickerPosition(position: number) {
     console.log('POSITION', position)
-    let realPos = this.maxPosition /100 * position;
+    let realPos = this.maxPosition / 100 * position;
     if (realPos < this.minPosition)
     realPos = this.minPosition;
 
@@ -299,18 +420,36 @@ export class BoilerplateCard extends LitElement {
     // console.log(this.maxPosition, this.minPosition)
     console.log('slideHeight', slideHeight, 'postop', posTop);  // Faltou isto para resolver o first updated. existe um mommento no inicio que não está rendered
     if (!this.hasUpdated) {
-      this.updateComplete.then(() => {
         this.updateComplete.then(() => {
           if (this.picker && this.slide) {
             this.slide.style.height =  slideHeight + 'px';
             this.picker.style.top = posTop + 'px';
+            console.log('passei 3')
           }
-        })
+          if (this.picker && this.slideMedium) {
+            this.slideMedium.style.height =  slideHeight + 'px';
+            this.picker.style.top = posTop + 'px';
+          }
+          if (this.picker && this.slideSmall) {
+            this.slideSmall.style.height =  slideHeight + 'px';
+            this.picker.style.top = posTop + 'px';
+            console.log('passei 1')
+          }
       });
     } else {
       if (this.picker && this.slide) {
         this.slide.style.height =  slideHeight + 'px';
         this.picker.style.top = posTop + 'px';
+        console.log('passei 4')
+      }
+      if (this.picker && this.slideMedium) {
+        this.slideMedium.style.height =  slideHeight + 'px';
+        this.picker.style.top = posTop + 'px';
+      }
+      if (this.picker && this.slideSmall) {
+        this.slideSmall.style.height =  slideHeight + 'px';
+        this.picker.style.top = posTop + 'px';
+        console.log('passei 2')
       }
     }
 
@@ -335,14 +474,14 @@ export class BoilerplateCard extends LitElement {
 
   private _mouseMove = (event) => {
 
-    const newPosition = (event.pageY - this?.getPictureTop(this.slide))* 100/ this.maxPosition; // FALTOU-TE DAR SCALE DOWN DEPOIS. o agarrar estava wonky
+    const newPosition = (event.pageY - this?.getPictureTop(this.picture))* 100 / this.maxPosition; // FALTOU-TE DAR SCALE DOWN DEPOIS. o agarrar estava wonky
       this?.setPickerPosition(newPosition);
   };
 
   private _mouseUp = (event) => {
     this.isUpdating = false;
     this.updateComplete.then(() => {
-      let newPosition = (event.pageY - this?.getPictureTop(this.slide));
+      let newPosition = (event.pageY - this?.getPictureTop(this.picture));
 
       if (newPosition < this?.minPosition)
         newPosition = this?.minPosition;
@@ -352,7 +491,12 @@ export class BoilerplateCard extends LitElement {
 
       const percentagePosition = (newPosition - this?.minPosition) * 100 / (this?.maxPosition - this?.minPosition);
       console.log('newpos', newPosition)
-      this?.setPickerPosition(newPosition* 100/ this.maxPosition); // FALTOU-TE DAR SCALE DOWN tambem. dava flickers
+      if (this.isMedium || this.isSmall) {
+        this?.setPickerPosition(newPosition * this.maxPosition / 100);
+      }
+      else {
+        this?.setPickerPosition(newPosition * 100 / this.maxPosition); // FALTOU-TE DAR SCALE DOWN tambem. dava flickers
+      }
 
       if (this.invertPercentage) {
         this.updateBlindPosition(this?.hass, this.stateObj.entity_id, percentagePosition);
@@ -370,29 +514,6 @@ export class BoilerplateCard extends LitElement {
 
     })
   };
-
-  // NAO É MUITO IMPORTANTE SERVE SO PARA INDICAR ERROS RELATIVOS AO SUBIR E DESCER A CORTINA
-  // private computeOpenDisabled(): boolean {
-  //   if (this.open_cover?.state === UNAVAILABLE) {
-  //     return true
-  //   }
-  //   const assumedState = this.open_cover?.attributes.assumed_state === true;
-  //   return ((this._entityObj.isFullyOpen || this._entityObj.isOpening) && !assumedState);
-  // }
-
-  // private computeCloseDisabled(stateObj): boolean {
-  //   if (stateObj?.state === UNAVAILABLE) {
-  //     return true
-  //   }
-  //   const assumedState = stateObj?.attributes.assumed_state === true;
-  //   return ((this._entityObj?.isFullyClose || this._entityObj?.isClosing) && !assumedState);
-  // }
-
-  // private _coverPositionSliderChanged() {
-  //   this.hass.callService("cover", "set_cover_position", {
-  //     entity_id: this.stateObj.entity_id,
-  //   });
-  // }
 
   private updateBlindPosition(hass: HomeAssistant, entity: string, position: number) {
     const blindPosition = Math.round(position);
@@ -457,9 +578,9 @@ export class BoilerplateCard extends LitElement {
   //     ? this.computeObjectId(stateObj?.entity_id).replace(/_/g, " ")
   //     : stateObj?.attributes.friendly_name || "";
 
-  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
-    return this._ripple
-  });
+  // private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
+  //   return this._ripple
+  // });
 
   // private _computeColor(stateObj: CoverEntity): string {
   //   if (stateObj.state === "closed") {
@@ -470,9 +591,9 @@ export class BoilerplateCard extends LitElement {
   //     : "";
   // }
 
-  private handleRippleFocus() {
-    this._rippleHandlers.startFocus()
-  }
+  // private handleRippleFocus() {
+  //   this._rippleHandlers.startFocus()
+  // }
 
   private _handleMoreInfo() {
     fireEvent(this, "hass-more-info", {
@@ -495,11 +616,10 @@ export class BoilerplateCard extends LitElement {
         justify-content: center;
         overflow: hidden;
         text-align: center;
-        background: var(--card-color-background, rgba(53,53,53,0.9));
         color: var(--card-color-text, white);
         border-radius: 1.5rem;
+        background: var( --ha-card-background, var(--card-background-color, white) );
       }
-
       svg {
         /* cursor: row-resize; */
         display: block;
@@ -535,6 +655,12 @@ export class BoilerplateCard extends LitElement {
       .hassbut {
         display: flex;
         flex-direction: column;
+        align-items: center;
+      }
+      .hassbut-small {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
       .blind-closed {
         position: absolute;
@@ -547,10 +673,73 @@ export class BoilerplateCard extends LitElement {
       .sc-blind-selector {
         position: absolute;
         /* top: 34px; */
-        left: -19px;
+        left: 1px;
         /* transform: translate(-50%, -50%); */
-        width: 172px;
-        height: 172px;
+        width: 150px;
+        height: 150px;
+      }
+      .sc-blind-selector-medium {
+        position: absolute;
+        top: 0;
+        left: 1px;
+        width: 120px;
+        height: 120px;
+      }
+      .sc-blind-selector-small {
+        position: absolute;
+        left: 7px;
+        width: 75px;
+        height: 75px;
+      }
+      .sc-blind-position {
+        position: absolute;
+        top: 20px;
+      }
+      .sc-blind-position-medium {
+        position: absolute;
+        left: 54px;
+        top: 28px;
+      }
+      .sc-blind-position-small {
+        display: none;
+      }
+      .sc-blind-label {
+        padding-top: 5px;
+        height: 100%;
+        padding-bottom: 23px;
+        font-size: 2.3rem;
+        font-weight: 450;
+        white-space: nowrap;
+        display: inline-block;
+        overflow-x: hidden;
+        max-width: 80%;
+        text-overflow: ellipsis;
+        justify-content: space-between;
+      }
+      .sc-blind-label-medium {
+        font-size: 1.7rem;
+        margin-left: 12%;
+        font-weight: 450;
+        height: 24px;
+        white-space: nowrap;
+        display: inline-block;
+        overflow-x: hidden;
+        max-width: 80%;
+        text-overflow: ellipsis;
+        justify-content: space-between;
+      }
+      .sc-blind-label-small {
+        font-size: 1.2rem;
+        margin-top: 10%;
+        margin-left: 13%;
+        font-weight: 450;
+        height: 24px;
+        white-space: nowrap;
+        display: inline-block;
+        overflow-x: hidden;
+        max-width: 80%;
+        text-overflow: ellipsis;
+        justify-content: space-between;
       }
       .sc-blind-selector-picture {
         position: relative;
@@ -568,11 +757,33 @@ export class BoilerplateCard extends LitElement {
         cursor: row-resize;
         height: 100%;
         max-width: 230px;
-        min-width: 143px;
+        min-width: 123px;
         max-height: 100%;
         /* top: 44px; */
-        top: 27px;
-        left: 16px;
+        top: 24px;
+        left: 14px;
+      }
+      .sc-blind-selector-slide-medium {
+        position: absolute;
+        cursor: row-resize;
+        height: 100%;
+        max-width: 230px;
+        min-width: 99px;
+        max-height: 75%;
+        /* top: 44px; */
+        top: 18px;
+        left: 11px;
+      }
+      .sc-blind-selector-slide-small {
+        position: absolute;
+        cursor: row-resize;
+        height: 100%;
+        max-width: 230px;
+        min-width: 62.6px;
+        max-height: 74%;
+        /* top: 44px; */
+        top: 11px;
+        left: 6.5px;
       }
       .sc-blind-selector-picker {
         cursor: row-resize;
@@ -587,8 +798,25 @@ export class BoilerplateCard extends LitElement {
         position: relative;
         justify-content: center;
         width: 200px;
-        height: 100px;
+        height: 171px;
       }
+      .sc-blind-middle-medium {
+        display: flex;
+        align-items: center;
+        position: relative;
+        justify-content: center;
+        width: 200px;
+        height: 144px;
+      }
+      .sc-blind-middle-small {
+        display: flex;
+        align-items: center;
+        position: relative;
+        justify-content: center;
+        width: 134px;
+        height: 77px;
+      }
+
       .window {
         overflow-y: hidden;
         width: 230px;
@@ -597,18 +825,36 @@ export class BoilerplateCard extends LitElement {
         left: 98px;
       }
       .container {
-        height: 100%;
+        height: 75%;
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-top: 22px;
+      }
+      .container-medium {
+        height: 65%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: 13px;
+        margin-top: 12px;
+      }
+      .container-small {
+        height: 55%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 7px;
       }
       #buttons {
-        height: 234px;
+        height: 204px;
         top: -16px;
         position: absolute;
-        left: 125px;
-        width: 95px;
+        left: 121px;
+        width: 89px;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -616,8 +862,8 @@ export class BoilerplateCard extends LitElement {
         justify-content: center;
       }
       .buttons {
-        width: 34px;
-        margin: 8px 0;
+        width: 30px;
+        margin: 5px 0;
       }
       .state-div {
         align-items: left;
@@ -647,11 +893,20 @@ export class BoilerplateCard extends LitElement {
         height: 25px;
         fill: white;
       }
+      .more-info {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        border-radius: 100%;
+        color: var(--secondary-text-color);
+        z-index: 1;
+      }
 
       @media only screen and (max-width: 600px) {
           #arrow-icon{
           padding: 0;
-          padding-top: 8px;
+          padding-top: 6px;
           width: 25px;
           height: 25px;
           fill: white;
@@ -671,8 +926,8 @@ export class BoilerplateCard extends LitElement {
         fill: #ffffff;
         display: flex;
         visibility: visible;
-        width: 36px;
-        height: 36px;
+        width: 33px;
+        height: 33px;
         border-radius: 8px;
         border-width: 0;
       }

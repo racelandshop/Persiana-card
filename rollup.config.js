@@ -43,7 +43,7 @@ const plugins = [
 
 export default [
   {
-    input: 'src/persiana-card.ts',
+    input: 'src/blind-card.ts',
     output: {
       dir: 'dist',
       format: 'es',

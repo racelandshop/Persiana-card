@@ -1,7 +1,7 @@
 {
-  "name": "persiana-card",
+  "name": "blind-card",
   "version": "1.4.0",
-  "description": "Lovelace persiana-card",
+  "description": "Lovelace blind-card",
   "keywords": [
     "home-assistant",
     "homeassistant",

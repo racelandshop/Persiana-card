@@ -1,5 +1,7 @@
 {
   "common": {
+    "name": "Blind",
+    "description": "A card that allows you to control blinds",
     "version": "Version",
     "invalid_configuration": "Invalid configuration",
     "show_warning": "Show Warning",
@@ -8,9 +10,9 @@
   "states":{
     "open": "100%",
     "close": "0%",
-    "stop": "Parada",
+    "stop": "Stopped",
     "on": "100%",
     "off": "0%",
-    "unavailable": "Indisponível"
+    "unavailable": "Unavailable"
 }
 }

@@ -1,5 +1,7 @@
 {
   "common": {
+    "name": "Persiana",
+    "description": "Uma carta que permite controlar persianas",
     "version": "Versão",
     "invalid_configuration": "Configuração Inválida",
     "show_warning": "Mostrar Aviso",

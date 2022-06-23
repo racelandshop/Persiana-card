@@ -7,7 +7,7 @@ import json from '@rollup/plugin-json';
 import ignore from "./rollup-ignore-plugin"
 
 export default {
-  input: ['src/persiana-card.ts'],
+  input: ['src/blind-card.ts'],
   output: {
     dir: './dist',
     format: 'es',
