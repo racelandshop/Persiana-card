@@ -324,7 +324,7 @@ export class BoilerplateCard extends LitElement {
                         <path d="M45.83 8.21H4.66997C4.27997 8.21 3.96997 7.9 3.96997 7.51V5.45C3.96997 5.06 4.27997 4.75 4.66997 4.75H45.82C46.21 4.75 46.52 5.06 46.52 5.45V7.51C46.53 7.89 46.21 8.21 45.83 8.21Z" />
                       </svg>
                   </div>
-                    <div class="sc-blind-selector-slide" style= "background-color:#ffffff"></div>
+                    <div class="sc-blind-selector-slide"></div>
                       <svg class=
                       "sc-blind-selector-picker"
                       viewBox="0 0 50 50" height="100%" width="100%">
@@ -424,7 +424,6 @@ export class BoilerplateCard extends LitElement {
           if (this.picker && this.slide) {
             this.slide.style.height =  slideHeight + 'px';
             this.picker.style.top = posTop + 'px';
-            console.log('passei 3')
           }
           if (this.picker && this.slideMedium) {
             this.slideMedium.style.height =  slideHeight + 'px';
@@ -433,14 +432,12 @@ export class BoilerplateCard extends LitElement {
           if (this.picker && this.slideSmall) {
             this.slideSmall.style.height =  slideHeight + 'px';
             this.picker.style.top = posTop + 'px';
-            console.log('passei 1')
           }
       });
     } else {
       if (this.picker && this.slide) {
         this.slide.style.height =  slideHeight + 'px';
         this.picker.style.top = posTop + 'px';
-        console.log('passei 4')
       }
       if (this.picker && this.slideMedium) {
         this.slideMedium.style.height =  slideHeight + 'px';
@@ -449,7 +446,6 @@ export class BoilerplateCard extends LitElement {
       if (this.picker && this.slideSmall) {
         this.slideSmall.style.height =  slideHeight + 'px';
         this.picker.style.top = posTop + 'px';
-        console.log('passei 2')
       }
     }
 
@@ -472,16 +468,16 @@ export class BoilerplateCard extends LitElement {
     this.shadowRoot?.addEventListener('pointerup', this._mouseUp);
   };
 
-  private _mouseMove = (event) => {
+  private _mouseMove = (event: any) => {
 
-    const newPosition = (event.pageY - this?.getPictureTop(this.picture))* 100 / this.maxPosition; // FALTOU-TE DAR SCALE DOWN DEPOIS. o agarrar estava wonky
-      this?.setPickerPosition(newPosition);
+    const newPosition = ((event.pageY - 21) - this?.getPictureTop(this.picture)) * 100 / this.maxPosition;
+    this?.setPickerPosition(newPosition);
   };
 
-  private _mouseUp = (event) => {
+  private _mouseUp = (event: any) => {
     this.isUpdating = false;
     this.updateComplete.then(() => {
-      let newPosition = (event.pageY - this?.getPictureTop(this.picture));
+      let newPosition = ((event.pageY - 21) - this?.getPictureTop(this.picture));
 
       if (newPosition < this?.minPosition)
         newPosition = this?.minPosition;
@@ -490,12 +486,11 @@ export class BoilerplateCard extends LitElement {
         newPosition = this?.maxPosition;
 
       const percentagePosition = (newPosition - this?.minPosition) * 100 / (this?.maxPosition - this?.minPosition);
-      console.log('newpos', newPosition)
       if (this.isMedium || this.isSmall) {
         this?.setPickerPosition(newPosition * this.maxPosition / 100);
       }
       else {
-        this?.setPickerPosition(newPosition * 100 / this.maxPosition); // FALTOU-TE DAR SCALE DOWN tambem. dava flickers
+        this?.setPickerPosition(newPosition * 100 / this.maxPosition);
       }
 
       if (this.invertPercentage) {
@@ -525,21 +520,18 @@ export class BoilerplateCard extends LitElement {
   }
 
   private onOpenTap(): void {
-    // console.log('open', this.stateObj.attributes.current_position)
     this.hass.callService('cover', 'open_cover', {
       entity_id: this.config.entity,
     });
   }
 
   private onStopTap(): void {
-    // console.log('stop', this.stateObj.attributes.current_position)
     this.hass.callService('cover', 'stop_cover', {
       entity_id: this.config.entity,
     });
   }
 
   private onCloseTap(): void {
-    // console.log('close', this.stateObj.attributes.current_position)
     this.hass.callService('cover', 'close_cover', {
       entity_id: this.config.entity,
     });
@@ -547,15 +539,8 @@ export class BoilerplateCard extends LitElement {
 
   private computeActiveState = (stateObj: HassEntity): string => {
     const state = stateObj?.state;
-    // console.log('asdasd', state)
     return state;
   };
-
-  // private _handleAction(ev: ActionHandlerEvent): void {
-  //   if (this.hass && this.config && ev.detail.action) {
-  //     handleAction(this, this.hass, this.config, ev.detail.action)
-  //   }
-  // }
 
   private _showWarning(warning: string): TemplateResult {
     return html`<hui-warning>${warning}</hui-warning>`;
@@ -571,30 +556,6 @@ export class BoilerplateCard extends LitElement {
     return html`${errorCard}`;
   }
 
-  // private computeObjectId = (entityId: string): string => entityId.substr(entityId.indexOf(".") + 1);
-
-  // private computeStateName = (stateObj: HassEntity): string =>
-  //   stateObj?.attributes.friendly_name === undefined
-  //     ? this.computeObjectId(stateObj?.entity_id).replace(/_/g, " ")
-  //     : stateObj?.attributes.friendly_name || "";
-
-  // private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
-  //   return this._ripple
-  // });
-
-  // private _computeColor(stateObj: CoverEntity): string {
-  //   if (stateObj.state === "closed") {
-  //     return "";
-  //   }
-  //   return stateObj.attributes.rgb_color
-  //     ? `rgb(${stateObj.attributes.rgb_color.join(",")})`
-  //     : "";
-  // }
-
-  // private handleRippleFocus() {
-  //   this._rippleHandlers.startFocus()
-  // }
-
   private _handleMoreInfo() {
     fireEvent(this, "hass-more-info", {
       entityId: this.config?.entity
@@ -604,7 +565,7 @@ export class BoilerplateCard extends LitElement {
   static get styles(): CSSResultGroup {
     return css`
       ha-card {
-        cursor: pointer;
+        /* cursor: pointer; */
         flex-direction: column;
         align-items: left;
         text-align: left;
@@ -616,9 +577,9 @@ export class BoilerplateCard extends LitElement {
         justify-content: center;
         overflow: hidden;
         text-align: center;
-        color: var(--card-color-text, white);
+        color: var(--card-color-text, var(--raquel-claro));
         border-radius: 1.5rem;
-        background: var( --ha-card-background, var(--card-background-color, white) );
+        background: var( --ha-card-background, var(--card-background-color, var(--raquel-claro)) );
       }
       svg {
         /* cursor: row-resize; */
@@ -692,18 +653,21 @@ export class BoilerplateCard extends LitElement {
         height: 75px;
       }
       .sc-blind-position {
+        color: var(--primary-text-color);
         position: absolute;
         top: 20px;
       }
       .sc-blind-position-medium {
+        color: var(--primary-text-color);
         position: absolute;
         left: 54px;
-        top: 28px;
+        top: 26px;
       }
       .sc-blind-position-small {
         display: none;
       }
       .sc-blind-label {
+        color: var(--primary-text-color);
         padding-top: 5px;
         height: 100%;
         padding-bottom: 23px;
@@ -717,10 +681,11 @@ export class BoilerplateCard extends LitElement {
         justify-content: space-between;
       }
       .sc-blind-label-medium {
-        font-size: 1.7rem;
+        color: var(--primary-text-color);
+        font-size: 1.65rem;
         margin-left: 12%;
         font-weight: 450;
-        height: 24px;
+        height: 25px;
         white-space: nowrap;
         display: inline-block;
         overflow-x: hidden;
@@ -729,6 +694,7 @@ export class BoilerplateCard extends LitElement {
         justify-content: space-between;
       }
       .sc-blind-label-small {
+        color: var(--primary-text-color);
         font-size: 1.2rem;
         margin-top: 10%;
         margin-left: 13%;
@@ -743,7 +709,7 @@ export class BoilerplateCard extends LitElement {
       }
       .sc-blind-selector-picture {
         position: relative;
-        fill: #E6E6E6;
+        fill: #666666;
       }
       .top-bar {
         position: absolute;
@@ -753,6 +719,7 @@ export class BoilerplateCard extends LitElement {
         right: 0px;
       }
       .sc-blind-selector-slide {
+        background-color: var(--raquel-light-grey-2);
         position: absolute;
         cursor: row-resize;
         height: 100%;
@@ -764,6 +731,7 @@ export class BoilerplateCard extends LitElement {
         left: 14px;
       }
       .sc-blind-selector-slide-medium {
+        background-color: var(--raquel-light-grey-2);
         position: absolute;
         cursor: row-resize;
         height: 100%;
@@ -775,6 +743,7 @@ export class BoilerplateCard extends LitElement {
         left: 11px;
       }
       .sc-blind-selector-slide-small {
+        background-color: var(--raquel-light-grey-2);
         position: absolute;
         cursor: row-resize;
         height: 100%;
@@ -884,14 +853,14 @@ export class BoilerplateCard extends LitElement {
         padding: 4px;
         width: 25px;
         height: 25px;
-        fill: white;
+        fill: var(--raquel-claro);
       }
 
       #arrow-icon-middle {
         padding: 4px;
         width: 25px;
         height: 25px;
-        fill: white;
+        fill: var(--raquel-claro);
       }
       .more-info {
         position: absolute;
@@ -909,19 +878,19 @@ export class BoilerplateCard extends LitElement {
           padding-top: 6px;
           width: 25px;
           height: 25px;
-          fill: white;
+          fill: var(--raquel-claro);
           }
           #arrow-icon-middle {
             padding: 0;
             padding-top: 5px;
             width: 25px;
             height: 25px;
-            fill: white;
+            fill: var(--raquel-claro);
           }
       }
 
       button {
-        background-color: grey;
+        background-color: var(--raquel-dark-1);
         cursor: pointer;
         fill: #ffffff;
         display: flex;
@@ -932,25 +901,25 @@ export class BoilerplateCard extends LitElement {
         border-width: 0;
       }
       .openButton.state-on {
-        background-color: #bdbdbd!important;
+        background-color: var(--raquel-light-grey-2) !important;
       }
       .openButton.state-on > #arrow-icon {
-        fill: #fdd835;
+        fill: var(--raquel-blue-2);
       }
       .blindOpen.state-on > svg {
-        fill: #fdd835;
+        fill: var(--raquel-blue-2);
       }
       .closeButton.state-on {
-        background-color: #bdbdbd!important;
+        background-color: var(--raquel-light-grey-2) !important;
       }
       .closeButton.state-on > #arrow-icon {
-        fill: #fdd835;
+        fill: var(--raquel-blue-2);
       }
       .pause:active, .blindOpen:active, .closeButton:active {
-        background-color: #bdbdbd !important;
+        background-color: var(--raquel-light-grey-2) !important;
       }
       .pause:active > #arrow-icon {
-        fill: #fdd835;
+        fill: var(--raquel-blue-2);
       }
       mwc-list-item {
         cursor: pointer;
@@ -969,7 +938,7 @@ export class BoilerplateCard extends LitElement {
         transform: translate(62%, 55%) scale(2.5);
       } */
 
-      .state {
+      /* .state {
         animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
@@ -1007,7 +976,7 @@ export class BoilerplateCard extends LitElement {
         100% {
           opacity: 1;
         }
-      }
+      } */
     `;
     }
 }
