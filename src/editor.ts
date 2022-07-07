@@ -8,12 +8,12 @@ import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'cust
 import { BoilerplateCardConfig, EditorTarget } from './types';
 import { customElement, property, state } from 'lit/decorators';
 
-const includeDomains = ["switch", "fan"];
+const includeDomains = ["switch", "cover"];
 
 export const blindCardEditorSchema = [
   {
       name: "entity",
-      selector: { entity: {domain: ["switch", "fan"]} }
+      selector: { entity: {domain: ["switch", "cover"]} }
   },
   {
       name: "name",
@@ -88,8 +88,6 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     if (!this.hass || !this._helpers) {
       return html``;
     }
-    this._helpers.importMoreInfoControl('climate');
-    const entities = Object.keys(this.hass.states).filter(eid => eid.substr(0, eid.indexOf('.')) === 'switch');
     return html`
       <ha-form
         .hass=${this.hass}

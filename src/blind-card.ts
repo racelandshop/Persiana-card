@@ -14,10 +14,11 @@ import './editor';
 import type { BoilerplateCardConfig} from './types';
 import { arrowDown, CARD_VERSION, blind_closed, blind_open, mdiDotsVertical } from './const';
 import { localize } from './localize/localize';
-import { UNAVAILABLE } from "./data/entity";
+import { UNAVAILABLE, UNAVAILABLE_STATES } from "./data/entity";
 import { fireEvent } from "custom-card-helpers";
 import { debounce } from "./common/debounce";
 import ResizeObserver from "./common/resizeObserver";
+import { computeStateName } from "./common/entity/compute_state_name";
 
 console.info(
   `%c  RACELAND-blind-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
@@ -76,15 +77,7 @@ export class BoilerplateCard extends LitElement {
       entitiesFallback,
       includeDomains
     );
-    return {
-      type: "custom:blind-card",
-      entity: foundEntities[0] || "",
-      "show_name": true,
-      "show_state": true,
-      "show_buttons": true,
-      "show_preview": true,
-      "icon": blind_closed + ":" + blind_open,
-      "name": localize("common.name")
+    return { type: "custom:blind-card", entity: foundEntities[0] || "", "show_name": true, "show_state": true
     };
   }
 
@@ -171,7 +164,11 @@ export class BoilerplateCard extends LitElement {
               const stateCard =
                 this.shadowRoot?.querySelector(".hassbut");
                 stateCard?.classList.remove("hassbut");
-                stateCard?.classList.add("hassbut-small");
+              stateCard?.classList.add("hassbut-small");
+              const iconUnavailable =
+                this.shadowRoot?.querySelector(".icon-unavailable");
+                iconUnavailable?.classList.remove("icon-unavailable");
+                iconUnavailable?.classList.add("icon-unavailable-medium");
               this.showButtons = false;
               this.isMedium = true;
             }
@@ -207,7 +204,11 @@ export class BoilerplateCard extends LitElement {
               const stateCard =
                 this.shadowRoot?.querySelector(".hassbut");
                 stateCard?.classList.remove("hassbut");
-                stateCard?.classList.add("hassbut-small");
+              stateCard?.classList.add("hassbut-small");
+              const iconUnavailable =
+                this.shadowRoot?.querySelector(".icon-unavailable");
+                iconUnavailable?.classList.remove("icon-unavailable");
+                iconUnavailable?.classList.add("icon-unavailable-small");
               this.showButtons = false;
               this.isSmall = true;
             }
@@ -251,6 +252,7 @@ export class BoilerplateCard extends LitElement {
 
 
   protected render(): TemplateResult | void {
+
     if (this.config.show_warning) {return this._showWarning(localize('common.show_warning'))}
     if (this.config.show_error) { return this._showError(localize('common.show_error')) }
     if (this.isSmall) {
@@ -270,8 +272,11 @@ export class BoilerplateCard extends LitElement {
     }
     this.stateObj = this.config.entity
     ? this.hass.states[this.config.entity]
-      : undefined;
+    : undefined;
 
+    const name = this.config.show_name
+      ? this.config.name || (this.stateObj ? computeStateName(this.stateObj) : "")
+      : "";
   return html`
     <ha-card
       class="hassbut ${classMap({
@@ -298,14 +303,15 @@ export class BoilerplateCard extends LitElement {
         ></ha-icon-button>
     ${this.config.show_state
       ? html`
-        <div  class="sc-blind-position"
+        <div  class="sc-blind-position ${classMap({"position-null": this.stateObj.state === UNAVAILABLE})}"
         @change=${this.setPickerPosition(100 - (this.stateObj.attributes.current_position))}>
           ${this.stateObj.attributes.current_position} %
         </div>
       `: ""
     }
     <div class="container">
-        <div class="sc-blind-middle">
+        <div class="sc-blind-middle"
+        .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}>
             ${this.config.show_icon && this.config.icon
             ? html`
                   <div class="sc-blind-selector">
@@ -323,10 +329,14 @@ export class BoilerplateCard extends LitElement {
                         viewBox="0 0 50 50" height="100%" width="100%">
                         <path d="M45.83 8.21H4.66997C4.27997 8.21 3.96997 7.9 3.96997 7.51V5.45C3.96997 5.06 4.27997 4.75 4.66997 4.75H45.82C46.21 4.75 46.52 5.06 46.52 5.45V7.51C46.53 7.89 46.21 8.21 45.83 8.21Z" />
                       </svg>
-                  </div>
+                    </div>
+                  ${UNAVAILABLE_STATES.includes(this.stateObj.state)
+                    ? html`
+                  <unavailable-icon
+                  class="icon-unavailable"></unavailable-icon>` : html``}
                     <div class="sc-blind-selector-slide"></div>
                       <svg class=
-                      "sc-blind-selector-picker"
+                      "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj.state === UNAVAILABLE,})}"
                       viewBox="0 0 50 50" height="100%" width="100%">
                       <path d="M5.54004 44.58C5.54004 44.75 5.67004 44.88 5.84004 44.88H44.66C44.79 44.88 44.87 44.79 44.92 44.68C44.93 44.65 44.96 44.62 44.96 44.58V43.98H5.54004V44.58Z" fill="#B3B3B3"/>
                       </svg>
@@ -339,6 +349,7 @@ export class BoilerplateCard extends LitElement {
               <div id="buttons">
                   <div class="buttons" >
                       <button
+                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
                       class="openButton ${classMap({
                     "state-on": this.stateObj.state === "opening",
                     "state-unavailable": this.stateObj.state === UNAVAILABLE,
@@ -352,7 +363,10 @@ export class BoilerplateCard extends LitElement {
                   </div>
                   <div class="buttons" >
                       <button
-                      class="pause"
+                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                      class="pause ${classMap({
+                    "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                      })}"
                       .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
                       @click=${this.onStopTap}
                     ><svg  id="arrow-icon-middle" viewBox="0 0 24 24">
@@ -362,6 +376,7 @@ export class BoilerplateCard extends LitElement {
                   </div>
                   <div class="buttons" >
                       <button
+                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
                       class="closeButton ${classMap({
                         "state-on": this.stateObj.state === "closing",
                         "state-unavailable": this.stateObj.state === UNAVAILABLE,
@@ -382,7 +397,7 @@ export class BoilerplateCard extends LitElement {
     ${this.config.show_name
       ? html`
         <div class="sc-blind-label">
-          ${this.config.name}</div>
+          ${name}</div>
       `: ""
     }
     </ha-card>
@@ -577,9 +592,9 @@ export class BoilerplateCard extends LitElement {
         justify-content: center;
         overflow: hidden;
         text-align: center;
-        color: var(--card-color-text, var(--raquel-claro));
+        color: var(--primary-text-color);
         border-radius: 1.5rem;
-        background: var( --ha-card-background, var(--card-background-color, var(--raquel-claro)) );
+        background: var(--card-background-color);
       }
       svg {
         /* cursor: row-resize; */
@@ -652,13 +667,16 @@ export class BoilerplateCard extends LitElement {
         width: 75px;
         height: 75px;
       }
+      .position-null {
+        display: none;
+      }
       .sc-blind-position {
-        color: var(--primary-text-color);
+        color: var(--secondary-text-color);
         position: absolute;
         top: 20px;
       }
       .sc-blind-position-medium {
-        color: var(--primary-text-color);
+        color: var(--secondary-text-color);
         position: absolute;
         left: 54px;
         top: 26px;
@@ -693,6 +711,24 @@ export class BoilerplateCard extends LitElement {
         text-overflow: ellipsis;
         justify-content: space-between;
       }
+      .icon-unavailable-small {
+        z-index: 1;
+        position: absolute;
+        top: 35%;
+        left: 35%;
+      }
+      .icon-unavailable-medium {
+        z-index: 1;
+        position: absolute;
+        top: 42%;
+        left: 40%;
+      }
+      .icon-unavailable {
+        z-index: 1;
+        position: absolute;
+        top: 44%;
+        left: 44%;
+      }
       .sc-blind-label-small {
         color: var(--primary-text-color);
         font-size: 1.2rem;
@@ -719,7 +755,7 @@ export class BoilerplateCard extends LitElement {
         right: 0px;
       }
       .sc-blind-selector-slide {
-        background-color: var(--raquel-light-grey-2);
+        background-color: var(--slider-track-color);
         position: absolute;
         cursor: row-resize;
         height: 100%;
@@ -731,7 +767,7 @@ export class BoilerplateCard extends LitElement {
         left: 14px;
       }
       .sc-blind-selector-slide-medium {
-        background-color: var(--raquel-light-grey-2);
+        background-color: var(--slider-track-color);
         position: absolute;
         cursor: row-resize;
         height: 100%;
@@ -743,14 +779,13 @@ export class BoilerplateCard extends LitElement {
         left: 11px;
       }
       .sc-blind-selector-slide-small {
-        background-color: var(--raquel-light-grey-2);
+        background-color: var(--slider-track-color);
         position: absolute;
         cursor: row-resize;
         height: 100%;
         max-width: 230px;
         min-width: 62.6px;
         max-height: 74%;
-        /* top: 44px; */
         top: 11px;
         left: 6.5px;
       }
@@ -819,11 +854,9 @@ export class BoilerplateCard extends LitElement {
         margin-top: 7px;
       }
       #buttons {
-        height: 204px;
-        top: -16px;
+        top: 21px;
         position: absolute;
-        left: 121px;
-        width: 89px;
+        right: 22px;
         text-align: center;
         display: flex;
         flex-direction: column;
@@ -831,7 +864,7 @@ export class BoilerplateCard extends LitElement {
         justify-content: center;
       }
       .buttons {
-        width: 30px;
+        width: 33px;
         margin: 5px 0;
       }
       .state-div {
@@ -850,17 +883,18 @@ export class BoilerplateCard extends LitElement {
       }
 
       #arrow-icon{
-        padding: 4px;
-        width: 25px;
-        height: 25px;
-        fill: var(--raquel-claro);
+        margin-top: 5px;
+        height: 20px;
+        width: 15px;
+        fill: var(--card-background-color);
       }
 
       #arrow-icon-middle {
-        padding: 4px;
-        width: 25px;
-        height: 25px;
-        fill: var(--raquel-claro);
+        padding: 0;
+        margin: 0;
+        height: 20px;
+        width: 15px;
+        fill: var(--card-background-color);
       }
       .more-info {
         position: absolute;
@@ -873,27 +907,28 @@ export class BoilerplateCard extends LitElement {
       }
 
       @media only screen and (max-width: 600px) {
-          #arrow-icon{
+        #arrow-icon{
+          margin-top: 4px;
+          height: 20px;
+          width: 15px;
+          fill: var(--card-background-color);
+        }
+        #arrow-icon-middle {
           padding: 0;
-          padding-top: 6px;
-          width: 25px;
-          height: 25px;
-          fill: var(--raquel-claro);
-          }
-          #arrow-icon-middle {
-            padding: 0;
-            padding-top: 5px;
-            width: 25px;
-            height: 25px;
-            fill: var(--raquel-claro);
-          }
+          margin: 0;
+          height: 20px;
+          width: 15px;
+          fill: var(--card-background-color);
+        }
       }
 
       button {
-        background-color: var(--raquel-dark-1);
+        background-color: var(--secondary-text-color);
         cursor: pointer;
         fill: #ffffff;
         display: flex;
+        align-items: center;
+        justify-content: center;
         visibility: visible;
         width: 33px;
         height: 33px;
@@ -901,82 +936,36 @@ export class BoilerplateCard extends LitElement {
         border-width: 0;
       }
       .openButton.state-on {
-        background-color: var(--raquel-light-grey-2) !important;
+        background-color: var(--header-card-picker-background) !important;
       }
       .openButton.state-on > #arrow-icon {
-        fill: var(--raquel-blue-2);
+        fill: var(--accent-color);
       }
       .blindOpen.state-on > svg {
-        fill: var(--raquel-blue-2);
+        fill: var(--accent-color);
       }
       .closeButton.state-on {
-        background-color: var(--raquel-light-grey-2) !important;
+        background-color: var(--header-card-picker-background) !important;
       }
       .closeButton.state-on > #arrow-icon {
-        fill: var(--raquel-blue-2);
+        fill: var(--accent-color);
       }
       .pause:active, .blindOpen:active, .closeButton:active {
-        background-color: var(--raquel-light-grey-2) !important;
+        background-color: var(--header-card-picker-background) !important;
       }
       .pause:active > #arrow-icon {
-        fill: var(--raquel-blue-2);
+        fill: var(--accent-color);
       }
       mwc-list-item {
         cursor: pointer;
         white-space: nowrap;
       }
 
-      /* .svgicon-blind {
-        padding-bottom: 20px;
-        max-width: 170px;
-        transform: translate(62%, 55%) scale(2.5);
-      }
-
-      .svicon-shutter {
-        padding-bottom: 20px;
-        max-width: 170px;
-        transform: translate(62%, 55%) scale(2.5);
-      } */
-
-      /* .state {
-        animation: state 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
-
       .state-unavailable {
         color: var(--state-icon-unavailable-color, #bdbdbd);
+        pointer-events: none;
       }
 
-      :root {
-        --main-color: bisque;
-      }
-
-      .opacity {
-        animation: opacity 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      }
-
-      .reverse {
-        animation-direction: reverse;
-      }
-
-      @keyframes state {
-        0% {
-          transform: none;
-          fill: #9da0a2;
-        }
-        100% {
-          transform: skewY(10deg) translate(4.5%, -3.9%) scaleX(0.8);
-          fill: #b68349;
-        }
-      }
-
-      @keyframes opacity {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-        }
-      } */
     `;
     }
 }
