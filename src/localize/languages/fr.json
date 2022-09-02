@@ -1,0 +1,17 @@
+{
+    "common": {
+        "card": "Stores",
+        "version": "Version",
+        "invalid_configuration": "Configuration invalide",
+        "show_warning": "Afficher l'avis",
+        "show_error": "Afficher l'erreur"
+    },
+    "states":{
+      "open": "100%",
+      "close": "0%",
+      "stop": "Arrêt",
+      "on": "100%",
+      "off": "0%",
+      "unavailable": "Indisponible"
+  }
+  }

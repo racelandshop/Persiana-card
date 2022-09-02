@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RippleHandlers } from "@material/mwc-ripple/ripple-handlers";
 import { Ripple } from '@material/mwc-ripple';
 import { html, TemplateResult, css, PropertyValues, CSSResultGroup, LitElement } from 'lit';
 import { HassEntity } from 'home-assistant-js-websocket'
@@ -12,7 +11,7 @@ import { classMap } from "lit/directives/class-map";
 import { HomeAssistant, hasConfigOrEntityChanged, LovelaceCardEditor, getLovelace} from 'custom-card-helpers';
 import './editor';
 import type { BoilerplateCardConfig} from './types';
-import { arrowDown, CARD_VERSION, blind_closed, blind_open, mdiDotsVertical } from './const';
+import { arrowDown, CARD_VERSION, mdiDotsVertical } from './const';
 import { localize } from './localize/localize';
 import { UNAVAILABLE, UNAVAILABLE_STATES } from "./data/entity";
 import { fireEvent } from "custom-card-helpers";
@@ -59,6 +58,8 @@ export class BoilerplateCard extends LitElement {
 
   @state() private config!: BoilerplateCardConfig;
 
+  @property({ type: String }) public layout = "big";
+
   private maxPosition!: number;
   private minPosition!: number;
 
@@ -81,7 +82,6 @@ export class BoilerplateCard extends LitElement {
     };
   }
 
-  // stateObj: { state: string; attributes: { assumed_state: any; }; };
   open_cover: any;
   stop_cover: any;
   close_cover: any;
@@ -114,10 +114,8 @@ export class BoilerplateCard extends LitElement {
   }
 
   protected firstUpdated() {
-    // console.log(this.picker, this.slide, this.picture);
     this._attachResizeObserver();
     this.slide.style.height =  (this.maxPosition - this.minPosition) + 'px';
-    // console.log("first updated", this.picker);
     ['mousedown', 'touchstart', 'pointerdown'].forEach((type) => {
       this.picker?.addEventListener(type, this._mouseDown);
     });
@@ -136,86 +134,24 @@ export class BoilerplateCard extends LitElement {
               rootGrid &&
               entry.contentRect.width <= rootGrid.clientWidth / 2 &&
               entry.contentRect.width > rootGrid.clientWidth / 3
-              ) {
-                const stateLabel =
-                this.shadowRoot?.querySelector(".sc-blind-label");
-                stateLabel?.classList.remove("sc-blind-label");
-                stateLabel?.classList.add("sc-blind-label-medium");
-              const stateSelector =
-                this.shadowRoot?.querySelector(".sc-blind-selector");
-                stateSelector?.classList.remove("sc-blind-selector");
-              stateSelector?.classList.add("sc-blind-selector-medium");
-              const stateMedium =
-                this.shadowRoot?.querySelector(".sc-blind-middle");
-                stateMedium?.classList.remove("sc-blind-middle");
-              stateMedium?.classList.add("sc-blind-middle-medium");
-              const stateSlide =
-                this.shadowRoot?.querySelector(".sc-blind-selector-slide");
-                stateSlide?.classList.remove("sc-blind-selector-slide");
-              stateSlide?.classList.add("sc-blind-selector-slide-medium");
-              const stateContainer =
-                this.shadowRoot?.querySelector(".container");
-                stateContainer?.classList.remove("container");
-              stateContainer?.classList.add("container-medium");
-              const statePosition =
-              this.shadowRoot?.querySelector(".sc-blind-position");
-              statePosition?.classList.remove("sc-blind-position");
-              statePosition?.classList.add("sc-blind-position-small");
-              const stateCard =
-                this.shadowRoot?.querySelector(".hassbut");
-                stateCard?.classList.remove("hassbut");
-              stateCard?.classList.add("hassbut-small");
-              const iconUnavailable =
-                this.shadowRoot?.querySelector(".icon-unavailable");
-                iconUnavailable?.classList.remove("icon-unavailable");
-                iconUnavailable?.classList.add("icon-unavailable-medium");
+            ) {
+              this.layout = "medium";
               this.showButtons = false;
               this.isMedium = true;
-            }
-            if (
+            } else if (
               rootGrid &&
               entry.contentRect.width <= rootGrid.clientWidth / 3 &&
               entry.contentRect.width !== 0
-              ) {
-                const stateLabel =
-                this.shadowRoot?.querySelector(".sc-blind-label");
-                stateLabel?.classList.remove("sc-blind-label");
-              stateLabel?.classList.add("sc-blind-label-small");
-              const stateContainer =
-                this.shadowRoot?.querySelector(".container");
-                stateContainer?.classList.remove("container");
-              stateContainer?.classList.add("container-small");
-              const stateMedium =
-              this.shadowRoot?.querySelector(".sc-blind-middle");
-              stateMedium?.classList.remove("sc-blind-middle");
-              stateMedium?.classList.add("sc-blind-middle-small");
-              const stateSelector =
-              this.shadowRoot?.querySelector(".sc-blind-selector");
-              stateSelector?.classList.remove("sc-blind-selector");
-              stateSelector?.classList.add("sc-blind-selector-small");
-              const statePosition =
-              this.shadowRoot?.querySelector(".sc-blind-position");
-              statePosition?.classList.remove("sc-blind-position");
-              statePosition?.classList.add("sc-blind-position-small");
-              const stateSlide =
-                this.shadowRoot?.querySelector(".sc-blind-selector-slide");
-                stateSlide?.classList.remove("sc-blind-selector-slide");
-              stateSlide?.classList.add("sc-blind-selector-slide-small");
-              const stateCard =
-                this.shadowRoot?.querySelector(".hassbut");
-                stateCard?.classList.remove("hassbut");
-              stateCard?.classList.add("hassbut-small");
-              const iconUnavailable =
-                this.shadowRoot?.querySelector(".icon-unavailable");
-                iconUnavailable?.classList.remove("icon-unavailable");
-                iconUnavailable?.classList.add("icon-unavailable-small");
+            ) {
+              this.layout = "small";
               this.showButtons = false;
               this.isSmall = true;
+            } else {
             }
           },
           250,
           true
-          )
+        )
       );
     }
 
@@ -258,17 +194,14 @@ export class BoilerplateCard extends LitElement {
     if (this.isSmall) {
       this.maxPosition = 55;
       this.minPosition = 0;
-      console.log('small')
     }
     else if (this.isMedium) {
       this.maxPosition = 88;
       this.minPosition = 0;
-      console.log('medium')
     }
     else {
       this.maxPosition = 111;
       this.minPosition = 0;
-      console.log('large')
     }
     this.stateObj = this.config.entity
     ? this.hass.states[this.config.entity]
@@ -279,20 +212,20 @@ export class BoilerplateCard extends LitElement {
       : "";
   return html`
     <ha-card
-      class="hassbut ${classMap({
+      class=
+      ${classMap({
+        "hassbut": this.layout === "big",
+        "hassbut-small": this.layout === "small" || this.layout === "medium",
         "state-on":
           ifDefined(this.stateObj ? this.computeActiveState(this.stateObj) : undefined) === "on",
         "state-off":
           ifDefined(this.stateObj ? this.computeActiveState(this.stateObj) : undefined) === "off",
         "state-stop":
           ifDefined(this.stateObj ? this.computeActiveState(this.stateObj) : undefined) === "stop",
-      })}"
-
-
-
-        .label=${`blind: ${this.config.entity || 'No Entity Defined'}`}
-    >
-    <ha-icon-button
+              })}
+        .label=${`blind: ${this.config.entity || 'No Entity Defined'}`}>
+        ${!this.isSmall ? html`
+        <ha-icon-button
           class="more-info"
           .label=${this.hass!.localize(
             "ui.panel.lovelace.cards.show_more_info"
@@ -301,102 +234,199 @@ export class BoilerplateCard extends LitElement {
           @click=${this._handleMoreInfo}
           tabindex="0"
         ></ha-icon-button>
-    ${this.config.show_state
-      ? html`
-        <div  class="sc-blind-position ${classMap({"position-null": this.stateObj.state === UNAVAILABLE})}"
-        @change=${this.setPickerPosition(100 - (this.stateObj.attributes.current_position))}>
-          ${this.stateObj.attributes.current_position} %
-        </div>
-      `: ""
-    }
-    <div class="container">
-        <div class="sc-blind-middle"
-        .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}>
-            ${this.config.show_icon && this.config.icon
-            ? html`
-                  <div class="sc-blind-selector">
-                    <div class="blindOpen ${classMap({
-                      "state-on": this.stateObj.state === "open" || this.stateObj.state === "opening" || this.stateObj.state === "closing",
-                    "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                      })}">
-                      <svg class=
-                        "sc-blind-selector-picture"
-                        viewBox="0 0 50 50" height="100%" width="100%">
-                        <path d="M45.4199 5H5.08989C4.69989 5 4.38989 5.31 4.38989 5.7V44.88C4.38989 45.27 4.69989 45.58 5.08989 45.58H45.4199C45.8099 45.58 46.1199 45.27 46.1199 44.88V5.7C46.1199 5.31 45.7999 5 45.4199 5ZM24.7199 42.36C24.7199 42.63 24.4999 42.85 24.2299 42.85H6.52989C6.25989 42.85 6.03989 42.63 6.03989 42.36V7.71C6.03989 7.44 6.25989 7.22 6.52989 7.22H24.2299C24.4999 7.22 24.7199 7.44 24.7199 7.71V42.36ZM44.7999 43.35C44.7999 43.62 44.5799 43.84 44.3099 43.84H26.5299C26.2599 43.84 26.0399 43.62 26.0399 43.35V7.67C26.0399 7.4 26.2599 7.18 26.5299 7.18H44.2999C44.5699 7.18 44.7899 7.4 44.7899 7.67V43.35H44.7999Z"/>
-                        </svg>
-                        <svg class=
-                        "top-bar"
-                        viewBox="0 0 50 50" height="100%" width="100%">
-                        <path d="M45.83 8.21H4.66997C4.27997 8.21 3.96997 7.9 3.96997 7.51V5.45C3.96997 5.06 4.27997 4.75 4.66997 4.75H45.82C46.21 4.75 46.52 5.06 46.52 5.45V7.51C46.53 7.89 46.21 8.21 45.83 8.21Z" />
-                      </svg>
-                    </div>
-                  ${UNAVAILABLE_STATES.includes(this.stateObj.state)
-                    ? html`
-                  <unavailable-icon
-                  class="icon-unavailable"></unavailable-icon>` : html``}
-                    <div class="sc-blind-selector-slide"></div>
-                      <svg class=
-                      "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj.state === UNAVAILABLE,})}"
-                      viewBox="0 0 50 50" height="100%" width="100%">
-                      <path d="M5.54004 44.58C5.54004 44.75 5.67004 44.88 5.84004 44.88H44.66C44.79 44.88 44.87 44.79 44.92 44.68C44.93 44.65 44.96 44.62 44.96 44.58V43.98H5.54004V44.58Z" fill="#B3B3B3"/>
-                      </svg>
-                  </div>
-                    `
-                  : ""}
+        ` : html``
+        }
 
-              ${this.showButtons
-              ? html`
-              <div id="buttons">
-                  <div class="buttons" >
-                      <button
-                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
-                      class="openButton ${classMap({
-                    "state-on": this.stateObj.state === "opening",
-                    "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                      })}"
-                    .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
-                      @click=${this.onOpenTap}
-                    ><svg id="arrow-icon" viewBox="0 0 24 24">
-                          <path d="M3.4375 16.1041L13 6.56246L22.5625 16.1041L25.5 13.1666L13 0.666626L0.5 13.1666L3.4375 16.1041Z"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="buttons" >
-                      <button
-                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
-                      class="pause ${classMap({
-                    "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                      })}"
-                      .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
-                      @click=${this.onStopTap}
-                    ><svg  id="arrow-icon-middle" viewBox="0 0 24 24">
-                          <path d="M17.1667 29.5833H25.5V0.416626H17.1667V29.5833ZM0.5 29.5833H8.83333V0.416626H0.5V29.5833Z"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="buttons" >
-                      <button
-                      .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
-                      class="closeButton ${classMap({
-                        "state-on": this.stateObj.state === "closing",
-                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                      })}"
-                      .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
-                      .path=${arrowDown}
-                      @click=${this.onCloseTap}
-                    ><svg  id="arrow-icon" viewBox="0 0 24 24">
-                          <path d="M3.4375 0.391357L13 9.95386L22.5625 0.391357L25.5 3.34969L13 15.8497L0.5 3.34969L3.4375 0.391357Z"/>
-                      </svg>
-                    </button>
-                  </div>
-              </div>
+            ${this.isSmall ? html`
+          <div id="container" @click=${this._handleMoreInfo}>
+          ${UNAVAILABLE_STATES.includes(this.stateObj.state) ? html`
+          <unavailable-icon
+            class=${classMap({
+            "icon-unavailable-small": this.layout === "small",
+            "icon-unavailable-medium": this.layout === "medium"
+            })}>
+          </unavailable-icon>
+          ` : html``}
+          ${this.stateObj.attributes.current_position === 0 ? html`
+            <svg class="icon ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"
+                          width="50" height="50" viewBox="0 0 50 50" fill="none" class="ha-status-icon-small">
+              <path d="M45.4197 5H5.08965C4.69965 5 4.38965 5.31 4.38965 5.7V44.88C4.38965 45.27 4.69965 45.58 5.08965 45.58H45.4197C45.8097 45.58 46.1197 45.27 46.1197 44.88V5.7C46.1197 5.31 45.7997 5 45.4197 5ZM24.7197 42.36C24.7197 42.63 24.4997 42.85 24.2297 42.85H6.52965C6.25965 42.85 6.03965 42.63 6.03965 42.36V7.71C6.03965 7.44 6.25965 7.22 6.52965 7.22H24.2297C24.4997 7.22 24.7197 7.44 24.7197 7.71V42.36ZM44.7997 43.35C44.7997 43.62 44.5797 43.84 44.3097 43.84H26.5297C26.2597 43.84 26.0397 43.62 26.0397 43.35V7.67C26.0397 7.4 26.2597 7.18 26.5297 7.18H44.2997C44.5697 7.18 44.7897 7.4 44.7897 7.67V43.35H44.7997Z" class="black ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+              <path d="M44.9599 44.5801C44.9599 44.6201 44.9299 44.6501 44.9199 44.6801C44.9399 44.6601 44.9599 44.6201 44.9599 44.5801Z" class="white"/>
+              <path d="M44.12 5H6.39004C5.92004 5 5.54004 5.38 5.54004 5.86V43.98H44.96V5.85C44.96 5.38 44.58 5 44.12 5Z" class="white"/>
+              <path d="M5.54004 44.5805C5.54004 44.7505 5.67004 44.8805 5.84004 44.8805H44.66C44.79 44.8805 44.87 44.7905 44.92 44.6805C44.93 44.6505 44.96 44.6205 44.96 44.5805V43.9805H5.54004V44.5805Z" class="grey ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+              <path d="M45.8297 8.21H4.66973C4.27973 8.21 3.96973 7.9 3.96973 7.51V5.45C3.96973 5.06 4.27973 4.75 4.66973 4.75H45.8197C46.2097 4.75 46.5197 5.06 46.5197 5.45V7.51C46.5297 7.89 46.2097 8.21 45.8297 8.21Z" class="grey ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+            </svg>` :
+            (this.stateObj.attributes.current_position !== 100) && this.stateObj.attributes.current_position ? html`
+            <svg class="icon ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+            })}"
+                             width="89" height="89" viewBox="0 0 89 89" fill="none">
+              <path d="M73.7305 14.5608H8.1855C7.55167 14.5608 7.04785 15.0646 7.04785 15.6984V79.3745C7.04785 80.0083 7.55167 80.5121 8.1855 80.5121H73.7305C74.3644 80.5121 74.8682 80.0083 74.8682 79.3745V15.6984C74.8682 15.0646 74.3481 14.5608 73.7305 14.5608ZM40.0885 75.2789C40.0885 75.7177 39.731 76.0753 39.2922 76.0753H10.5258C10.087 76.0753 9.72946 75.7177 9.72946 75.2789V18.9651C9.72946 18.5263 10.087 18.1688 10.5258 18.1688H39.2922C39.731 18.1688 40.0885 18.5263 40.0885 18.9651V75.2789ZM72.7229 76.8879C72.7229 77.3267 72.3653 77.6842 71.9265 77.6842H43.0302C42.5914 77.6842 42.2338 77.3267 42.2338 76.8879V18.9001C42.2338 18.4613 42.5914 18.1038 43.0302 18.1038H71.9103C72.3491 18.1038 72.7066 18.4613 72.7066 18.9001V76.8879H72.7229Z" class="blue ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+              <path d="M74.533 30.4126C74.533 30.4272 74.4826 30.4381 74.4658 30.449C74.4994 30.4417 74.533 30.4272 74.533 30.4126Z" class="white"/>
+              <path d="M 71.5941 15.9565 H 10.4211 C 9.6591 15.9565 9.043 16.0943 9.043 16.2683 V 49 H 72.956 V 16.2647 C 72.956 16.0943 72.3399 15.9565 71.5941 15.9565 Z" class="white"/>
+              <path d="M9 30.1111C9 30.1561 9.21106 30.1905 9.48706 30.1905H72.5129C72.724 30.1905 72.8539 30.1667 72.9351 30.1376C72.9513 30.1296 73 30.1217 73 30.1111V29.9524H9V30.1111Z" class="grey ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}" fill-opacity="0.85"/>
+              <path d="M74.3968 19.7778H7.50289C6.86905 19.7778 6.36523 19.274 6.36523 18.6401V15.2922C6.36523 14.6584 6.86905 14.1545 7.50289 14.1545H74.3806C75.0144 14.1545 75.5182 14.6584 75.5182 15.2922V18.6401C75.5345 19.2577 75.0144 19.7778 74.3968 19.7778Z" class="blue ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+            </svg>
+            ` : html`
+            <svg class="icon ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+            })}"
+                             width="89" height="89" viewBox="0 0 89 89" fill="none">
+              <path d="M73.7305 14.5608H8.1855C7.55167 14.5608 7.04785 15.0646 7.04785 15.6984V79.3745C7.04785 80.0083 7.55167 80.5121 8.1855 80.5121H73.7305C74.3644 80.5121 74.8682 80.0083 74.8682 79.3745V15.6984C74.8682 15.0646 74.3481 14.5608 73.7305 14.5608ZM40.0885 75.2789C40.0885 75.7177 39.731 76.0753 39.2922 76.0753H10.5258C10.087 76.0753 9.72946 75.7177 9.72946 75.2789V18.9651C9.72946 18.5263 10.087 18.1688 10.5258 18.1688H39.2922C39.731 18.1688 40.0885 18.5263 40.0885 18.9651V75.2789ZM72.7229 76.8879C72.7229 77.3267 72.3653 77.6842 71.9265 77.6842H43.0302C42.5914 77.6842 42.2338 77.3267 42.2338 76.8879V18.9001C42.2338 18.4613 42.5914 18.1038 43.0302 18.1038H71.9103C72.3491 18.1038 72.7066 18.4613 72.7066 18.9001V76.8879H72.7229Z" class="blue ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+              <path d="M74.533 30.4126C74.533 30.4272 74.4826 30.4381 74.4658 30.449C74.4994 30.4417 74.533 30.4272 74.533 30.4126Z" class="white"/>
+              <path d="M71.5941 15.9565H10.4211C9.65908 15.9565 9.04297 16.0943 9.04297 16.2683V30.087H72.956V16.2647C72.956 16.0943 72.3399 15.9565 71.5941 15.9565Z" class="white"/>
+              <path d="M9 30.1111C9 30.1561 9.21106 30.1905 9.48706 30.1905H72.5129C72.724 30.1905 72.8539 30.1667 72.9351 30.1376C72.9513 30.1296 73 30.1217 73 30.1111V29.9524H9V30.1111Z" class="grey ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}" fill-opacity="0.85"/>
+              <path d="M74.3968 19.7778H7.50289C6.86905 19.7778 6.36523 19.274 6.36523 18.6401V15.2922C6.36523 14.6584 6.86905 14.1545 7.50289 14.1545H74.3806C75.0144 14.1545 75.5182 14.6584 75.5182 15.2922V18.6401C75.5345 19.2577 75.0144 19.7778 74.3968 19.7778Z" class="blue ${classMap({
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            })}"/>
+            </svg>
+            `}</div>
+            ` :
+
+        html`
+        ${this.config.show_state
+          ? html`
+            <div  class=${classMap({
+            "sc-blind-position": this.layout === "big",
+            "sc-blind-position-small": this.layout === "small" || this.layout === "medium",
+            "position-null": this.stateObj.state === UNAVAILABLE
+                  })}
+            @change=${this.setPickerPosition(100 - (this.stateObj.attributes.current_position))}>
+              ${this.stateObj.attributes.current_position} %
+            </div>
           `: ""
-         }
-    </div>
-    </div>
+        }
+        <div class=${classMap({
+            "container": this.layout === "big",
+            "container-small": this.layout === "small",
+            "container-medium": this.layout === "medium"
+                  })}>
+            <div class=${classMap({
+              "sc-blind-middle": this.layout === "big",
+              "sc-blind-middle-small": this.layout === "small",
+              "sc-blind-middle-medium": this.layout === "medium"
+                    })}
+            .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}>
+                ${this.config.show_icon && this.config.icon
+                ? html`
+                      <div class=${classMap({
+                      "sc-blind-selector": this.layout === "big",
+                      "sc-blind-selector-small": this.layout === "small",
+                      "sc-blind-selector-medium": this.layout === "medium"
+                            })}>
+                        <div class="blindOpen ${classMap({
+                          "state-on": this.stateObj.state === "open" || this.stateObj.state === "opening" || this.stateObj.state === "closing",
+                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                          })}">
+                          <svg class=
+                            "sc-blind-selector-picture"
+                            viewBox="0 0 50 50" height="100%" width="100%">
+                            <path d="M45.4199 5H5.08989C4.69989 5 4.38989 5.31 4.38989 5.7V44.88C4.38989 45.27 4.69989 45.58 5.08989 45.58H45.4199C45.8099 45.58 46.1199 45.27 46.1199 44.88V5.7C46.1199 5.31 45.7999 5 45.4199 5ZM24.7199 42.36C24.7199 42.63 24.4999 42.85 24.2299 42.85H6.52989C6.25989 42.85 6.03989 42.63 6.03989 42.36V7.71C6.03989 7.44 6.25989 7.22 6.52989 7.22H24.2299C24.4999 7.22 24.7199 7.44 24.7199 7.71V42.36ZM44.7999 43.35C44.7999 43.62 44.5799 43.84 44.3099 43.84H26.5299C26.2599 43.84 26.0399 43.62 26.0399 43.35V7.67C26.0399 7.4 26.2599 7.18 26.5299 7.18H44.2999C44.5699 7.18 44.7899 7.4 44.7899 7.67V43.35H44.7999Z"/>
+                            </svg>
+                            <svg class=
+                            "top-bar"
+                            viewBox="0 0 50 50" height="100%" width="100%">
+                            <path d="M45.83 8.21H4.66997C4.27997 8.21 3.96997 7.9 3.96997 7.51V5.45C3.96997 5.06 4.27997 4.75 4.66997 4.75H45.82C46.21 4.75 46.52 5.06 46.52 5.45V7.51C46.53 7.89 46.21 8.21 45.83 8.21Z" />
+                          </svg>
+                        </div>
+                      ${UNAVAILABLE_STATES.includes(this.stateObj.state)
+                        ? html`
+                      <unavailable-icon
+                      class=${classMap({
+                      "icon-unavailable": this.layout === "big",
+                      "icon-unavailable-small": this.layout === "small",
+                      "icon-unavailable-medium": this.layout === "medium"
+                            })}></unavailable-icon>` : html``}
+                        <div class=${classMap({
+                          "sc-blind-selector-slide": this.layout === "big",
+                          "sc-blind-selector-slide-small": this.layout === "small",
+                          "sc-blind-selector-slide-medium": this.layout === "medium"
+                                })}></div>
+                          <svg class=
+                          "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj.state === UNAVAILABLE,})}"
+                          viewBox="0 0 50 50" height="100%" width="100%">
+                          <path d="M5.54004 44.58C5.54004 44.75 5.67004 44.88 5.84004 44.88H44.66C44.79 44.88 44.87 44.79 44.92 44.68C44.93 44.65 44.96 44.62 44.96 44.58V43.98H5.54004V44.58Z" fill="#B3B3B3"/>
+                          </svg>
+                      </div>
+                        `
+                      : ""}
+
+                  ${this.showButtons
+                  ? html`
+                  <div id="buttons">
+                      <div class="buttons" >
+                          <button
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          class="openButton ${classMap({
+                        "state-on": this.stateObj.state === "opening",
+                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                          })}"
+                        .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
+                          @click=${this.onOpenTap}
+                        ><svg id="arrow-icon" viewBox="0 0 24 24">
+                              <path d="M3.4375 16.1041L13 6.56246L22.5625 16.1041L25.5 13.1666L13 0.666626L0.5 13.1666L3.4375 16.1041Z"/>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="buttons" >
+                          <button
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          class="pause ${classMap({
+                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                          })}"
+                          .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
+                          @click=${this.onStopTap}
+                        ><svg  id="arrow-icon-middle" viewBox="0 0 24 24">
+                              <path d="M17.1667 29.5833H25.5V0.416626H17.1667V29.5833ZM0.5 29.5833H8.83333V0.416626H0.5V29.5833Z"/>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="buttons" >
+                          <button
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          class="closeButton ${classMap({
+                            "state-on": this.stateObj.state === "closing",
+                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                          })}"
+                          .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
+                          .path=${arrowDown}
+                          @click=${this.onCloseTap}
+                        ><svg  id="arrow-icon" viewBox="0 0 24 24">
+                              <path d="M3.4375 0.391357L13 9.95386L22.5625 0.391357L25.5 3.34969L13 15.8497L0.5 3.34969L3.4375 0.391357Z"/>
+                          </svg>
+                        </button>
+                      </div>
+                  </div>
+              `: ""
+            }
+        </div>
+        </div>
+        `}
     ${this.config.show_name
       ? html`
-        <div class="sc-blind-label">
+        <div class=${classMap({
+        "sc-blind-label": this.layout === "big",
+        "sc-blind-label-small": this.layout === "small",
+        "sc-blind-label-medium": this.layout === "medium"
+              })}>
           ${name}</div>
       `: ""
     }
@@ -421,7 +451,6 @@ export class BoilerplateCard extends LitElement {
 
 
   private setPickerPosition(position: number) {
-    console.log('POSITION', position)
     let realPos = this.maxPosition / 100 * position;
     if (realPos < this.minPosition)
     realPos = this.minPosition;
@@ -432,8 +461,6 @@ export class BoilerplateCard extends LitElement {
 
     const posTop = realPos - (this.maxPosition - this.minPosition);
     const slideHeight = realPos- (this.minPosition);
-    // console.log(this.maxPosition, this.minPosition)
-    console.log('slideHeight', slideHeight, 'postop', posTop);  // Faltou isto para resolver o first updated. existe um mommento no inicio que não está rendered
     if (!this.hasUpdated) {
         this.updateComplete.then(() => {
           if (this.picker && this.slide) {
@@ -579,8 +606,33 @@ export class BoilerplateCard extends LitElement {
 
   static get styles(): CSSResultGroup {
     return css`
+      .icon {
+        height: 95%;
+        width: 75%;
+      }
+      .blue {
+        fill: var(--accent-color);
+      }
+      .white {
+        fill:#F2F1F6
+      }
+      .grey {
+        fill: #B3B3B3
+      }
+      .black {
+        fill: #333333
+      }
+      .ha-status-icon-small {
+        width: 63%;
+        height: auto;
+        color: var(--paper-item-icon-color, #7b7b7b);
+        --mdc-icon-size: 100%;
+      }
+      #container {
+        height: 70%;
+        width: 100%;
+      }
       ha-card {
-        /* cursor: pointer; */
         flex-direction: column;
         align-items: left;
         text-align: left;
@@ -595,9 +647,9 @@ export class BoilerplateCard extends LitElement {
         color: var(--primary-text-color);
         border-radius: 1.5rem;
         background: var(--card-background-color);
+        /* aspect-ratio: 1; */
       }
       svg {
-        /* cursor: row-resize; */
         display: block;
         .state-on {
           transform: scale(0);
@@ -656,10 +708,10 @@ export class BoilerplateCard extends LitElement {
       }
       .sc-blind-selector-medium {
         position: absolute;
-        top: 0;
-        left: 1px;
-        width: 120px;
-        height: 120px;
+        top: 12px;
+        left: 0px;
+        width: 90px;
+        height: 90px;
       }
       .sc-blind-selector-small {
         position: absolute;
@@ -700,7 +752,7 @@ export class BoilerplateCard extends LitElement {
       }
       .sc-blind-label-medium {
         color: var(--primary-text-color);
-        font-size: 1.65rem;
+        font-size: 1.3rem;
         margin-left: 12%;
         font-weight: 450;
         height: 25px;
@@ -711,11 +763,18 @@ export class BoilerplateCard extends LitElement {
         text-overflow: ellipsis;
         justify-content: space-between;
       }
+      .ha-status-icon-small {
+        width: 60%;
+        margin-left: 5%;
+        height: auto;
+        color: var(--paper-item-icon-color, #7b7b7b);
+        --mdc-icon-size: 100%;
+      }
       .icon-unavailable-small {
         z-index: 1;
         position: absolute;
-        top: 35%;
-        left: 35%;
+        top: 11px;
+        right: 10%;
       }
       .icon-unavailable-medium {
         z-index: 1;
@@ -726,13 +785,13 @@ export class BoilerplateCard extends LitElement {
       .icon-unavailable {
         z-index: 1;
         position: absolute;
-        top: 44%;
-        left: 44%;
+        top: 40%;
+        left: 40%;
       }
       .sc-blind-label-small {
         color: var(--primary-text-color);
-        font-size: 1.2rem;
-        margin-top: 10%;
+        font-size: 1.1rem;
+        margin-top: 4%;
         margin-left: 13%;
         font-weight: 450;
         height: 24px;
@@ -772,11 +831,10 @@ export class BoilerplateCard extends LitElement {
         cursor: row-resize;
         height: 100%;
         max-width: 230px;
-        min-width: 99px;
-        max-height: 75%;
-        /* top: 44px; */
-        top: 18px;
-        left: 11px;
+        min-width: 73px;
+        max-height: 74%;
+        top: 14px;
+        left: 9px;
       }
       .sc-blind-selector-slide-small {
         background-color: var(--slider-track-color);
@@ -809,8 +867,8 @@ export class BoilerplateCard extends LitElement {
         align-items: center;
         position: relative;
         justify-content: center;
-        width: 200px;
-        height: 144px;
+        width: 180px;
+        height: 130px;
       }
       .sc-blind-middle-small {
         display: flex;
@@ -837,8 +895,8 @@ export class BoilerplateCard extends LitElement {
         margin-top: 22px;
       }
       .container-medium {
-        height: 65%;
-        width: 100%;
+        height: 60%;
+        width: 60%;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -962,7 +1020,8 @@ export class BoilerplateCard extends LitElement {
       }
 
       .state-unavailable {
-        color: var(--state-icon-unavailable-color, #bdbdbd);
+        color: var(--state-unavailable-color, #bdbdbd);
+        fill: var(--state-unavailable-color, #bdbdbd);
         pointer-events: none;
       }
 

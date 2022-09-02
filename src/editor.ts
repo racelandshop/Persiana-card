@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/camelcase */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
 import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
-import { BoilerplateCardConfig, EditorTarget } from './types';
+import { BoilerplateCardConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 
-const includeDomains = ["switch", "cover"];
 
 export const blindCardEditorSchema = [
   {
@@ -18,17 +12,6 @@ export const blindCardEditorSchema = [
   {
       name: "name",
       selector: { text: {} }
-  },
-  {
-    name: "",
-    type: "grid",
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    column_min_width: "50px",
-    schema: [
-      // { name: "show_name", selector: { boolean: {} } },
-      // { name: "show_state", selector: { boolean: {} } },
-
-    ],
   },
 ]
 @customElement('blind-card-editor')
@@ -110,7 +93,7 @@ export class BoilerplateCardEditor extends LitElement implements LovelaceCardEdi
     this._helpers = await (window as any).loadCardHelpers();
   }
 
-  private _computeLabel(schema) {
+  private _computeLabel(schema): any {
     return this.hass!.localize(
       `ui.panel.lovelace.editor.card.generic.${schema.name}`
     );

@@ -1,0 +1,17 @@
+{
+    "common": {
+        "card": "Persiane",
+        "version": "Versione",
+        "invalid_configuration": "Configurazione non valida",
+        "show_warning": "Mostrar Avviso",
+        "show_error": "Mostra errore"
+    },
+    "states":{
+      "open": "100%",
+      "close": "0%",
+      "stop": "Fermare",
+      "on": "100%",
+      "off": "0%",
+      "unavailable": "Non disponibile"
+  }
+  }

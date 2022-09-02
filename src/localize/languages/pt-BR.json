@@ -1,0 +1,18 @@
+{
+    "common": {
+      "name": "Persiana",
+      "description": "Uma carta que permite controlar persianas",
+      "version": "Versão",
+      "invalid_configuration": "Configuração Inválida",
+      "show_warning": "Mostrar Aviso",
+      "show_error": "Mostrar Erro"
+    },
+    "states":{
+      "open": "100%",
+      "close": "0%",
+      "stop": "Parada",
+      "on": "100%",
+      "off": "0%",
+      "unavailable": "Indisponível"
+  }
+  }

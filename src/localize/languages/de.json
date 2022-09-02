@@ -1,0 +1,17 @@
+{
+    "common": {
+        "card": "Jalousie",
+        "version": "VeAusführungrsão",
+        "invalid_configuration": "Ungültige Konfiguration",
+        "show_warning": "Hinweis zeigen",
+        "show_error": "Fehler anzeigen"
+    },
+    "states":{
+      "open": "100%",
+      "close": "0%",
+      "stop": "Halt",
+      "on": "100%",
+      "off": "0%",
+      "unavailable": "Nicht verfügbar"
+  }
+  }
