@@ -114,50 +114,12 @@ export class BoilerplateCard extends LitElement {
   }
 
   protected firstUpdated() {
-    this._attachResizeObserver();
-    this.slide.style.height =  (this.maxPosition - this.minPosition) + 'px';
+    if (this.layout === "big") this.slide.style.height =  (this.maxPosition - this.minPosition) + 'px';
     ['mousedown', 'touchstart', 'pointerdown'].forEach((type) => {
       this.picker?.addEventListener(type, this._mouseDown);
     });
 
   }
-  private _resizeObserver?: ResizeObserver;
-
-  private async _attachResizeObserver(): Promise<void> {
-    if (!this._resizeObserver) {
-      this._resizeObserver = new ResizeObserver(
-        debounce(
-          (entries: any) => {
-            const entry = entries[0];
-            const rootGrid = this.closest("div");
-            if (
-              rootGrid &&
-              entry.contentRect.width <= rootGrid.clientWidth / 2 &&
-              entry.contentRect.width > rootGrid.clientWidth / 3
-            ) {
-              this.layout = "medium";
-              this.showButtons = false;
-              this.isMedium = true;
-            } else if (
-              rootGrid &&
-              entry.contentRect.width <= rootGrid.clientWidth / 3 &&
-              entry.contentRect.width !== 0
-            ) {
-              this.layout = "small";
-              this.showButtons = false;
-              this.isSmall = true;
-            } else {
-            }
-          },
-          250,
-          true
-        )
-      );
-    }
-
-    this._resizeObserver.observe(this);
-  }
-
   public setConfig(config: BoilerplateCardConfig): void {
     if (!config) {
       throw new Error(localize('common.invalidconfiguration'));
@@ -206,6 +168,10 @@ export class BoilerplateCard extends LitElement {
     this.stateObj = this.config.entity
     ? this.hass.states[this.config.entity]
     : undefined;
+
+    if (this.layout === "small" || this.layout === "medium") {
+      this.showButtons = false
+    }
 
     const name = this.config.show_name
       ? this.config.name || (this.stateObj ? computeStateName(this.stateObj) : "")
@@ -274,7 +240,7 @@ export class BoilerplateCard extends LitElement {
                             })}"/>
               <path d="M74.533 30.4126C74.533 30.4272 74.4826 30.4381 74.4658 30.449C74.4994 30.4417 74.533 30.4272 74.533 30.4126Z" class="white"/>
               <path d="M 71.5941 15.9565 H 10.4211 C 9.6591 15.9565 9.043 16.0943 9.043 16.2683 V 49 H 72.956 V 16.2647 C 72.956 16.0943 72.3399 15.9565 71.5941 15.9565 Z" class="white"/>
-              <path d="M9 30.1111C9 30.1561 9.21106 30.1905 9.48706 30.1905H72.5129C72.724 30.1905 72.8539 30.1667 72.9351 30.1376C72.9513 30.1296 73 30.1217 73 30.1111V29.9524H9V30.1111Z" class="grey ${classMap({
+              <path d="M 9 49.1111 C 9 49.1561 9.2111 49.1905 9.4871 49.1905 H 72.5129 C 72.724 49.1905 72.8539 49.1667 72.9351 49.1376 C 72.9513 49.1296 73 49.1217 73 49.1111 V 48.9524 H 9 V 49.1111 Z" class="grey ${classMap({
                             "state-unavailable": this.stateObj.state === UNAVAILABLE,
                             })}" fill-opacity="0.85"/>
               <path d="M74.3968 19.7778H7.50289C6.86905 19.7778 6.36523 19.274 6.36523 18.6401V15.2922C6.36523 14.6584 6.86905 14.1545 7.50289 14.1545H74.3806C75.0144 14.1545 75.5182 14.6584 75.5182 15.2922V18.6401C75.5345 19.2577 75.0144 19.7778 74.3968 19.7778Z" class="blue ${classMap({
@@ -461,7 +427,7 @@ export class BoilerplateCard extends LitElement {
 
     const posTop = realPos - (this.maxPosition - this.minPosition);
     const slideHeight = realPos- (this.minPosition);
-    if (!this.hasUpdated) {
+    if (!this.hasUpdated && this.layout === "big") {
         this.updateComplete.then(() => {
           if (this.picker && this.slide) {
             this.slide.style.height =  slideHeight + 'px';
@@ -477,7 +443,7 @@ export class BoilerplateCard extends LitElement {
           }
       });
     } else {
-      if (this.picker && this.slide) {
+      if (this.picker && this.slide && this.layout === "big") {
         this.slide.style.height =  slideHeight + 'px';
         this.picker.style.top = posTop + 'px';
       }

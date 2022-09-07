@@ -7,7 +7,7 @@ import { customElement, property, state } from 'lit/decorators';
 export const blindCardEditorSchema = [
   {
       name: "entity",
-      selector: { entity: {domain: ["switch", "cover"]} }
+      selector: { entity: {domain: ["cover"]} }
   },
   {
       name: "name",
