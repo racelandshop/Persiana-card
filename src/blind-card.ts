@@ -4,7 +4,7 @@ import { Ripple } from '@material/mwc-ripple';
 import { html, TemplateResult, css, PropertyValues, CSSResultGroup, LitElement } from 'lit';
 import { HassEntity } from 'home-assistant-js-websocket'
 import { queryAsync } from 'lit-element'
-import { customElement, property, query, state } from "lit/decorators";
+import { customElement, eventOptions, property, query, state } from "lit/decorators";
 import { findEntities } from "./././find-entities";
 import { ifDefined } from "lit/directives/if-defined";
 import { classMap } from "lit/directives/class-map";
@@ -15,9 +15,8 @@ import { arrowDown, CARD_VERSION, mdiDotsVertical } from './const';
 import { localize } from './localize/localize';
 import { UNAVAILABLE, UNAVAILABLE_STATES } from "./data/entity";
 import { fireEvent } from "custom-card-helpers";
-import { debounce } from "./common/debounce";
-import ResizeObserver from "./common/resizeObserver";
 import { computeStateName } from "./common/entity/compute_state_name";
+import { RippleHandlers } from '@material/mwc-ripple/ripple-handlers';
 
 console.info(
   `%c  RACELAND-blind-card \n%c  ${localize("common.version")} ${CARD_VERSION}`,
@@ -55,6 +54,8 @@ export class BoilerplateCard extends LitElement {
   @property({ type: Boolean }) public isMedium = false;
 
   @property({ type: Boolean }) public isSmall = false;
+
+  @state() private _shouldRenderRipple = false;
 
   @state() private config!: BoilerplateCardConfig;
 
@@ -176,12 +177,12 @@ export class BoilerplateCard extends LitElement {
     const name = this.config.show_name
       ? this.config.name || (this.stateObj ? computeStateName(this.stateObj) : "")
       : "";
-  return html`
+    return html`
+    ${this.layout === "big" ? html`
     <ha-card
       class=
       ${classMap({
         "hassbut": this.layout === "big",
-        "hassbut-small": this.layout === "small" || this.layout === "medium",
         "state-on":
           ifDefined(this.stateObj ? this.computeActiveState(this.stateObj) : undefined) === "on",
         "state-off":
@@ -203,76 +204,10 @@ export class BoilerplateCard extends LitElement {
         ` : html``
         }
 
-            ${this.isSmall ? html`
-          <div id="container" @click=${this._handleMoreInfo}>
-          ${UNAVAILABLE_STATES.includes(this.stateObj.state) ? html`
-          <unavailable-icon
-            class=${classMap({
-            "icon-unavailable-small": this.layout === "small",
-            "icon-unavailable-medium": this.layout === "medium"
-            })}>
-          </unavailable-icon>
-          ` : html``}
-          ${this.stateObj.attributes.current_position === 0 ? html`
-            <svg class="icon ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"
-                          width="50" height="50" viewBox="0 0 50 50" fill="none" class="ha-status-icon-small">
-              <path d="M45.4197 5H5.08965C4.69965 5 4.38965 5.31 4.38965 5.7V44.88C4.38965 45.27 4.69965 45.58 5.08965 45.58H45.4197C45.8097 45.58 46.1197 45.27 46.1197 44.88V5.7C46.1197 5.31 45.7997 5 45.4197 5ZM24.7197 42.36C24.7197 42.63 24.4997 42.85 24.2297 42.85H6.52965C6.25965 42.85 6.03965 42.63 6.03965 42.36V7.71C6.03965 7.44 6.25965 7.22 6.52965 7.22H24.2297C24.4997 7.22 24.7197 7.44 24.7197 7.71V42.36ZM44.7997 43.35C44.7997 43.62 44.5797 43.84 44.3097 43.84H26.5297C26.2597 43.84 26.0397 43.62 26.0397 43.35V7.67C26.0397 7.4 26.2597 7.18 26.5297 7.18H44.2997C44.5697 7.18 44.7897 7.4 44.7897 7.67V43.35H44.7997Z" class="black ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-              <path d="M44.9599 44.5801C44.9599 44.6201 44.9299 44.6501 44.9199 44.6801C44.9399 44.6601 44.9599 44.6201 44.9599 44.5801Z" class="white"/>
-              <path d="M44.12 5H6.39004C5.92004 5 5.54004 5.38 5.54004 5.86V43.98H44.96V5.85C44.96 5.38 44.58 5 44.12 5Z" class="white"/>
-              <path d="M5.54004 44.5805C5.54004 44.7505 5.67004 44.8805 5.84004 44.8805H44.66C44.79 44.8805 44.87 44.7905 44.92 44.6805C44.93 44.6505 44.96 44.6205 44.96 44.5805V43.9805H5.54004V44.5805Z" class="grey ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-              <path d="M45.8297 8.21H4.66973C4.27973 8.21 3.96973 7.9 3.96973 7.51V5.45C3.96973 5.06 4.27973 4.75 4.66973 4.75H45.8197C46.2097 4.75 46.5197 5.06 46.5197 5.45V7.51C46.5297 7.89 46.2097 8.21 45.8297 8.21Z" class="grey ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-            </svg>` :
-            (this.stateObj.attributes.current_position !== 100) && this.stateObj.attributes.current_position ? html`
-            <svg class="icon ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-            })}"
-                             width="89" height="89" viewBox="0 0 89 89" fill="none">
-              <path d="M73.7305 14.5608H8.1855C7.55167 14.5608 7.04785 15.0646 7.04785 15.6984V79.3745C7.04785 80.0083 7.55167 80.5121 8.1855 80.5121H73.7305C74.3644 80.5121 74.8682 80.0083 74.8682 79.3745V15.6984C74.8682 15.0646 74.3481 14.5608 73.7305 14.5608ZM40.0885 75.2789C40.0885 75.7177 39.731 76.0753 39.2922 76.0753H10.5258C10.087 76.0753 9.72946 75.7177 9.72946 75.2789V18.9651C9.72946 18.5263 10.087 18.1688 10.5258 18.1688H39.2922C39.731 18.1688 40.0885 18.5263 40.0885 18.9651V75.2789ZM72.7229 76.8879C72.7229 77.3267 72.3653 77.6842 71.9265 77.6842H43.0302C42.5914 77.6842 42.2338 77.3267 42.2338 76.8879V18.9001C42.2338 18.4613 42.5914 18.1038 43.0302 18.1038H71.9103C72.3491 18.1038 72.7066 18.4613 72.7066 18.9001V76.8879H72.7229Z" class="blue ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-              <path d="M74.533 30.4126C74.533 30.4272 74.4826 30.4381 74.4658 30.449C74.4994 30.4417 74.533 30.4272 74.533 30.4126Z" class="white"/>
-              <path d="M 71.5941 15.9565 H 10.4211 C 9.6591 15.9565 9.043 16.0943 9.043 16.2683 V 49 H 72.956 V 16.2647 C 72.956 16.0943 72.3399 15.9565 71.5941 15.9565 Z" class="white"/>
-              <path d="M 9 49.1111 C 9 49.1561 9.2111 49.1905 9.4871 49.1905 H 72.5129 C 72.724 49.1905 72.8539 49.1667 72.9351 49.1376 C 72.9513 49.1296 73 49.1217 73 49.1111 V 48.9524 H 9 V 49.1111 Z" class="grey ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}" fill-opacity="0.85"/>
-              <path d="M74.3968 19.7778H7.50289C6.86905 19.7778 6.36523 19.274 6.36523 18.6401V15.2922C6.36523 14.6584 6.86905 14.1545 7.50289 14.1545H74.3806C75.0144 14.1545 75.5182 14.6584 75.5182 15.2922V18.6401C75.5345 19.2577 75.0144 19.7778 74.3968 19.7778Z" class="blue ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-            </svg>
-            ` : html`
-            <svg class="icon ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-            })}"
-                             width="89" height="89" viewBox="0 0 89 89" fill="none">
-              <path d="M73.7305 14.5608H8.1855C7.55167 14.5608 7.04785 15.0646 7.04785 15.6984V79.3745C7.04785 80.0083 7.55167 80.5121 8.1855 80.5121H73.7305C74.3644 80.5121 74.8682 80.0083 74.8682 79.3745V15.6984C74.8682 15.0646 74.3481 14.5608 73.7305 14.5608ZM40.0885 75.2789C40.0885 75.7177 39.731 76.0753 39.2922 76.0753H10.5258C10.087 76.0753 9.72946 75.7177 9.72946 75.2789V18.9651C9.72946 18.5263 10.087 18.1688 10.5258 18.1688H39.2922C39.731 18.1688 40.0885 18.5263 40.0885 18.9651V75.2789ZM72.7229 76.8879C72.7229 77.3267 72.3653 77.6842 71.9265 77.6842H43.0302C42.5914 77.6842 42.2338 77.3267 42.2338 76.8879V18.9001C42.2338 18.4613 42.5914 18.1038 43.0302 18.1038H71.9103C72.3491 18.1038 72.7066 18.4613 72.7066 18.9001V76.8879H72.7229Z" class="blue ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-              <path d="M74.533 30.4126C74.533 30.4272 74.4826 30.4381 74.4658 30.449C74.4994 30.4417 74.533 30.4272 74.533 30.4126Z" class="white"/>
-              <path d="M71.5941 15.9565H10.4211C9.65908 15.9565 9.04297 16.0943 9.04297 16.2683V30.087H72.956V16.2647C72.956 16.0943 72.3399 15.9565 71.5941 15.9565Z" class="white"/>
-              <path d="M9 30.1111C9 30.1561 9.21106 30.1905 9.48706 30.1905H72.5129C72.724 30.1905 72.8539 30.1667 72.9351 30.1376C72.9513 30.1296 73 30.1217 73 30.1111V29.9524H9V30.1111Z" class="grey ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}" fill-opacity="0.85"/>
-              <path d="M74.3968 19.7778H7.50289C6.86905 19.7778 6.36523 19.274 6.36523 18.6401V15.2922C6.36523 14.6584 6.86905 14.1545 7.50289 14.1545H74.3806C75.0144 14.1545 75.5182 14.6584 75.5182 15.2922V18.6401C75.5345 19.2577 75.0144 19.7778 74.3968 19.7778Z" class="blue ${classMap({
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
-                            })}"/>
-            </svg>
-            `}</div>
-            ` :
-
-        html`
         ${this.config.show_state
           ? html`
             <div  class=${classMap({
             "sc-blind-position": this.layout === "big",
-            "sc-blind-position-small": this.layout === "small" || this.layout === "medium",
             "position-null": this.stateObj.state === UNAVAILABLE
                   })}
             @change=${this.setPickerPosition(100 - (this.stateObj.attributes.current_position))}>
@@ -280,24 +215,12 @@ export class BoilerplateCard extends LitElement {
             </div>
           `: ""
         }
-        <div class=${classMap({
-            "container": this.layout === "big",
-            "container-small": this.layout === "small",
-            "container-medium": this.layout === "medium"
-                  })}>
-            <div class=${classMap({
-              "sc-blind-middle": this.layout === "big",
-              "sc-blind-middle-small": this.layout === "small",
-              "sc-blind-middle-medium": this.layout === "medium"
-                    })}
+        <div class="container">
+            <div class="sc-blind-middle"
             .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}>
                 ${this.config.show_icon && this.config.icon
                 ? html`
-                      <div class=${classMap({
-                      "sc-blind-selector": this.layout === "big",
-                      "sc-blind-selector-small": this.layout === "small",
-                      "sc-blind-selector-medium": this.layout === "medium"
-                            })}>
+                      <div class="sc-blind-selector">
                         <div class="blindOpen ${classMap({
                           "state-on": this.stateObj.state === "open" || this.stateObj.state === "opening" || this.stateObj.state === "closing",
                         "state-unavailable": this.stateObj.state === UNAVAILABLE,
@@ -315,17 +238,8 @@ export class BoilerplateCard extends LitElement {
                         </div>
                       ${UNAVAILABLE_STATES.includes(this.stateObj.state)
                         ? html`
-                      <unavailable-icon
-                      class=${classMap({
-                      "icon-unavailable": this.layout === "big",
-                      "icon-unavailable-small": this.layout === "small",
-                      "icon-unavailable-medium": this.layout === "medium"
-                            })}></unavailable-icon>` : html``}
-                        <div class=${classMap({
-                          "sc-blind-selector-slide": this.layout === "big",
-                          "sc-blind-selector-slide-small": this.layout === "small",
-                          "sc-blind-selector-slide-medium": this.layout === "medium"
-                                })}></div>
+                      <unavailable-icon class="icon-unavailable"></unavailable-icon>` : html``}
+                        <div class="sc-blind-selector-slide"></div>
                           <svg class=
                           "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj.state === UNAVAILABLE,})}"
                           viewBox="0 0 50 50" height="100%" width="100%">
@@ -385,21 +299,86 @@ export class BoilerplateCard extends LitElement {
             }
         </div>
         </div>
-        `}
     ${this.config.show_name
       ? html`
-        <div class=${classMap({
-        "sc-blind-label": this.layout === "big",
-        "sc-blind-label-small": this.layout === "small",
-        "sc-blind-label-medium": this.layout === "medium"
-              })}>
+        <div class="sc-blind-label">
           ${name}</div>
       `: ""
     }
     </ha-card>
-    `;
+    ` : html`
+        <ha-card
+          class=${classMap({
+            "small-card": this.layout === "small",
+            "medium-card": this.layout === "medium",
+            "unavailable": UNAVAILABLE_STATES.includes(this.stateObj.state)
+                  })}
+            @focus=${this.handleRippleFocus}
+            @blur=${this.handleRippleBlur}
+            @mousedown=${this.handleRippleActivate}
+            @mouseup=${this.handleRippleDeactivate}
+            @touchstart=${this.handleRippleActivate}
+            @touchend=${this.handleRippleDeactivate}
+            @touchcancel=${this.handleRippleDeactivate}
+            @click=${this._handleMoreInfo}
+            role="button"
+
+          >
+            <div class=${classMap({
+                "small-icons": this.layout === "medium" ||  this.layout === "small",
+                })}>
+              <svg
+              class=${classMap({
+                "ha-status-icon-small": this.layout === "small",
+                "ha-status-icon-medium": this.layout === "medium",
+                })}
+              viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M45.4197 5H5.08965C4.69965 5 4.38965 5.31 4.38965 5.7V44.88C4.38965 45.27 4.69965 45.58 5.08965 45.58H45.4197C45.8097 45.58 46.1197 45.27 46.1197 44.88V5.7C46.1197 5.31 45.7997 5 45.4197 5ZM24.7197 42.36C24.7197 42.63 24.4997 42.85 24.2297 42.85H6.52965C6.25965 42.85 6.03965 42.63 6.03965 42.36V7.71C6.03965 7.44 6.25965 7.22 6.52965 7.22H24.2297C24.4997 7.22 24.7197 7.44 24.7197 7.71V42.36ZM44.7997 43.35C44.7997 43.62 44.5797 43.84 44.3097 43.84H26.5297C26.2597 43.84 26.0397 43.62 26.0397 43.35V7.67C26.0397 7.4 26.2597 7.18 26.5297 7.18H44.2997C44.5697 7.18 44.7897 7.4 44.7897 7.67V43.35H44.7997Z" id="accent-color"/>
+              <path d="M44.9599 44.5801C44.9599 44.6201 44.9299 44.6501 44.9199 44.6801C44.9399 44.6601 44.9599 44.6201 44.9599 44.5801Z" fill="#E6E6E6"/>
+              <path d="M44.1689 5H6.84094C6.37595 5 6 5.16573 6 5.37506V21C6 21.5523 6.44772 22 7 22H44C44.5523 22 45 21.5523 45 21V5.3707C45 5.16573 44.624 5 44.1689 5Z" fill="#E6E6E6"/>
+              <path d="M6 21.6667C6 21.8556 6.12862 22 6.2968 22H44.7032C44.8318 22 44.911 21.9 44.9604 21.7778C44.9703 21.7444 45 21.7111 45 21.6667V21H6V21.6667Z" fill="#B3B3B3"/>
+              <path d="M45.8297 8.21H4.66973C4.27973 8.21 3.96973 7.9 3.96973 7.51V5.45C3.96973 5.06 4.27973 4.75 4.66973 4.75H45.8197C46.2097 4.75 46.5197 5.06 46.5197 5.45V7.51C46.5297 7.89 46.2097 8.21 45.8297 8.21Z" id="accent-color"/>
+              </svg>
+            </div>
+            ${name !== "undefined"
+              ? html`<span class=${classMap({
+                "rect-card-small": this.layout === "small",
+                "rect-card-medium": this.layout === "medium"
+                      })} tabindex="-1" .title=${name ? name : ""}
+                  >${name}</span
+                >`
+              : ""}
+            ${this._shouldRenderRipple ? html`<mwc-ripple></mwc-ripple>` : ""}
+            ${UNAVAILABLE_STATES.includes(this.stateObj.state)
+              ? html` <unavailable-icon></unavailable-icon>`
+              : html``}
+          </ha-card>
+        `
+
+    }`
   }
 
+  private _rippleHandlers: RippleHandlers = new RippleHandlers(() => {
+    this._shouldRenderRipple = true;
+    return this._ripple;
+  });
+
+  @eventOptions({ passive: true })
+  private handleRippleActivate(evt?: Event) {
+    this._rippleHandlers.startPress(evt);
+  }
+
+  private handleRippleDeactivate() {
+    this._rippleHandlers.endPress();
+  }
+
+  private handleRippleFocus() {
+    this._rippleHandlers.startFocus();
+  }
+
+  private handleRippleBlur() {
+    this._rippleHandlers.endFocus();
+  }
   getPictureTop(picture: Element) {
     if (!picture) {
       return null;
@@ -588,12 +567,6 @@ export class BoilerplateCard extends LitElement {
       .black {
         fill: #333333
       }
-      .ha-status-icon-small {
-        width: 63%;
-        height: auto;
-        color: var(--paper-item-icon-color, #7b7b7b);
-        --mdc-icon-size: 100%;
-      }
       #container {
         height: 70%;
         width: 100%;
@@ -613,7 +586,6 @@ export class BoilerplateCard extends LitElement {
         color: var(--primary-text-color);
         border-radius: 1.5rem;
         background: var(--card-background-color);
-        /* aspect-ratio: 1; */
       }
       svg {
         display: block;
@@ -651,11 +623,6 @@ export class BoilerplateCard extends LitElement {
         flex-direction: column;
         align-items: center;
       }
-      .hassbut-small {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
       .blind-closed {
         position: absolute;
         top: 0;
@@ -666,24 +633,9 @@ export class BoilerplateCard extends LitElement {
       }
       .sc-blind-selector {
         position: absolute;
-        /* top: 34px; */
         left: 1px;
-        /* transform: translate(-50%, -50%); */
         width: 150px;
         height: 150px;
-      }
-      .sc-blind-selector-medium {
-        position: absolute;
-        top: 12px;
-        left: 0px;
-        width: 90px;
-        height: 90px;
-      }
-      .sc-blind-selector-small {
-        position: absolute;
-        left: 7px;
-        width: 75px;
-        height: 75px;
       }
       .position-null {
         display: none;
@@ -692,15 +644,6 @@ export class BoilerplateCard extends LitElement {
         color: var(--secondary-text-color);
         position: absolute;
         top: 20px;
-      }
-      .sc-blind-position-medium {
-        color: var(--secondary-text-color);
-        position: absolute;
-        left: 54px;
-        top: 26px;
-      }
-      .sc-blind-position-small {
-        display: none;
       }
       .sc-blind-label {
         color: var(--primary-text-color);
@@ -715,26 +658,6 @@ export class BoilerplateCard extends LitElement {
         max-width: 80%;
         text-overflow: ellipsis;
         justify-content: space-between;
-      }
-      .sc-blind-label-medium {
-        color: var(--primary-text-color);
-        font-size: 1.3rem;
-        margin-left: 12%;
-        font-weight: 450;
-        height: 25px;
-        white-space: nowrap;
-        display: inline-block;
-        overflow-x: hidden;
-        max-width: 80%;
-        text-overflow: ellipsis;
-        justify-content: space-between;
-      }
-      .ha-status-icon-small {
-        width: 60%;
-        margin-left: 5%;
-        height: auto;
-        color: var(--paper-item-icon-color, #7b7b7b);
-        --mdc-icon-size: 100%;
       }
       .icon-unavailable-small {
         z-index: 1;
@@ -753,20 +676,6 @@ export class BoilerplateCard extends LitElement {
         position: absolute;
         top: 40%;
         left: 40%;
-      }
-      .sc-blind-label-small {
-        color: var(--primary-text-color);
-        font-size: 1.1rem;
-        margin-top: 4%;
-        margin-left: 13%;
-        font-weight: 450;
-        height: 24px;
-        white-space: nowrap;
-        display: inline-block;
-        overflow-x: hidden;
-        max-width: 80%;
-        text-overflow: ellipsis;
-        justify-content: space-between;
       }
       .sc-blind-selector-picture {
         position: relative;
@@ -787,31 +696,8 @@ export class BoilerplateCard extends LitElement {
         max-width: 230px;
         min-width: 123px;
         max-height: 100%;
-        /* top: 44px; */
         top: 24px;
         left: 14px;
-      }
-      .sc-blind-selector-slide-medium {
-        background-color: var(--slider-track-color);
-        position: absolute;
-        cursor: row-resize;
-        height: 100%;
-        max-width: 230px;
-        min-width: 73px;
-        max-height: 74%;
-        top: 14px;
-        left: 9px;
-      }
-      .sc-blind-selector-slide-small {
-        background-color: var(--slider-track-color);
-        position: absolute;
-        cursor: row-resize;
-        height: 100%;
-        max-width: 230px;
-        min-width: 62.6px;
-        max-height: 74%;
-        top: 11px;
-        left: 6.5px;
       }
       .sc-blind-selector-picker {
         cursor: row-resize;
@@ -828,22 +714,6 @@ export class BoilerplateCard extends LitElement {
         width: 200px;
         height: 171px;
       }
-      .sc-blind-middle-medium {
-        display: flex;
-        align-items: center;
-        position: relative;
-        justify-content: center;
-        width: 180px;
-        height: 130px;
-      }
-      .sc-blind-middle-small {
-        display: flex;
-        align-items: center;
-        position: relative;
-        justify-content: center;
-        width: 134px;
-        height: 77px;
-      }
 
       .window {
         overflow-y: hidden;
@@ -859,23 +729,6 @@ export class BoilerplateCard extends LitElement {
         align-items: center;
         justify-content: center;
         margin-top: 22px;
-      }
-      .container-medium {
-        height: 60%;
-        width: 60%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        margin-left: 13px;
-        margin-top: 12px;
-      }
-      .container-small {
-        height: 55%;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 7px;
       }
       #buttons {
         top: 21px;
@@ -989,6 +842,143 @@ export class BoilerplateCard extends LitElement {
         color: var(--state-unavailable-color, #bdbdbd);
         fill: var(--state-unavailable-color, #bdbdbd);
         pointer-events: none;
+      }
+
+      .small-card {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        text-align: left;
+        padding: 4% 0;
+        font-size: 1.2rem;
+        height: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        font-weight: 450;
+      }
+      .medium-card {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        text-align: left;
+        padding: 4% 0;
+        font-size: 1.8rem;
+        height: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        font-weight: 450;
+      }
+      .big-card {
+        cursor: pointer;
+        aspect-ratio: 1.5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 4% 0;
+        font-size: 2.3rem;
+        height: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        font-weight: 450;
+      }
+
+      .small-icons {
+        display: flex;
+        align-items: center;
+        margin-left: 10%;
+      }
+
+      .unavailable {
+        pointer-events: none;
+      }
+      unavailable-icon {
+        position: absolute;
+        top: 11px;
+        right: 10%;
+      }
+      .rect-card-small {
+        padding: 5%;
+        padding-bottom: 4%;
+        margin-bottom: 4%;
+        margin-left: 7%;
+        white-space: nowrap;
+        display: inline-block;
+        overflow: hidden;
+        max-width: 110px;
+        text-overflow: ellipsis;
+      }
+
+      .rect-card-medium {
+        padding: 5%;
+        padding-bottom: 4%;
+        margin-bottom: 4%;
+        margin-left: 7%;
+        white-space: nowrap;
+        display: inline-block;
+        overflow: hidden;
+        max-width: 200px;
+        text-overflow: ellipsis;
+      }
+
+      .rect-card {
+        padding: 5%;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 350px;
+        text-overflow: ellipsis;
+      }
+
+      ha-card:focus {
+        outline: none;
+      }
+
+    #accent-color {
+        fill: var(--accent-color);
+      }
+
+      .ha-status-icon-big {
+        width: 140px;
+        height: 140px;
+      }
+
+      .ha-status-icon-medium {
+        width: 90px;
+        height: 90px;
+      }
+
+      .ha-status-icon-small {
+        width: 60px;
+        height: 60px;
+      }
+
+      .svg-icon {
+        fill: var(--paper-item-icon-color, #44739e);
+      }
+
+      ha-state-icon,
+      span {
+        outline: none;
+      }
+      unavailable-icon {
+        position: absolute;
+        top: 11px;
+        right: 10%;
+      }
+      .state {
+        font-size: 0.9rem;
+        color: var(--secondary-text-color);
       }
 
     `;
