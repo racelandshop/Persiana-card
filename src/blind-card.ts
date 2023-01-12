@@ -208,22 +208,22 @@ export class BoilerplateCard extends LitElement {
           ? html`
             <div  class=${classMap({
             "sc-blind-position": this.layout === "big",
-            "position-null": this.stateObj.state === UNAVAILABLE
+            "position-null": this.stateObj?.state === UNAVAILABLE
                   })}
-            @change=${this.setPickerPosition(100 - (this.stateObj.attributes.current_position))}>
-              ${this.stateObj.attributes.current_position} %
+            @change=${this.setPickerPosition(100 - (this.stateObj?.attributes.current_position))}>
+              ${this.stateObj?.attributes.current_position} %
             </div>
           `: ""
         }
         <div class="container">
             <div class="sc-blind-middle"
-            .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}>
+            .disabled=${UNAVAILABLE_STATES.includes(this.stateObj?.state)}>
                 ${this.config.show_icon && this.config.icon
                 ? html`
                       <div class="sc-blind-selector">
                         <div class="blindOpen ${classMap({
-                          "state-on": this.stateObj.state === "open" || this.stateObj.state === "opening" || this.stateObj.state === "closing",
-                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                          "state-on": this.stateObj?.state === "open" || this.stateObj?.state === "opening" || this.stateObj?.state === "closing",
+                        "state-unavailable": this.stateObj?.state === UNAVAILABLE,
                           })}">
                           <svg class=
                             "sc-blind-selector-picture"
@@ -236,12 +236,12 @@ export class BoilerplateCard extends LitElement {
                             <path d="M45.83 8.21H4.66997C4.27997 8.21 3.96997 7.9 3.96997 7.51V5.45C3.96997 5.06 4.27997 4.75 4.66997 4.75H45.82C46.21 4.75 46.52 5.06 46.52 5.45V7.51C46.53 7.89 46.21 8.21 45.83 8.21Z" />
                           </svg>
                         </div>
-                      ${UNAVAILABLE_STATES.includes(this.stateObj.state)
+                      ${UNAVAILABLE_STATES.includes(this.stateObj?.state)
                         ? html`
                       <unavailable-icon class="icon-unavailable"></unavailable-icon>` : html``}
                         <div class="sc-blind-selector-slide"></div>
                           <svg class=
-                          "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj.state === UNAVAILABLE,})}"
+                          "sc-blind-selector-picker ${classMap({"state-unavailable": this.stateObj?.state === UNAVAILABLE,})}"
                           viewBox="0 0 50 50" height="100%" width="100%">
                           <path d="M5.54004 44.58C5.54004 44.75 5.67004 44.88 5.84004 44.88H44.66C44.79 44.88 44.87 44.79 44.92 44.68C44.93 44.65 44.96 44.62 44.96 44.58V43.98H5.54004V44.58Z" fill="#B3B3B3"/>
                           </svg>
@@ -254,10 +254,10 @@ export class BoilerplateCard extends LitElement {
                   <div id="buttons">
                       <div class="buttons" >
                           <button
-                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj?.state)}
                           class="openButton ${classMap({
-                        "state-on": this.stateObj.state === "opening",
-                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                        "state-on": this.stateObj?.state === "opening",
+                        "state-unavailable": this.stateObj?.state === UNAVAILABLE,
                           })}"
                         .label=${this.hass.localize("ui.dialogs.more_info_control.opencover")}
                           @click=${this.onOpenTap}
@@ -268,9 +268,9 @@ export class BoilerplateCard extends LitElement {
                       </div>
                       <div class="buttons" >
                           <button
-                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj?.state)}
                           class="pause ${classMap({
-                        "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                        "state-unavailable": this.stateObj?.state === UNAVAILABLE,
                           })}"
                           .label=${this.hass.localize("ui.dialogs.more_info_control.stopcover")}
                           @click=${this.onStopTap}
@@ -281,10 +281,10 @@ export class BoilerplateCard extends LitElement {
                       </div>
                       <div class="buttons" >
                           <button
-                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj.state)}
+                          .disabled=${UNAVAILABLE_STATES.includes(this.stateObj?.state)}
                           class="closeButton ${classMap({
-                            "state-on": this.stateObj.state === "closing",
-                            "state-unavailable": this.stateObj.state === UNAVAILABLE,
+                            "state-on": this.stateObj?.state === "closing",
+                            "state-unavailable": this.stateObj?.state === UNAVAILABLE,
                           })}"
                           .label=${this.hass.localize("ui.dialogs.more_info_control.closecover")}
                           .path=${arrowDown}
@@ -311,7 +311,7 @@ export class BoilerplateCard extends LitElement {
           class=${classMap({
             "small-card": this.layout === "small",
             "medium-card": this.layout === "medium",
-            "unavailable": UNAVAILABLE_STATES.includes(this.stateObj.state)
+            "unavailable": UNAVAILABLE_STATES.includes(this.stateObj?.state)
                   })}
             @focus=${this.handleRippleFocus}
             @blur=${this.handleRippleBlur}
@@ -333,11 +333,17 @@ export class BoilerplateCard extends LitElement {
                 "ha-status-icon-medium": this.layout === "medium",
                 })}
               viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M45.4197 5H5.08965C4.69965 5 4.38965 5.31 4.38965 5.7V44.88C4.38965 45.27 4.69965 45.58 5.08965 45.58H45.4197C45.8097 45.58 46.1197 45.27 46.1197 44.88V5.7C46.1197 5.31 45.7997 5 45.4197 5ZM24.7197 42.36C24.7197 42.63 24.4997 42.85 24.2297 42.85H6.52965C6.25965 42.85 6.03965 42.63 6.03965 42.36V7.71C6.03965 7.44 6.25965 7.22 6.52965 7.22H24.2297C24.4997 7.22 24.7197 7.44 24.7197 7.71V42.36ZM44.7997 43.35C44.7997 43.62 44.5797 43.84 44.3097 43.84H26.5297C26.2597 43.84 26.0397 43.62 26.0397 43.35V7.67C26.0397 7.4 26.2597 7.18 26.5297 7.18H44.2997C44.5697 7.18 44.7897 7.4 44.7897 7.67V43.35H44.7997Z" id="accent-color"/>
+              <path d="M45.4197 5H5.08965C4.69965 5 4.38965 5.31 4.38965 5.7V44.88C4.38965 45.27 4.69965 45.58 5.08965 45.58H45.4197C45.8097 45.58 46.1197 45.27 46.1197 44.88V5.7C46.1197 5.31 45.7997 5 45.4197 5ZM24.7197 42.36C24.7197 42.63 24.4997 42.85 24.2297 42.85H6.52965C6.25965 42.85 6.03965 42.63 6.03965 42.36V7.71C6.03965 7.44 6.25965 7.22 6.52965 7.22H24.2297C24.4997 7.22 24.7197 7.44 24.7197 7.71V42.36ZM44.7997 43.35C44.7997 43.62 44.5797 43.84 44.3097 43.84H26.5297C26.2597 43.84 26.0397 43.62 26.0397 43.35V7.67C26.0397 7.4 26.2597 7.18 26.5297 7.18H44.2997C44.5697 7.18 44.7897 7.4 44.7897 7.67V43.35H44.7997Z" class=${classMap({
+                "blue": this.stateObj?.state !== "closed" && this.stateObj?.state !== UNAVAILABLE,
+                "grey": this.stateObj?.state === "closed",
+                })}/>
               <path d="M44.9599 44.5801C44.9599 44.6201 44.9299 44.6501 44.9199 44.6801C44.9399 44.6601 44.9599 44.6201 44.9599 44.5801Z" fill="#E6E6E6"/>
               <path d="M44.1689 5H6.84094C6.37595 5 6 5.16573 6 5.37506V21C6 21.5523 6.44772 22 7 22H44C44.5523 22 45 21.5523 45 21V5.3707C45 5.16573 44.624 5 44.1689 5Z" fill="#E6E6E6"/>
               <path d="M6 21.6667C6 21.8556 6.12862 22 6.2968 22H44.7032C44.8318 22 44.911 21.9 44.9604 21.7778C44.9703 21.7444 45 21.7111 45 21.6667V21H6V21.6667Z" fill="#B3B3B3"/>
-              <path d="M45.8297 8.21H4.66973C4.27973 8.21 3.96973 7.9 3.96973 7.51V5.45C3.96973 5.06 4.27973 4.75 4.66973 4.75H45.8197C46.2097 4.75 46.5197 5.06 46.5197 5.45V7.51C46.5297 7.89 46.2097 8.21 45.8297 8.21Z" id="accent-color"/>
+              <path d="M45.8297 8.21H4.66973C4.27973 8.21 3.96973 7.9 3.96973 7.51V5.45C3.96973 5.06 4.27973 4.75 4.66973 4.75H45.8197C46.2097 4.75 46.5197 5.06 46.5197 5.45V7.51C46.5297 7.89 46.2097 8.21 45.8297 8.21Z" class=${classMap({
+                "blue": this.stateObj?.state !== "closed" && this.stateObj?.state !== UNAVAILABLE,
+                "grey": this.stateObj?.state === "closed",
+                })}/>
               </svg>
             </div>
             ${name !== "undefined"
@@ -349,7 +355,7 @@ export class BoilerplateCard extends LitElement {
                 >`
               : ""}
             ${this._shouldRenderRipple ? html`<mwc-ripple></mwc-ripple>` : ""}
-            ${UNAVAILABLE_STATES.includes(this.stateObj.state)
+            ${UNAVAILABLE_STATES.includes(this.stateObj?.state)
               ? html` <unavailable-icon></unavailable-icon>`
               : html``}
           </ha-card>
@@ -481,9 +487,9 @@ export class BoilerplateCard extends LitElement {
       }
 
       if (this.invertPercentage) {
-        this.updateBlindPosition(this?.hass, this.stateObj.entity_id, percentagePosition);
+        this.updateBlindPosition(this?.hass, this.stateObj?.entity_id, percentagePosition);
       } else {
-        this.updateBlindPosition(this?.hass, this.stateObj.entity_id, 100 - percentagePosition);
+        this.updateBlindPosition(this?.hass, this.stateObj?.entity_id, 100 - percentagePosition);
       }
 
       this.shadowRoot?.removeEventListener('mousemove', this._mouseMove);
